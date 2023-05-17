@@ -1,7 +1,6 @@
 import PARSERS from "./nameParsers";
 import { ParsedName, RawRoomBooking, RoomBooking } from "./types";
-import { getTimezoneOffset } from 'date-fns-tz';
-import { addMilliseconds } from 'date-fns';
+import { toSydneyTime } from "./toSydneyTime";
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const NO_WEEKS = 52;
 const FIRST_WEEK = 0x8000000000000n;
@@ -26,8 +25,8 @@ function parseBooking(booking: RawRoomBooking) {
         bookingType: bookingType,
         name,
         roomId: booking.roomId,
-        start: createSydneyDate(i, booking.day, booking.start),
-        end: createSydneyDate(i, booking.day, booking.end),
+        start: toSydneyTime(createDate(i, booking.day, booking.start)),
+        end: toSydneyTime(createDate(i, booking.day, booking.end)),
       });
     }
     weekMask >>= 1n;
@@ -51,7 +50,7 @@ const parseName = (rawName: string): ParsedName => {
 /**
  * Create a date given a week number (0..52), day (full name) and time (HH:MM)
  */
-const createSydneyDate = (week: number, day: string, time: string) => {
+const createDate = (week: number, day: string, time: string) => {
   const dayNum = DAYS.indexOf(day);
   const [hours, minutes] = time.split(':').map(x => parseInt(x, 10));
   const year = new Date().getFullYear();
@@ -62,8 +61,7 @@ const createSydneyDate = (week: number, day: string, time: string) => {
 
   // Add weeks and day - if the day is greater than the number of days in a
   // month then JS just overflows it to the next
-  let date = new Date(year, 0, firstMonday + week * 7 + dayNum, hours, minutes);
-  return addMilliseconds(date, getTimezoneOffset("Australia/Sydney", date));
+  return new Date(year, 0, firstMonday + week * 7 + dayNum, hours, minutes);
 }
 
 export default parseBooking;

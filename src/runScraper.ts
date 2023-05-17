@@ -7,16 +7,16 @@ import scrapeBuildings from "./scrapeBuildings";
 const runScrapeJob = async () => {
 
   const buildings = await scrapeBuildings();
-  fs.writeFileSync("./buildings.json", JSON.stringify(buildings, null, 2));
+  fs.writeFileSync("./output/buildings.json", JSON.stringify(buildings, null, 2));
 
   const rooms = await scrapeRooms();
-  fs.writeFileSync("./rooms.json", JSON.stringify(rooms, null, 2));
+  fs.writeFileSync("./output/rooms.json", JSON.stringify(rooms, null, 2));
 
   const bookingPromises = rooms.map(room => scrapeBookings(room.id));
   const bookings = (await Promise.all(bookingPromises)).flat();
   const parsedBookings = bookings.map(parseBooking).flat();
   parsedBookings.sort((a, b) => a.start.getTime() - b.start.getTime());
-  fs.writeFileSync("./bookings.json", JSON.stringify(parsedBookings));
+  fs.writeFileSync("./output/bookings.json", JSON.stringify(parsedBookings, null, 2));
 }
 
 console.time('Scraping');
