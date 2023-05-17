@@ -1,0 +1,31 @@
+{
+  "name": "nss-scraper",
+  "version": "1.0.0",
+  "description": "nss scraping",
+  "main": "src/scraper.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc --project ./",
+    "scrape": "ts-node src/scraper.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csesoc/nss-scraper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/csesoc/nss-scraper/issues"
+  },
+  "homepage": "https://github.com/csesoc/nss-scraper#readme",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "cheerio": "^1.0.0-rc.12",
+    "date-fns": "^2.30.0",
+    "date-fns-tz": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.1.7",
+    "ts-node": "^10.9.1"
+  }
+}
