@@ -129,3 +129,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 database.json
+
+# artifacts
+bookings.json
+buildings.json
+rooms.json
