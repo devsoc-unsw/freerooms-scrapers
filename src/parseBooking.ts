@@ -63,7 +63,7 @@ const createSydneyDate = (week: number, day: string, time: string) => {
   // Add weeks and day - if the day is greater than the number of days in a
   // month then JS just overflows it to the next
   let date = new Date(year, 0, firstMonday + week * 7 + dayNum, hours, minutes);
-  return addMilliseconds(date, getTimezoneOffset("Australia/Sydney"));
+  return addMilliseconds(date, getTimezoneOffset("Australia/Sydney", date));
 }
 
 export default parseBooking;
