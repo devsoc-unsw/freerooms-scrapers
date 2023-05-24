@@ -2,6 +2,5 @@ version: "3.6"
 services:
   scraper:
     build: .
-    network_mode: "host"
-  volumes:
-    - ./output:/app/output
+    volumes:
+      - ./output:/app/output
