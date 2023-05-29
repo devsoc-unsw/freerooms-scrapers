@@ -21,7 +21,7 @@ const scrapeBuildings = async (): Promise<Building[]> => {
   $('select[name="building"]').find('option').each((_, e) => {
     const [name, id] = $(e).text().split(' - ');
     if (!id?.match(BUILDING_REGEX)) return;
-    buildings.push({ name, id, lat: 0, long: 0 });
+    buildings.push({ name: cleanName(name), id, lat: 0, long: 0 });
   });
 
   overrideLocations(buildings);
@@ -41,6 +41,13 @@ const overrideLocations = (data: Building[]) => {
       buildingData.long = building.long;
     }
   }
+}
+
+const cleanName = (name: string): string => {
+  return name
+    .replace(/^[A-Z][0-9]{1,2} /, "")  // Get rid of leading grid refs
+    .replace(/\ufffd/g, " ")           // Replace the weird chars in red centre
+    .replace(/ \d+ Anzac Parade/, ""); // Get rid of the address in L5
 }
 
 export default scrapeBuildings;
