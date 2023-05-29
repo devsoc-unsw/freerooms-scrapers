@@ -2,6 +2,8 @@ import { Room } from "./types";
 import { load } from "cheerio";
 import nssFetch from "./nssFetch";
 
+const ROOM_REGEX = /^K-[A-Z][0-9]{1,2}-.+$/;
+
 // Returns an array of objects containing classroom info
 // {
 //   abbr: 'AnatLab7',
@@ -21,7 +23,7 @@ const scrapeRooms = async (): Promise<Room[]> => {
     const id = $(data[2]).text();
 
     // Ignore rooms not in Kensington
-    if (!id.startsWith('K')) return;
+    if (!id.match(ROOM_REGEX)) return;
 
     classroomData.push({
       abbr: $(data[0]).text(),
