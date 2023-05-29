@@ -1,6 +1,6 @@
 import PARSERS from "./nameParsers";
 import { ParsedName, RawRoomBooking, RoomBooking } from "./types";
-import { toSydneyTime } from "./toSydneyTime";
+import toSydneyTime from "./toSydneyTime";
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const NO_WEEKS = 52;
 const FIRST_WEEK = 0x8000000000000n;
