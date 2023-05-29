@@ -4,10 +4,14 @@ import nssFetch from "./nssFetch";
 import fs from "fs";
 import { LocationData } from "./types";
 
+const BUILDING_REGEX = /^K-[A-Z][0-9]{1,2}$/;
+
 // Returns an array of objects containing building info
 // {
 //   name: 'Ainsworth Building',
 //   id: 'K-J17'
+//   lat: -33
+//   long: 151
 // }
 const scrapeBuildings = async (): Promise<Building[]> => {
   const response = await nssFetch('view_multirooms');
@@ -16,7 +20,7 @@ const scrapeBuildings = async (): Promise<Building[]> => {
   const buildings: Building[] = [];
   $('select[name="building"]').find('option').each((_, e) => {
     const [name, id] = $(e).text().split(' - ');
-    if (!id?.startsWith('K')) return;
+    if (!id?.match(BUILDING_REGEX)) return;
     buildings.push({ name, id, lat: 0, long: 0 });
   });
 
