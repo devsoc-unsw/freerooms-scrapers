@@ -6,13 +6,9 @@ export type UngroupedRoomBooking = {
   weekPattern: number;
 }
 
-export type RawRoomBooking = {
-  name: string;
+export type RawRoomBooking = UngroupedRoomBooking & {
   roomId: string;
-  day: string;
-  start: string;
   end: string;
-  weekPattern: number;
 }
 
 export type RoomBooking = {
