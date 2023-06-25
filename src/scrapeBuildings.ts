@@ -2,10 +2,11 @@ import { Building } from "./types";
 import { load } from "cheerio";
 import nssFetch from "./nssFetch";
 import fs from "fs";
-import { LocationData } from "./types";
+import { OverrideData } from "./types";
 import { excludeBuilding } from './exclusions';
 
 const BUILDING_REGEX = /^K-[A-Z][0-9]{1,2}$/;
+const BUILDING_OVERRIDES_PATH = "./buildingOverrides.json";
 
 // Returns an array of objects containing building info
 // {
@@ -25,7 +26,8 @@ const scrapeBuildings = async (): Promise<Building[]> => {
       name: cleanName(name),
       id,
       lat: 0,
-      long: 0
+      long: 0,
+      aliases: []
     }
     if (building.id?.match(BUILDING_REGEX) && !excludeBuilding(building)) {
       buildings.push(building);
@@ -38,8 +40,8 @@ const scrapeBuildings = async (): Promise<Building[]> => {
 
 // Manually override the building locations in the database
 const overrideLocations = (data: Building[]) => {
-  const rawLocations = fs.readFileSync('./buildingLocations.json', 'utf8');
-  const locations = JSON.parse(rawLocations) as LocationData;
+  const rawLocations = fs.readFileSync(BUILDING_OVERRIDES_PATH, 'utf8');
+  const locations = JSON.parse(rawLocations) as OverrideData;
 
   // For each building in location data, replace the location in original data
   for (const building of locations.buildings) {
@@ -47,6 +49,7 @@ const overrideLocations = (data: Building[]) => {
     if (buildingData) {
       buildingData.lat = building.lat;
       buildingData.long = building.long;
+      buildingData.aliases.push(...building.aliases);
     }
   }
 }

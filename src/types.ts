@@ -43,13 +43,9 @@ export type Building = {
   id: string;
   lat: number;
   long: number;
+  aliases: string[];
 }
 
-export type LocationData = {
-  buildings: Array<{
-    name: string;
-    id: string;
-    lat: number;
-    long: number;
-  }>;
+export type OverrideData = {
+  buildings: Building[];
 }
