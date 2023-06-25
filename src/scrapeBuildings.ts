@@ -3,6 +3,7 @@ import { load } from "cheerio";
 import nssFetch from "./nssFetch";
 import fs from "fs";
 import { LocationData } from "./types";
+import { excludeBuilding } from './exclusions';
 
 const BUILDING_REGEX = /^K-[A-Z][0-9]{1,2}$/;
 
@@ -20,8 +21,15 @@ const scrapeBuildings = async (): Promise<Building[]> => {
   const buildings: Building[] = [];
   $('select[name="building"]').find('option').each((_, e) => {
     const [name, id] = $(e).text().split(' - ');
-    if (!id?.match(BUILDING_REGEX)) return;
-    buildings.push({ name: cleanName(name), id, lat: 0, long: 0 });
+    const building = {
+      name: cleanName(name),
+      id,
+      lat: 0,
+      long: 0
+    }
+    if (building.id?.match(BUILDING_REGEX) && !excludeBuilding(building)) {
+      buildings.push(building);
+    }
   });
 
   overrideLocations(buildings);
@@ -47,7 +55,8 @@ const cleanName = (name: string): string => {
   return name
     .replace(/^[A-Z][0-9]{1,2} /, "")  // Get rid of leading grid refs
     .replace(/\ufffd/g, " ")           // Replace the weird chars in red centre
-    .replace(/ \d+ Anzac Parade/, ""); // Get rid of the address in L5
+    .replace(/Undercroft/, "")         // Get rid of "Undercroft"
+    .trim();
 }
 
 export default scrapeBuildings;
