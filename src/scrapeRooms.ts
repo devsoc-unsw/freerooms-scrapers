@@ -1,6 +1,7 @@
 import { Room } from "./types";
 import { load } from "cheerio";
 import nssFetch from "./nssFetch";
+import { excludeRoom } from './exclusions';
 
 const ROOM_REGEX = /^K-[A-Z][0-9]{1,2}-.+$/;
 
@@ -20,19 +21,19 @@ const scrapeRooms = async (): Promise<Room[]> => {
   const classroomData: Room[] = [];
   $("form").find("tr.rowLowlight, tr.rowHighlight").each((_, e) => {
     const data = $(e).find("td");
-    const id = $(data[2]).text();
 
-    // Ignore rooms not in Kensington
-    if (!id.match(ROOM_REGEX)) return;
-
-    classroomData.push({
+    const room = {
       abbr: $(data[0]).text(),
       name: $(data[1]).text(),
-      id,
+      id: $(data[2]).text(),
       usage: $(data[3]).text(),
       capacity: parseInt($(data[4]).text()),
       school: $(data[5]).text(),
-    });
+    }
+
+    if (room.id.match(ROOM_REGEX) && !excludeRoom(room)) {
+      classroomData.push(room);
+    }
   })
 
   return classroomData;
