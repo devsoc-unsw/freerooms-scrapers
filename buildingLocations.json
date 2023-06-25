@@ -27,8 +27,8 @@
     {
       "name": "Central Lecture Block",
       "id": "K-E19",
-      "lat": -33.917077,
-      "long": 151.232811
+      "lat": -33.917177,
+      "long": 151.232511
     },
     {
       "name": "June Griffith Building",
@@ -111,14 +111,14 @@
     {
       "name": "Newton Building",
       "id": "K-J12",
-      "lat": -33.918363,
-      "long": 151.229791
+      "lat": -33.918120,
+      "long": 151.229211
     },
     {
       "name": "Old Main Building",
       "id": "K-K15",
-      "lat": -33.918489,
-      "long": 151.230731
+      "lat": -33.918507,
+      "long": 151.229457
     },
     {
       "name": "Physics Theatre",
@@ -231,7 +231,7 @@
     {
       "name": "Material Science & Engineering",
       "id": "K-E10",
-      "lat": -33.916518,
+      "lat": -33.916458,
       "long": 151.228459
     },
     {
