@@ -30,6 +30,7 @@ export type Room = {
   usage: string;
   capacity: number;
   school: string;
+  buildingid: string;
 }
 
 export type ParsedName = {

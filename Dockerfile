@@ -16,5 +16,6 @@ RUN npm ci
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/buildingLocations.json ./
+COPY --from=builder /app/sql ./sql
 
 CMD npm start
