@@ -30,6 +30,7 @@ const scrapeRooms = async (): Promise<Room[]> => {
       usage: $(data[3]).text(),
       capacity: parseInt($(data[4]).text()),
       school: $(data[5]).text(),
+      buildingid: id.split('-').slice(0, 2).join('-')
     });
   })
 
