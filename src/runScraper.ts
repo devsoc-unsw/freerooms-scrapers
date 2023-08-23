@@ -23,7 +23,7 @@ const runScrapeJob = async () => {
       metadata: {
         table_name: "Buildings",
         sql_create: fs.readFileSync("./sql/Buildings.sql", "utf8"),
-        columns: ["id", "name", "lat", "long"],
+        columns: ["id", "name", "lat", "long", "aliases"],
       },
       payload: filteredBuildings
     })
