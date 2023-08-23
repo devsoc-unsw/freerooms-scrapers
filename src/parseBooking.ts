@@ -21,12 +21,15 @@ function parseBooking(booking: RawRoomBooking) {
   let weekMask = FIRST_WEEK;
   for (let i = 0; i < NO_WEEKS; i++) {
     if (weekPattern & weekMask) {
+      const start = toSydneyTime(createDate(i, booking.day, booking.start));
+      const end = toSydneyTime(createDate(i, booking.day, booking.end));
       bookings.push({
+        id: `${booking.roomId}-${start.getTime()}-${end.getTime()}`, // only one booking for each room/start/end
         bookingType: bookingType,
         name,
         roomId: booking.roomId,
-        start: toSydneyTime(createDate(i, booking.day, booking.start)),
-        end: toSydneyTime(createDate(i, booking.day, booking.end)),
+        start,
+        end
       });
     }
     weekMask >>= 1n;

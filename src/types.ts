@@ -12,6 +12,7 @@ export type RawRoomBooking = UngroupedRoomBooking & {
 }
 
 export type RoomBooking = {
+  id: string;
   bookingType: string;
   name: string;
   roomId: string;
@@ -26,7 +27,7 @@ export type Room = {
   usage: string;
   capacity: number;
   school: string;
-  buildingid: string;
+  buildingId: string;
 }
 
 export type ParsedName = {
