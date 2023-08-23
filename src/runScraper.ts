@@ -6,9 +6,14 @@ import scrapeBuildings from "./scrapeBuildings";
 import { HASURAGRES_URL } from "./config";
 
 const runScrapeJob = async () => {
-
   const buildings = await scrapeBuildings();
+  const rooms = await scrapeRooms();
 
+  
+  // Filter buildings with no rooms
+  const filteredBuildings = buildings.filter(
+    building => !!rooms.find(room => room.id.startsWith(building.id))
+  );
   fetch(`${HASURAGRES_URL}/insert`, {
     method: "POST",
     headers: {
@@ -20,11 +25,10 @@ const runScrapeJob = async () => {
         sql_create: fs.readFileSync("./sql/Buildings.sql", "utf8"),
         columns: ["id", "name", "lat", "long"],
       },
-      payload: buildings
+      payload: filteredBuildings
     })
   });
-
-  const rooms = await scrapeRooms();
+  
   fetch(`${HASURAGRES_URL}/insert`, {
     method: "POST",
     headers: {
@@ -39,6 +43,7 @@ const runScrapeJob = async () => {
       payload: rooms
     })
   });
+
 
   const bookingPromises = rooms.map(room => scrapeBookings(room.id));
   const bookings = (await Promise.all(bookingPromises)).flat();

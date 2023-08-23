@@ -32,13 +32,12 @@ const scrapeBookings = async (roomId: string): Promise<RawRoomBooking[]> => {
         });
       });
 
-      // Determine which events to extends and which to mark as ended
+      // Determine which events to extend and which to mark as ended
       const newOpenEvents: UngroupedRoomBooking[] = [];
-      const currEventSet = new Set(currEvents.map(e => e.name));
       for (const openEvent of openEvents[day]) {
-        if (currEventSet.has(openEvent.name)) {
+        const hasMatchingEvent = !!currEvents.find(x => bookingsEqual(x, openEvent));
+        if (hasMatchingEvent) {
           // If matching event in this time slot, extend it
-          currEventSet.delete(openEvent.name);
           newOpenEvents.push(openEvent);
         } else {
           // Otherwise mark the event as ended
@@ -46,9 +45,9 @@ const scrapeBookings = async (roomId: string): Promise<RawRoomBooking[]> => {
         }
       }
 
-      // Curr events left in the set are new and should be added to open
+      // Curr events that are new (not yet in open events) should be added
       for (const currEvent of currEvents) {
-        if (currEventSet.has(currEvent.name)) {
+        if (!openEvents[day].find(x => bookingsEqual(x, currEvent))) {
           newOpenEvents.push(currEvent);
         }
       }
@@ -70,5 +69,12 @@ const scrapeBookings = async (roomId: string): Promise<RawRoomBooking[]> => {
 
   return bookings;
 };
+
+const bookingsEqual = (
+  a: UngroupedRoomBooking,
+  b: UngroupedRoomBooking
+): boolean => {
+  return a.name === b.name && a.weekPattern === b.weekPattern;
+}
 
 export default scrapeBookings;
