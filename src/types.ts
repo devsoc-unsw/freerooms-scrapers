@@ -6,13 +6,9 @@ export type UngroupedRoomBooking = {
   weekPattern: number;
 }
 
-export type RawRoomBooking = {
-  name: string;
+export type RawRoomBooking = UngroupedRoomBooking & {
   roomId: string;
-  day: string;
-  start: string;
   end: string;
-  weekPattern: number;
 }
 
 export type RoomBooking = {
@@ -48,13 +44,9 @@ export type Building = {
   id: string;
   lat: number;
   long: number;
+  aliases: string[];
 }
 
-export type LocationData = {
-  buildings: Array<{
-    name: string;
-    id: string;
-    lat: number;
-    long: number;
-  }>;
+export type OverrideData = {
+  buildings: Building[];
 }
