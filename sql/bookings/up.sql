@@ -1,7 +1,7 @@
 CREATE TYPE BookingTypeEnum AS ENUM ('CLASS', 'BLOCK', 'SOCIETY', 'MISC', 'INTERNAL');
 
 CREATE TABLE Bookings (
-    "id"            TEXT PRIMARY KEY,
+    "id"            SERIAL PRIMARY KEY,
     "bookingType"   BookingTypeEnum,
     "name"          TEXT NOT NULL,
     "roomId"        TEXT NOT NULL,

@@ -61,7 +61,7 @@ const runScrapeJob = async () => {
     {
       metadata: {
         table_name: "Bookings",
-        columns: ["bookingType", "name", "id", "roomId", "start", "end"],
+        columns: ["bookingType", "name", "roomId", "start", "end"],
         sql_up: fs.readFileSync("./sql/bookings/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/bookings/down.sql", "utf8"),
       },
