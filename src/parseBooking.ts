@@ -11,7 +11,7 @@ const FIRST_WEEK = 0x8000000000000n;
  * - splits the booking's week pattern into a list of bookings with
  *   start and end Dates
  */
-function parseBooking(booking: RawRoomBooking) {
+function parseBooking(booking: RawRoomBooking): RoomBooking[] {
   const { bookingType, name } = parseName(booking.name);
 
   const bookings: RoomBooking[] = [];
@@ -21,12 +21,14 @@ function parseBooking(booking: RawRoomBooking) {
   let weekMask = FIRST_WEEK;
   for (let i = 0; i < NO_WEEKS; i++) {
     if (weekPattern & weekMask) {
+      const start = toSydneyTime(createDate(i, booking.day, booking.start));
+      const end = toSydneyTime(createDate(i, booking.day, booking.end));
       bookings.push({
         bookingType: bookingType,
         name,
         roomId: booking.roomId,
-        start: toSydneyTime(createDate(i, booking.day, booking.start)),
-        end: toSydneyTime(createDate(i, booking.day, booking.end)),
+        start,
+        end
       });
     }
     weekMask >>= 1n;
