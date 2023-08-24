@@ -24,7 +24,8 @@ function parseBooking(booking: RawRoomBooking) {
       const start = toSydneyTime(createDate(i, booking.day, booking.start));
       const end = toSydneyTime(createDate(i, booking.day, booking.end));
       bookings.push({
-        id: `${booking.roomId}-${start.getTime()}-${end.getTime()}`, // only one booking for each room/start/end
+        // only one booking for each (room,start,end) combo
+        id: `${booking.roomId}-${start.getTime() / 1000}-${end.getTime() / 1000}`,
         bookingType: bookingType,
         name,
         roomId: booking.roomId,
