@@ -20,6 +20,14 @@ const runScrapeJob = async () => {
   const parsedBookings = bookings.map(parseBooking).flat();
   parsedBookings.sort((a, b) => a.start.getTime() - b.start.getTime());
 
+  return { buildings: filteredBuildings, rooms, bookings: parsedBookings };
+}
+
+const runScraper = async () => {
+  console.time('Scraping');
+  const { buildings, rooms, bookings } = await runScrapeJob();
+  console.timeEnd('Scraping');
+
   await axios.post(
     `${HASURAGRES_URL}/insert`,
     {
@@ -29,7 +37,7 @@ const runScrapeJob = async () => {
         sql_down: fs.readFileSync("./sql/buildings/down.sql", "utf8"),
         columns: ["id", "name", "lat", "long", "aliases"],
       },
-      payload: filteredBuildings
+      payload: buildings
     },
     {
       headers: {
@@ -46,6 +54,8 @@ const runScrapeJob = async () => {
         columns: ["abbr", "name", "id", "usage", "capacity", "school", "buildingId"],
         sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),
+        sql_execute: "DELETE FROM Rooms WHERE \"usage\" = 'LIBRARY';",
+        write_mode: 'append'
       },
       payload: rooms
     },
@@ -64,8 +74,10 @@ const runScrapeJob = async () => {
         columns: ["bookingType", "name", "roomId", "start", "end"],
         sql_up: fs.readFileSync("./sql/bookings/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/bookings/down.sql", "utf8"),
+        sql_execute: "DELETE FROM Bookings WHERE \"bookingType\" = 'LIBRARY';",
+        write_mode: 'append'
       },
-      payload: parsedBookings
+      payload: bookings
     },
     {
       headers: {
@@ -73,8 +85,6 @@ const runScrapeJob = async () => {
       }
     }
   );
-
 }
 
-console.time('Scraping');
-runScrapeJob().then(() => console.timeEnd('Scraping'));
+runScraper();

@@ -45,7 +45,7 @@ const parseName = (rawName: string): ParsedName => {
     }
   }
 
-  console.warn(`Warning: No pattern found for "${rawName}"`);
+  console.warn(`Warning: No pattern found to parse booking name "${rawName}"`);
   return { bookingType: 'MISC',  name: 'Misc.' }
 }
 
