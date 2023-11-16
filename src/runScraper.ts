@@ -28,6 +28,12 @@ const runScraper = async () => {
   const { buildings, rooms, bookings } = await runScrapeJob();
   console.timeEnd('Scraping');
 
+  const requestConfig = {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  }
+
   await axios.post(
     `${HASURAGRES_URL}/insert`,
     {
@@ -36,14 +42,11 @@ const runScraper = async () => {
         sql_up: fs.readFileSync("./sql/buildings/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/buildings/down.sql", "utf8"),
         columns: ["id", "name", "lat", "long", "aliases"],
+        write_mode: 'truncate'
       },
       payload: buildings
     },
-    {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }
+    requestConfig
   );
 
   await axios.post(
@@ -54,16 +57,12 @@ const runScraper = async () => {
         columns: ["abbr", "name", "id", "usage", "capacity", "school", "buildingId"],
         sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),
-        sql_execute: "DELETE FROM Rooms WHERE \"usage\" = 'LIBRARY';",
+        sql_execute: "DELETE FROM Rooms WHERE \"usage\" <> 'LIB';", // replace all non-lib rooms
         write_mode: 'append'
       },
       payload: rooms
     },
-    {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }
+    requestConfig
   );
 
   await axios.post(
@@ -74,16 +73,12 @@ const runScraper = async () => {
         columns: ["bookingType", "name", "roomId", "start", "end"],
         sql_up: fs.readFileSync("./sql/bookings/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/bookings/down.sql", "utf8"),
-        sql_execute: "DELETE FROM Bookings WHERE \"bookingType\" = 'LIBRARY';",
+        sql_execute: "DELETE FROM Bookings WHERE \"bookingType\" <> 'LIB';", // replace all non-lib bookings
         write_mode: 'append'
       },
       payload: bookings
     },
-    {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }
+    requestConfig
   );
 }
 
