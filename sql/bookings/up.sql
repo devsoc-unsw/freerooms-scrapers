@@ -1,4 +1,4 @@
-CREATE TYPE BookingTypeEnum AS ENUM ('CLASS', 'BLOCK', 'SOCIETY', 'MISC', 'INTERNAL');
+CREATE TYPE BookingTypeEnum AS ENUM ('LIB', 'CLASS', 'BLOCK', 'SOCIETY', 'MISC', 'INTERNAL');
 
 CREATE TABLE Bookings (
     "id"            SERIAL PRIMARY KEY,
