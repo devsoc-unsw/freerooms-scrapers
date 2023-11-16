@@ -55,11 +55,26 @@ const overrideLocations = (data: Building[]) => {
 }
 
 const cleanName = (name: string): string => {
-  return name
-    .replace(/^[A-Z][0-9]{1,2} /, "")  // Get rid of leading grid refs
-    .replace(/\ufffd/g, " ")           // Replace the weird chars in red centre
-    .replace(/Undercroft/, "")         // Get rid of "Undercroft"
-    .trim();
+  const replacements: {
+    searchValue: string | RegExp, replaceValue: string
+  }[] = [
+    // Get rid of leading grid refs
+    { searchValue: /^[A-Z][0-9]{1,2} /, replaceValue: "" },
+    // Replace the weird chars in red centre
+    { searchValue: /\ufffd/g, replaceValue:  " " },
+    // Get rid of "Undercroft" from Goldstein
+    { searchValue: /Undercroft/, replaceValue: "" },
+    // Replace "Library Stage 2" cos that's weird
+    { searchValue: /Library Stage 2/, replaceValue: "Main Library" },
+    // Get rid of any "UNSW" because it makes searching harder
+    { searchValue: /UNSW\s+/, replaceValue: "" },
+  ];
+
+  for (const r of replacements) {
+    name = name.replace(r.searchValue, r.replaceValue);
+  }
+
+  return name.trim();
 }
 
 export default scrapeBuildings;
