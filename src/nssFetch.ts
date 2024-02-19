@@ -1,9 +1,9 @@
 // Fetch an NSS page, adding all required request parameters
 // Take in actual variable parameters like roomId
 import axios from "axios";
+import { firstMonday, scwWeekNumber } from './dateUtils';
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-const NO_WEEKS = 52;
 
 const nssFetch = async (
   page: "find_rooms" | "view_rooms" | "view_multirooms",
@@ -27,13 +27,11 @@ const nssFetch = async (
       break;
   }
 
-  // If the year starts on Sunday then the first week of the year is 1, otherwise 2
-  const yearStartsSunday = (new Date(year, 0, 1)).getDay() === 0;
   return axios.post(url, {
     ...params,
     ...requiredParams,
-    fr_week: yearStartsSunday ? 1 : 2,
-    to_week: yearStartsSunday ? NO_WEEKS : NO_WEEKS + 1,
+    fr_week: scwWeekNumber(firstMonday(year)),
+    to_week: scwWeekNumber(new Date(year, 11, 31)),
   }, {
     headers: {
       "content-type": "application/x-www-form-urlencoded",
