@@ -1,6 +1,7 @@
 import PARSERS from "./nameParsers";
 import { ParsedName, RawRoomBooking, RoomBooking } from "./types";
 import { toSydneyTime, createDate, numWeeksInYear } from "./dateUtils";
+import { YEAR } from './config';
 
 /**
  * Takes a raw room booking and:
@@ -15,7 +16,7 @@ function parseBooking(booking: RawRoomBooking): RoomBooking[] {
   // The weekPattern is a 52 (or 53) bit integer - if the first bit (from left)
   // is set this means the booking runs in the first week etc.
   const weekPattern = BigInt(booking.weekPattern);
-  const numWeeks = numWeeksInYear(new Date().getFullYear());
+  const numWeeks = numWeeksInYear(YEAR);
   let weekMask = 1n << BigInt(numWeeks - 1);
   for (let i = 0; i < numWeeks; i++) {
     if (weekPattern & weekMask) {

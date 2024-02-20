@@ -1,5 +1,6 @@
 import { getTimezoneOffset } from "date-fns-tz";
 import { differenceInWeeks, setDay, startOfWeek } from 'date-fns';
+import { YEAR } from './config';
 
 const USER_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -36,11 +37,10 @@ export const firstMonday = (year: number) => {
 export const createDate = (week: number, day: string, time: string) => {
   const dayNum = DAYS.indexOf(day);
   const [hours, minutes] = time.split(':').map(x => parseInt(x, 10));
-  const year = new Date().getFullYear();
 
   // Add weeks and day - if the day is greater than the number of days in a
   // month then JS just overflows it to the next
-  return new Date(year, 0, firstMonday(year).getDate() + week * 7 + dayNum, hours, minutes);
+  return new Date(YEAR, 0, firstMonday(YEAR).getDate() + week * 7 + dayNum, hours, minutes);
 }
 
 /**
