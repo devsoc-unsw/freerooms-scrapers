@@ -1,5 +1,5 @@
 import { getTimezoneOffset } from "date-fns-tz";
-import { setDay, startOfWeek } from 'date-fns';
+import { differenceInWeeks, setDay, startOfWeek } from 'date-fns';
 
 const USER_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -58,13 +58,7 @@ export const scwWeekNumber = (date: Date): number => {
   // but all else go backward
   const mondayOfFirstWeek = setDay(new Date(year, 0, 1), MONDAY);
 
-  // Subtract the date of the current week from the date of the
-  // first week of the year to get the number of weeks in
-  // milliseconds.  Divide by the number of milliseconds
-  // in a week then round to no decimals in order to remove
-  // the effect of daylight saving.  Add one to make the first
-  // week, week 1.
-  return Math.round((mondayOfDateWeek.getTime() - mondayOfFirstWeek.getTime()) / 604800000) + 1;
+  return differenceInWeeks(mondayOfDateWeek, mondayOfFirstWeek) + 1;
 }
 
 export const numWeeksInYear = (year: number) => {
