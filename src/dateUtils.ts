@@ -1,8 +1,9 @@
 import { getTimezoneOffset } from "date-fns-tz";
-import { startOfWeek } from 'date-fns';
+import { setDay, startOfWeek } from 'date-fns';
 
 const USER_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const MONDAY = 1;
 
 /**
  * Take a Date created in local time and converts it to Sydney time.
@@ -43,29 +44,19 @@ export const createDate = (week: number, day: string, time: string) => {
 }
 
 /**
- * Adapted from function on the NSS site to calculate week number (in scw.js)
+ * Calculate the week number of a given date (between 1 and 53)
+ * Logic is kind of weird, but adapted from scwWeekNumber of Simple Calendar
+ * Widget used by NSS so that our week numbers match up
  */
-const scwWeekNumberEpoch = true;
-const scwWeekNumberBaseDay = 1;
 export const scwWeekNumber = (scwInDate: Date): number => {
-  // The base day in the week of the input date
-  const scwBaseYear = scwInDate.getFullYear();
-  const scwInDateWeekBase = startOfWeek(scwInDate, { weekStartsOn: scwWeekNumberBaseDay });
+  const year = scwInDate.getFullYear();
 
-  // The first Base Day in the year
-  // GRW which year is the origin?
-  const scwFirstBaseDay = new Date(scwWeekNumberEpoch ? scwBaseYear : scwInDateWeekBase.getFullYear(), 0, 1);
-  scwFirstBaseDay.setDate(scwFirstBaseDay.getDate()
-    - scwFirstBaseDay.getDay()
-    + scwWeekNumberBaseDay
-  );
+  const mondayOfDateWeek = startOfWeek(scwInDate, { weekStartsOn: MONDAY });
 
-  if (!scwWeekNumberEpoch && scwFirstBaseDay < new Date(scwInDateWeekBase.getFullYear(), 0, 1)) {
-    scwFirstBaseDay.setDate(scwFirstBaseDay.getDate() + 7);
-  }
-
-  // Start of Week 01
-  const scwStartWeekOne = startOfWeek(scwFirstBaseDay, { weekStartsOn: scwWeekNumberBaseDay });
+  // Monday of the first week (may actually be in the previous year)
+  // This assumes the week starts on Sunday, so Sunday goes forward
+  // but all else go backward
+  const mondayOfFirstWeek = setDay(new Date(year, 0, 1), MONDAY);
 
   // Subtract the date of the current week from the date of the
   // first week of the year to get the number of weeks in
@@ -73,7 +64,7 @@ export const scwWeekNumber = (scwInDate: Date): number => {
   // in a week then round to no decimals in order to remove
   // the effect of daylight saving.  Add one to make the first
   // week, week 1.
-  return Math.round((scwInDateWeekBase.getTime() - scwStartWeekOne.getTime()) / 604800000) + 1;
+  return Math.round((mondayOfDateWeek.getTime() - mondayOfFirstWeek.getTime()) / 604800000) + 1;
 }
 
 export const numWeeksInYear = (year: number) => {
