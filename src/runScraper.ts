@@ -3,7 +3,7 @@ import scrapeRooms from "./scrapeRooms";
 import scrapeBookings from "./scrapeBookings";
 import parseBooking from "./parseBooking";
 import scrapeBuildings from "./scrapeBuildings";
-import { HASURAGRES_URL } from "./config";
+import { HASURAGRES_URL, YEAR } from "./config";
 import axios from 'axios';
 
 const runScrapeJob = async () => {
@@ -42,7 +42,7 @@ const runScraper = async () => {
         sql_up: fs.readFileSync("./sql/buildings/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/buildings/down.sql", "utf8"),
         columns: ["id", "name", "lat", "long", "aliases"],
-        write_mode: 'truncate'
+        write_mode: 'overwrite'
       },
       payload: buildings
     },
@@ -57,7 +57,9 @@ const runScraper = async () => {
         columns: ["abbr", "name", "id", "usage", "capacity", "school", "buildingId"],
         sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),
-        sql_execute: "DELETE FROM Rooms WHERE \"usage\" <> 'LIB';", // replace all non-lib rooms
+        // overwrite all outdated non-lib rooms
+        sql_before: "DELETE FROM Rooms WHERE \"usage\" <> 'LIB' " +
+                    `AND "id" NOT IN (${rooms.map(room => `'${room.id}'`).join(",")});`,
         write_mode: 'append'
       },
       payload: rooms
@@ -65,6 +67,8 @@ const runScraper = async () => {
     requestConfig
   );
 
+  const startOfYear = new Date(YEAR, 0, 1);
+  const endOfYear = new Date(YEAR + 1, 0, 1);
   await axios.post(
     `${HASURAGRES_URL}/insert`,
     {
@@ -73,7 +77,10 @@ const runScraper = async () => {
         columns: ["bookingType", "name", "roomId", "start", "end"],
         sql_up: fs.readFileSync("./sql/bookings/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/bookings/down.sql", "utf8"),
-        sql_execute: "DELETE FROM Bookings WHERE \"bookingType\" <> 'LIB';", // replace all non-lib bookings
+        // // replace all non-lib bookings this year
+        sql_before: "DELETE FROM Bookings WHERE \"bookingType\" <> 'LIB' " +
+                    `AND \"start\" >= '${startOfYear.toISOString()}' ` +
+                    `AND \"end\" < '${endOfYear.toISOString()}';`,
         write_mode: 'append'
       },
       payload: bookings
