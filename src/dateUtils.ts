@@ -48,10 +48,10 @@ export const createDate = (week: number, day: string, time: string) => {
  * Logic is kind of weird, but adapted from scwWeekNumber of Simple Calendar
  * Widget used by NSS so that our week numbers match up
  */
-export const scwWeekNumber = (scwInDate: Date): number => {
-  const year = scwInDate.getFullYear();
+export const scwWeekNumber = (date: Date): number => {
+  const year = date.getFullYear();
 
-  const mondayOfDateWeek = startOfWeek(scwInDate, { weekStartsOn: MONDAY });
+  const mondayOfDateWeek = startOfWeek(date, { weekStartsOn: MONDAY });
 
   // Monday of the first week (may actually be in the previous year)
   // This assumes the week starts on Sunday, so Sunday goes forward
