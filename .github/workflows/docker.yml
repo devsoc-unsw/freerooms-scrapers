@@ -29,8 +29,8 @@ jobs:
           platforms: linux/amd64
           file: Dockerfile
           tags: |
-            ghcr.io/csesoc/nss-scraper:${{ github.sha }}
-            ghcr.io/csesoc/nss-scraper:latest
+            ghcr.io/devsoc-unsw/nss-scraper:${{ github.sha }}
+            ghcr.io/devsoc-unsw/nss-scraper:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
