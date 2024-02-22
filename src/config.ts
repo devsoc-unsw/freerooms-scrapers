@@ -4,6 +4,7 @@ import 'dotenv/config'
 export const YEAR = process.env.YEAR
   ? parseInt(process.env.YEAR)
   : new Date().getFullYear();
+console.log("Scraping " + YEAR);
 
 export const HASURAGRES_URL = `http://${process.env.HASURAGRES_HOST}:${process.env.HASURAGRES_PORT}`;
 console.log("Url to hit: " + HASURAGRES_URL);

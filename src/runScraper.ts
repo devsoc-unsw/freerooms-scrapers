@@ -5,6 +5,7 @@ import parseBooking from "./parseBooking";
 import scrapeBuildings from "./scrapeBuildings";
 import { HASURAGRES_URL, YEAR } from "./config";
 import axios from 'axios';
+import { formatString } from './stringUtils';
 
 const runScrapeJob = async () => {
   const buildings = await scrapeBuildings();
@@ -57,9 +58,10 @@ const runScraper = async () => {
         columns: ["abbr", "name", "id", "usage", "capacity", "school", "buildingId"],
         sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),
-        // overwrite all outdated non-lib rooms
-        sql_before: "DELETE FROM Rooms WHERE \"usage\" <> 'LIB' " +
-                    `AND "id" NOT IN (${rooms.map(room => `'${room.id}'`).join(",")});`,
+        sql_before: formatString(
+          fs.readFileSync("./sql/rooms/before.sql", "utf8"),
+          rooms.map(room => `'${room.id}'`).join(",")
+        ),
         write_mode: 'append'
       },
       payload: rooms
@@ -67,8 +69,6 @@ const runScraper = async () => {
     requestConfig
   );
 
-  const startOfYear = new Date(YEAR, 0, 1);
-  const endOfYear = new Date(YEAR + 1, 0, 1);
   await axios.post(
     `${HASURAGRES_URL}/insert`,
     {
@@ -77,10 +77,11 @@ const runScraper = async () => {
         columns: ["bookingType", "name", "roomId", "start", "end"],
         sql_up: fs.readFileSync("./sql/bookings/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/bookings/down.sql", "utf8"),
-        // // replace all non-lib bookings this year
-        sql_before: "DELETE FROM Bookings WHERE \"bookingType\" <> 'LIB' " +
-                    `AND \"start\" >= '${startOfYear.toISOString()}' ` +
-                    `AND \"end\" < '${endOfYear.toISOString()}';`,
+        sql_before: formatString(
+          fs.readFileSync("./sql/bookings/before.sql", "utf8"),
+          new Date(YEAR, 0, 1).toISOString(),
+          new Date(YEAR + 1, 0, 1).toISOString()
+        ),
         write_mode: 'append'
       },
       payload: bookings
