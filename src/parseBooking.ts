@@ -1,9 +1,6 @@
 import PARSERS from "./nameParsers";
 import { ParsedName, RawRoomBooking, RoomBooking } from "./types";
-import toSydneyTime from "./toSydneyTime";
-const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-const NO_WEEKS = 52;
-const FIRST_WEEK = 0x8000000000000n;
+import { toSydneyTime, createDate, numWeeksInYear } from "./dateUtils";
 
 /**
  * Takes a raw room booking and:
@@ -15,11 +12,12 @@ function parseBooking(booking: RawRoomBooking): RoomBooking[] {
   const { bookingType, name } = parseName(booking.name);
 
   const bookings: RoomBooking[] = [];
-  // The weekPattern is a 52 bit integer - if the first bit (from left) is set
-  // this means the booking runs in the first week etc.
+  // The weekPattern is a 52 (or 53) bit integer - if the first bit (from left)
+  // is set this means the booking runs in the first week etc.
   const weekPattern = BigInt(booking.weekPattern);
-  let weekMask = FIRST_WEEK;
-  for (let i = 0; i < NO_WEEKS; i++) {
+  const numWeeks = numWeeksInYear(new Date().getFullYear());
+  let weekMask = 1n << BigInt(numWeeks - 1);
+  for (let i = 0; i < numWeeks; i++) {
     if (weekPattern & weekMask) {
       const start = toSydneyTime(createDate(i, booking.day, booking.start));
       const end = toSydneyTime(createDate(i, booking.day, booking.end));
@@ -47,23 +45,6 @@ const parseName = (rawName: string): ParsedName => {
 
   console.warn(`Warning: No pattern found to parse booking name "${rawName}"`);
   return { bookingType: 'MISC',  name: 'Misc.' }
-}
-
-/**
- * Create a date given a week number (0..52), day (full name) and time (HH:MM)
- */
-const createDate = (week: number, day: string, time: string) => {
-  const dayNum = DAYS.indexOf(day);
-  const [hours, minutes] = time.split(':').map(x => parseInt(x, 10));
-  const year = new Date().getFullYear();
-
-  // Find the date of the first monday
-  const firstDay = new Date(year, 0, 1);
-  const firstMonday = 1 + ((8 - firstDay.getDay()) % 7);
-
-  // Add weeks and day - if the day is greater than the number of days in a
-  // month then JS just overflows it to the next
-  return new Date(year, 0, firstMonday + week * 7 + dayNum, hours, minutes);
 }
 
 export default parseBooking;
