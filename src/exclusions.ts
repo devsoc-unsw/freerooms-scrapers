@@ -8,7 +8,7 @@ const EXCLUDED_BUILDINGS = [
   "K-BS38",
   "K-L5",
   "K-D9",
-  "K-D10"
+  "K-D10",
 ];
 
 // Students can't use these rooms
@@ -31,6 +31,7 @@ const EXCLUDED_ROOMS = [
   "K-G17-G3",
   "K-H6-G17",
   "K-E4-109",
+  "K-E6-G",
   "K-E4-109A",
   "K-K17-B08"
 ]
