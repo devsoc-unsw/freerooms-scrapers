@@ -15,12 +15,11 @@ jobs:
           node-version: "16"
       - name: Install dependencies
         run: npm install
-      - name: Dryrun scraper
+      - name: Run scraper
         run: npm run scrape
         env:
           HASURAGRES_URL: https://graphql.csesoc.app
           HASURAGRES_API_KEY: ${{ secrets.HASURAGRES_API_KEY }}
-          DRYRUN: true
   build:
     name: "Build"
     needs: [test]
