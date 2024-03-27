@@ -3,8 +3,9 @@ import scrapeRooms from "./scrapeRooms";
 import scrapeBookings from "./scrapeBookings";
 import parseBooking from "./parseBooking";
 import scrapeBuildings from "./scrapeBuildings";
-import { HASURAGRES_URL } from "./config";
+import { DRYRUN, HASURAGRES_API_KEY, HASURAGRES_URL, YEAR } from "./config";
 import axios from 'axios';
+import { formatString } from './stringUtils';
 
 const runScrapeJob = async () => {
   const buildings = await scrapeBuildings();
@@ -30,7 +31,8 @@ const runScraper = async () => {
 
   const requestConfig = {
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "X-Api-Key": HASURAGRES_API_KEY,
     }
   }
 
@@ -42,7 +44,8 @@ const runScraper = async () => {
         sql_up: fs.readFileSync("./sql/buildings/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/buildings/down.sql", "utf8"),
         columns: ["id", "name", "lat", "long", "aliases"],
-        write_mode: 'truncate'
+        write_mode: 'overwrite',
+        dryrun: DRYRUN,
       },
       payload: buildings
     },
@@ -57,8 +60,12 @@ const runScraper = async () => {
         columns: ["abbr", "name", "id", "usage", "capacity", "school", "buildingId"],
         sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),
-        sql_execute: "DELETE FROM Rooms WHERE \"usage\" <> 'LIB';", // replace all non-lib rooms
-        write_mode: 'append'
+        sql_before: formatString(
+          fs.readFileSync("./sql/rooms/before.sql", "utf8"),
+          rooms.map(room => `'${room.id}'`).join(",")
+        ),
+        write_mode: 'append',
+        dryrun: DRYRUN,
       },
       payload: rooms
     },
@@ -73,8 +80,13 @@ const runScraper = async () => {
         columns: ["bookingType", "name", "roomId", "start", "end"],
         sql_up: fs.readFileSync("./sql/bookings/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/bookings/down.sql", "utf8"),
-        sql_execute: "DELETE FROM Bookings WHERE \"bookingType\" <> 'LIB';", // replace all non-lib bookings
-        write_mode: 'append'
+        sql_before: formatString(
+          fs.readFileSync("./sql/bookings/before.sql", "utf8"),
+          new Date(YEAR, 0, 1).toISOString(),
+          new Date(YEAR + 1, 0, 1).toISOString()
+        ),
+        write_mode: 'append',
+        dryrun: DRYRUN,
       },
       payload: bookings
     },
