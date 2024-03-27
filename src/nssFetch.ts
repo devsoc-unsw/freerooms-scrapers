@@ -2,6 +2,7 @@
 // Take in actual variable parameters like roomId
 import axios from "axios";
 import { firstMonday, scwWeekNumber } from './dateUtils';
+import { YEAR } from './config';
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -10,8 +11,7 @@ const nssFetch = async (
   params: Record<string, any> = {},
 ) => {
   // Create the URL for the given page
-  const year = new Date().getFullYear();
-  const url = `https://nss.cse.unsw.edu.au/tt/${page}.php?dbafile=${year}-KENS-COFA.DBA&campus=KENS`;
+  const url = `https://nss.cse.unsw.edu.au/tt/${page}.php?dbafile=${YEAR}-KENS-COFA.DBA&campus=KENS`;
 
   // Add extra required params for each page
   let requiredParams: Record<string, any>;
@@ -30,8 +30,8 @@ const nssFetch = async (
   return axios.post(url, {
     ...params,
     ...requiredParams,
-    fr_week: scwWeekNumber(firstMonday(year)),
-    to_week: scwWeekNumber(new Date(year, 11, 31)),
+    fr_week: scwWeekNumber(firstMonday(YEAR)),
+    to_week: scwWeekNumber(new Date(YEAR, 11, 31)),
   }, {
     headers: {
       "content-type": "application/x-www-form-urlencoded",
