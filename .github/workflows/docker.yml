@@ -74,7 +74,7 @@ jobs:
           git config user.email "technical@csesoc.org.au"
 
           git checkout -b update/nss-scraper/${{ github.sha }}
-          yq -i '.spec.jobTemplate.spec.template.spec.containers[0].image = "ghcr.io/devsoc-unsw/nss-scraper:${{ github.sha }}"' projects/timetable-scraper/cronjob.yml
+          yq -i '.spec.jobTemplate.spec.template.spec.containers[0].image = "ghcr.io/devsoc-unsw/nss-scraper:${{ github.sha }}"' projects/nss-scraper/nss-scraper.yml
           
           git add . 
           git commit -m "feat(nss-scraper): update image" 
