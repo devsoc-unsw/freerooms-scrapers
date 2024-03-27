@@ -1,10 +1,29 @@
 name: Docker
 on:
   push:
+    branches:
+      - "main"
 
 jobs:
+  test:
+    name: "Test"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "16"
+      - name: Install dependencies
+        run: npm install
+      - name: Dryrun scraper
+        run: npm run scrape
+        env:
+          HASURAGRES_URL: https://graphql.csesoc.app
+          HASURAGRES_API_KEY: ${{ secrets.HASURAGRES_API_KEY }}
+          DRYRUN: true
   build:
     name: "Build"
+    needs: [test]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -29,8 +48,8 @@ jobs:
           platforms: linux/amd64
           file: Dockerfile
           tags: |
-            ghcr.io/csesoc/nss-scraper:${{ github.sha }}
-            ghcr.io/csesoc/nss-scraper:latest
+            ghcr.io/devsoc-unsw/nss-scraper:${{ github.sha }}
+            ghcr.io/devsoc-unsw/nss-scraper:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
