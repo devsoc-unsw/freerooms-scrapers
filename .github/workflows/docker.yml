@@ -20,8 +20,10 @@ jobs:
           node-version: "16"
       - name: Install dependencies
         run: npm install
+        working-directory: ${{ matrix.scraper }}
       - name: Run scraper
         run: npm run scrape
+        working-directory: ${{ matrix.scraper }}
         env:
           HASURAGRES_URL: https://graphql.csesoc.app
           HASURAGRES_API_KEY: ${{ secrets.HASURAGRES_API_KEY }}
