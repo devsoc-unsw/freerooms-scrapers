@@ -6,8 +6,13 @@ on:
 
 jobs:
   test:
-    name: "Test"
+    name: "Test (${{ matrix.scraper }})"
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix:
+        scraper: [ nss, libcal ]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -21,9 +26,13 @@ jobs:
           HASURAGRES_URL: https://graphql.csesoc.app
           HASURAGRES_API_KEY: ${{ secrets.HASURAGRES_API_KEY }}
   build:
-    name: "Build"
-    needs: [test]
+    name: "Test (${{ matrix.scraper }})"
+    needs: [ test ]
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        scraper: [ nss, libcal ]
     permissions:
       contents: read
       packages: write
@@ -45,10 +54,10 @@ jobs:
         with:
           push: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
           platforms: linux/amd64
-          file: Dockerfile
+          file: ${{ matrix.scraper }}.dockerfile
           tags: |
-            ghcr.io/devsoc-unsw/nss-scraper:${{ github.sha }}
-            ghcr.io/devsoc-unsw/nss-scraper:latest
+            ghcr.io/devsoc-unsw/${{ matrix.scraper }}-scraper:${{ github.sha }}
+            ghcr.io/devsoc-unsw/${{ matrix.scraper }}-scraper:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -73,11 +82,12 @@ jobs:
           git config user.name "CSESoc CD"
           git config user.email "technical@csesoc.org.au"
 
-          git checkout -b update/nss-scraper/${{ github.sha }}
+          git checkout -b update/freerooms-scrapers/${{ github.sha }}
           yq -i '.spec.jobTemplate.spec.template.spec.containers[0].image = "ghcr.io/devsoc-unsw/nss-scraper:${{ github.sha }}"' projects/nss-scraper/nss-scraper.yml
+          yq -i '.spec.jobTemplate.spec.template.spec.containers[0].image = "ghcr.io/devsoc-unsw/libcal-scraper:${{ github.sha }}"' projects/libcal-scraper/libcal-scraper.yml
           
           git add . 
-          git commit -m "feat(nss-scraper): update image" 
-          git push -u origin update/nss-scraper/${{ github.sha }}
-          gh pr create -B migration --title "feat(nss-scraper): update image" --body "Updates the image for the nss-scraper deployment to commit devsoc-unsw/nss-scraper@${{ github.sha }}." > URL
+          git commit -m "feat(freerooms-scrapers): update images" 
+          git push -u origin update/freerooms-scrapers/${{ github.sha }}
+          gh pr create -B migration --title "feat(freerooms-scrapers): update images" --body "Updates the images for the nss-scraper and libcal-scraper deployments to commit devsoc-unsw/freerooms-scrapers@${{ github.sha }}." > URL
           gh pr merge $(cat URL) --squash -d
