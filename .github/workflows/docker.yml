@@ -58,8 +58,8 @@ jobs:
           platforms: linux/amd64
           file: ${{ matrix.scraper }}.dockerfile
           tags: |
-            ghcr.io/devsoc-unsw/${{ matrix.scraper }}-scraper:${{ github.sha }}
-            ghcr.io/devsoc-unsw/${{ matrix.scraper }}-scraper:latest
+            ghcr.io/devsoc-unsw/freerooms-${{ matrix.scraper }}-scraper:${{ github.sha }}
+            ghcr.io/devsoc-unsw/freerooms-${{ matrix.scraper }}-scraper:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -85,8 +85,8 @@ jobs:
           git config user.email "technical@csesoc.org.au"
 
           git checkout -b update/freerooms-scrapers/${{ github.sha }}
-          yq -i '.spec.jobTemplate.spec.template.spec.containers[0].image = "ghcr.io/devsoc-unsw/nss-scraper:${{ github.sha }}"' projects/nss-scraper/nss-scraper.yml
-          yq -i '.spec.jobTemplate.spec.template.spec.containers[0].image = "ghcr.io/devsoc-unsw/libcal-scraper:${{ github.sha }}"' projects/libcal-scraper/libcal-scraper.yml
+          yq -i '.spec.jobTemplate.spec.template.spec.containers[0].image = "ghcr.io/devsoc-unsw/freerooms-nss-scraper:${{ github.sha }}"' projects/nss-scraper/nss-scraper.yml
+          yq -i '.spec.jobTemplate.spec.template.spec.containers[0].image = "ghcr.io/devsoc-unsw/freerooms-libcal-scraper:${{ github.sha }}"' projects/libcal-scraper/libcal-scraper.yml
           
           git add . 
           git commit -m "feat(freerooms-scrapers): update images" 
