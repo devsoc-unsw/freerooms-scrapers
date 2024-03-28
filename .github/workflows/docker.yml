@@ -28,7 +28,7 @@ jobs:
           HASURAGRES_URL: https://graphql.csesoc.app
           HASURAGRES_API_KEY: ${{ secrets.HASURAGRES_API_KEY }}
   build:
-    name: "Test (${{ matrix.scraper }})"
+    name: "Build image (${{ matrix.scraper }})"
     needs: [ test ]
     runs-on: ubuntu-latest
     strategy:
