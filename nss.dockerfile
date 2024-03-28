@@ -24,6 +24,6 @@ RUN npm ci
 COPY --from=builder /app/dist ./dist
 COPY nss/buildingOverrides.json ./
 COPY nss/sql ./sql
-COPY sql ../
+COPY sql ../sql
 
 CMD npm start
