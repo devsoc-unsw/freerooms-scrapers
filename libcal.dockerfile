@@ -23,6 +23,6 @@ RUN npm ci
 # Root sql should be sibling of project directory
 COPY --from=builder /app/dist ./dist
 COPY libcal/sql ./sql
-COPY sql ../
+COPY sql ../sql
 
 CMD npm start
