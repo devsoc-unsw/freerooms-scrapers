@@ -50,3 +50,18 @@ The following relationships exist between tables. These relationships are tracke
 - Every **room** belongs to a **building**
 - Every **room** has 0 or more **bookings**
 - Every **booking** is for a specific **room**
+
+## Making Changes
+### Schema updates
+To update the schema, you will need to:
+- Update the relevant `up.sql` and `down.sql` files in the root `sql/` directory
+- Update the scrapers to produce this data
+
+### Adding additional scrapers
+To add additional scrapers, you will need to:
+- Create a new subdirectory with the scraper inside it
+- Ensure that if you are using the schema SQL files, you reference them using symlinks so all scrapers are updated
+- Add to the GitHub workflow so that it also tests/builds/deploys the new scraper
+
+### Testing
+See the [DevSoc GraphQL API docs](https://github.com/devsoc-unsw/graphql-api/blob/master/scrapers.md) on how to test scrapers.
