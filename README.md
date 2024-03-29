@@ -1,0 +1,52 @@
+# Freerooms Scrapers
+
+This repository contains the scrapers for the underlying buildings, rooms and bookings data used by Freerooms.
+
+For documentation on the internals of each scraper, please see the READMEs in the respective directories for each scraper.
+
+For instructions on how you can access this data, see the [DevSoc GraphQL API](https://github.com/devsoc-unsw/graphql-api).
+
+## Schema
+
+### Buildings
+
+| **Field** | **Description**                              | **Example**     |
+|-----------|----------------------------------------------|-----------------|
+| `id`      | Building ID in the format `CAMPUS-GRID_REF`. | "K-F8"          |
+| `name`    | Name of the building.                        | "Law Building"  |
+| `lat`     | Latitude of the building.                    | -33.91700       |
+| `long`    | Longitude of the building.                   | 151.227791      |
+| `aliases` | List of alternative names for the building.  | ["Law Library"] |
+
+### Rooms
+
+| **Field**    | **Description**                                   | **Example**         |
+|--------------|---------------------------------------------------|---------------------|
+| `id`         | Room ID in the format `CAMPUS-GRID_REF-ROOM_NUM`. | "K-J17-305"         |
+| `name`       | Name of the room.                                 | "Brass Lab J17 305" |
+| `abbr`       | Shortened name, as seen on timetable.             | "BrassME305"        |
+| `usage`      | Room type - see below for list.                   | "CMLB"              |
+| `capacity`   | Number of people the room is suitable for.        | 36                  |
+| `school`     | School that manages the room - `" "` if none.     | "CSE"               |
+| `buildingId` | ID of building that room is in.                   | "K-J17"             |
+
+Mapping of room usages can be found [here](https://github.com/devsoc-unsw/freerooms/blob/dev/common/roomUsages.ts). Mapping of school codes can be found [here](https://github.com/devsoc-unsw/freerooms/blob/dev/common/schools.ts).
+
+### Bookings
+
+| **Field**     | **Description**                                      | **Example**                 |
+|---------------|------------------------------------------------------|-----------------------------|
+| `bookingType` | Type of booking - see below.                         | "SOCIETY"                   |
+| `name`        | Name of the booking (usually related to the booker). | "SOFTWAREDEV"               |
+| `roomId`      | ID of the room the booking is for.                   | "K-E19-G05"                 |
+| `start`       | Start time of the booking.                           | "2024-01-27T04:00:00+00:00" |
+| `end`         | End time of the booking.                             | "2024-01-27T08:00:00+00:00" |
+
+Full list of current booking types is: "CLASS", "SOCIETY", "INTERNAL", "LIB", "BLOCK", "MISC".
+
+### Relationships
+The following relationships exist between tables. These relationships are tracked by Hasura and can be followed in GraphQL queries.
+- Every **building** contains 1 or more **rooms**
+- Every **room** belongs to a **building**
+- Every **room** has 0 or more **bookings**
+- Every **booking** is for a specific **room**
