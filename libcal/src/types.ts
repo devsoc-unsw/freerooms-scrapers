@@ -6,12 +6,18 @@ export type RoomBooking = {
     end: Date;
   }
 
-  export type Room = {
-    abbr: string;
-    name: string;
-    id: string;
-    usage: string;
-    capacity: number;
-    school: string;
-    buildingId: string;
-  }
+export type Room = {
+  abbr: string;
+  name: string;
+  id: string;
+  usage: string;
+  capacity: number;
+  school: string;
+  buildingId: string;
+}
+
+export type Library = {
+  name: string;
+  libcalCode: string;
+  buildingId: string;
+}
