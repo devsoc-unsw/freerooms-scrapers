@@ -6,5 +6,6 @@ CREATE TABLE Rooms (
     "capacity"      INTEGER NOT NULL,
     "school"        TEXT NOT NULL,
     "buildingId"    TEXT NOT NULL,
+    "facilities"    JSONB NOT NULL,
     FOREIGN KEY ("buildingId") REFERENCES Buildings("id") ON DELETE CASCADE
 );

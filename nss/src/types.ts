@@ -19,6 +19,10 @@ export type RoomBooking = {
   end: Date;
 }
 
+export const FACILITIES_LIST = ["Accessibility", "Audio-visual", "Info technology", "Writing media", "Services"] as const;
+
+export type Facilities = Record<typeof FACILITIES_LIST[number], string[]>
+
 export type Room = {
   abbr: string;
   name: string;

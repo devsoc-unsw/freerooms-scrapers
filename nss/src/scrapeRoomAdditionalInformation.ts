@@ -1,21 +1,18 @@
 import { load } from "cheerio";
 import nssFetch from "./nssFetch";
+import { Facilities, FACILITIES_LIST } from "./types";
 
-const fieldList = ["Accessibility", "Audio-visual", "Info technology", "Writing media", "Services"] as const;
-
-type AdditionalInformation = Record<typeof fieldList[number], string[]>
-
-const scrapeRoomAdditionalInformation = async (
+export const scrapeRoomFacilities = async (
   id: string
-): Promise<AdditionalInformation> => {
+): Promise<Facilities> => {
   const additionalParams: Record<string, any> = {};
   additionalParams.show = ["show_facilities"];
   additionalParams.room = id;
   const response = await nssFetch("view_rooms", additionalParams);
   const $ = load(response.data);
 
-  const additionalInformationData = {} as AdditionalInformation;
-  for (const field of fieldList) {
+  const additionalInformationData = {} as Facilities;
+  for (const field of FACILITIES_LIST) {
     const data = $(`td:contains("${field}")`).parent();
     additionalInformationData[field] = cleanString(data.find('td.data').text())
   }

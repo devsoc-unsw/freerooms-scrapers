@@ -177,24 +177,27 @@ const runScrapeJob = async () => {
     }
   }
 
-  await axios.post(
-    `${HASURAGRES_URL}/insert`,
-    {
-      metadata: {
-        table_name: "Rooms",
-        columns: ["abbr", "name", "id", "usage", "capacity", "school", "buildingId"],
-        sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
-        sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),
-        // overwrite all outdated lib rooms
-        sql_before: "DELETE FROM Rooms WHERE \"usage\" = 'LIB' " +
-          `AND "id" NOT IN (${allRooms.map(room => `'${room.id}'`).join(",")});`,
-        write_mode: 'append',
-        dryrun: DRYRUN,
+    await axios.post(
+      `${HASURAGRES_URL}/insert`,
+      {
+          metadata: {
+              table_name: "Rooms",
+              columns: ["abbr", "name", "id", "usage", "capacity", "school", "buildingId", "facilities"],
+              sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
+              sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),
+              // overwrite all outdated lib rooms
+              sql_before: "DELETE FROM Rooms WHERE \"usage\" = 'LIB' " +
+                          `AND "id" NOT IN (${allRooms.map(room => `'${room.id}'`).join(",")});`,
+              write_mode: 'append',
+              dryrun: DRYRUN,
+          },
+          payload: allRooms.map(room => ({
+            ...room,
+            facilities: JSON.stringify({})
+          }))
       },
-      payload: allRooms
-    },
-    requestConfig
-  );
+      requestConfig
+    );
 
   // libcal shows all bookings that start during or after the current 30-min period
   const baseTime = new Date();
