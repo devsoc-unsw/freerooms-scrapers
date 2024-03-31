@@ -6,7 +6,7 @@ import scrapeBuildings from "./scrapeBuildings";
 import { DRYRUN, HASURAGRES_API_KEY, HASURAGRES_URL, YEAR } from "./config";
 import axios from "axios";
 import { formatString } from "./stringUtils";
-import { scrapeRoomFacilities } from "./scrapeRoomAdditionalInformation";
+import { scrapeRoomFacilities } from "./scrapeRoomFacilities";
 
 const runScrapeJob = async () => {
   const buildings = await scrapeBuildings();
