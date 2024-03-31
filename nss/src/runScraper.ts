@@ -9,22 +9,17 @@ import { formatString } from "./stringUtils";
 import { scrapeRoomFacilities } from "./scrapeRoomAdditionalInformation";
 
 const runScrapeJob = async () => {
-  console.time("Scraping building");
   const buildings = await scrapeBuildings();
-  console.timeEnd("Scraping building");
-  console.time("Scraping rooms");
   const rooms = await scrapeRooms();
   const facilitiesPromises = rooms.map((room) =>
     scrapeRoomFacilities(room.id)
   );
-  console.timeEnd("Scraping rooms");
 
   // Filter buildings with no rooms
   const filteredBuildings = buildings.filter(
     (building) => !!rooms.find((room) => room.id.startsWith(building.id))
   );
 
-  console.time("Scraping bookings");
   const bookingPromises = rooms.map((room) => scrapeBookings(room.id));
   const [facilities, bookings] = await Promise.all([
     Promise.all(facilitiesPromises),
@@ -32,7 +27,6 @@ const runScrapeJob = async () => {
   ]);
   const parsedBookings = bookings.flat().map(parseBooking).flat();
   parsedBookings.sort((a, b) => a.start.getTime() - b.start.getTime());
-  console.timeEnd("Scraping bookings");
 
   return {
     buildings: filteredBuildings,
