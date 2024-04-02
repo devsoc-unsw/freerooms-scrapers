@@ -20,7 +20,8 @@ const runScrapeJob = async () => {
     (building) => !!rooms.find((room) => room.id.startsWith(building.id))
   );
 
-  const bookingPromises = rooms.map((room) => scrapeBookings(room.id));
+  const bookingPromises = rooms.map((room) => scrapeBookings(room.id)); 
+  // we're sending about 1000 requests here
   const [facilities, bookings] = await Promise.all([
     Promise.all(facilitiesPromises),
     Promise.all(bookingPromises),

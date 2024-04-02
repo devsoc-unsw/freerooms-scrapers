@@ -1,10 +1,13 @@
 // Fetch an NSS page, adding all required request parameters
 // Take in actual variable parameters like roomId
 import axios from "axios";
+import rateLimit from "axios-rate-limit"
 import { firstMonday, scwWeekNumber } from './dateUtils';
 import { YEAR } from './config';
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+const http = rateLimit(axios.create(), { maxRPS: 5 })
 
 const nssFetch = async (
   page: "find_rooms" | "view_rooms" | "view_multirooms",
@@ -27,7 +30,7 @@ const nssFetch = async (
       break;
   }
 
-  return axios.post(url, {
+  return http.post(url, {
     ...params,
     ...requiredParams,
     fr_week: scwWeekNumber(firstMonday(YEAR)),
