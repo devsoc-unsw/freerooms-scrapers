@@ -7,7 +7,7 @@ import { YEAR } from './config';
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-const http = rateLimit(axios.create(), { maxRPS: 5 })
+const http = rateLimit(axios.create(), { maxRPS: 30 })
 
 const nssFetch = async (
   page: "find_rooms" | "view_rooms" | "view_multirooms",
