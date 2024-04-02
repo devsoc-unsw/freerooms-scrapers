@@ -20,15 +20,18 @@ For instructions on how you can access this data, see the [DevSoc GraphQL API](h
 
 ### Rooms
 
-| **Field**    | **Description**                                   | **Example**         |
-|--------------|---------------------------------------------------|---------------------|
-| `id`         | Room ID in the format `CAMPUS-GRID_REF-ROOM_NUM`. | "K-J17-305"         |
-| `name`       | Name of the room.                                 | "Brass Lab J17 305" |
-| `abbr`       | Shortened name, as seen on timetable.             | "BrassME305"        |
-| `usage`      | Room type - see below for list.                   | "CMLB"              |
-| `capacity`   | Number of people the room is suitable for.        | 36                  |
-| `school`     | School that manages the room - `" "` if none.     | "CSE"               |
-| `buildingId` | ID of building that room is in.                   | "K-J17"             |
+| **Field**    | **Description**                                   | **Example**                                                   |
+|--------------|---------------------------------------------------|---------------------------------------------------------------|
+| `id`         | Room ID in the format `CAMPUS-GRID_REF-ROOM_NUM`. | "K-J17-305"                                                   |
+| `name`       | Name of the room.                                 | "Brass Lab J17 305"                                           |
+| `abbr`       | Shortened name, as seen on timetable.             | "BrassME305"                                                  |
+| `usage`      | Room type - see below for list.                   | "CMLB"                                                        |
+| `capacity`   | Number of people the room is suitable for.        | 36                                                            |
+| `school`     | School that manages the room - `" "` if none.     | "CSE"                                                         |
+| `buildingId` | ID of building that room is in.                   | "K-J17"                                                       |
+| `facilities` | JSONB of mapping of name to room facilities list  | {"Accessiblity": ["Power at Wall"], "Audio-visual": [], ...}  |
+
+Note that facilities differs between library and non-library rooms.
 
 Mapping of room usages can be found [here](https://github.com/devsoc-unsw/freerooms/blob/dev/common/roomUsages.ts). Mapping of school codes can be found [here](https://github.com/devsoc-unsw/freerooms/blob/dev/common/schools.ts).
 
