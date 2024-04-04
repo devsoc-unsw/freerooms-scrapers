@@ -14,6 +14,7 @@ export type Room = {
   capacity: number;
   school: string;
   buildingId: string;
+  facilities: Record<string, string[]>
 }
 
 export type Library = {

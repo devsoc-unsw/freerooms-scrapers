@@ -125,7 +125,6 @@ const parseBookingData = (bookingData: ResponseData[]) => {
 const getRoomData = async (roomId: string, buildingId: string) => {
   const response = await axios.get(ROOM_URL + roomId, {});
   const $ = load(response.data);
-
   const $heading = $('h1#s-lc-public-header-title');
 
   // Remove whitespace and split the name, location and capacity into newlines
@@ -145,6 +144,10 @@ const getRoomData = async (roomId: string, buildingId: string) => {
     roomNumber = 'POD' + roomNumber;
   }
 
+  const facilities = {
+    Equipment: $('strong:contains("Equipment")').parent().contents().last().text().split(",").map(string => string.trim())
+  }
+
   const roomData: Room = {
     name: libraryName + ' ' + name,
     abbr: name,
@@ -152,7 +155,8 @@ const getRoomData = async (roomId: string, buildingId: string) => {
     usage: "LIB",
     capacity,
     school: " ",
-    buildingId: buildingId
+    buildingId: buildingId,
+    facilities,
   }
 
   return roomData;
@@ -193,7 +197,7 @@ const runScrapeJob = async () => {
           },
           payload: allRooms.map(room => ({
             ...room,
-            facilities: JSON.stringify({})
+            facilities: JSON.stringify(room.facilities)
           }))
       },
       requestConfig
