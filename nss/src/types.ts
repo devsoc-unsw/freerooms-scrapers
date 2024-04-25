@@ -19,9 +19,28 @@ export type RoomBooking = {
   end: Date;
 }
 
-export const FACILITIES_LIST = ["Accessibility", "Audio-visual", "Info technology", "Writing media", "Services"] as const;
+export const FACILITIES_LIST = [
+  "Floor/seating",
+  "Microphone",
+  "Accessibility", 
+  "Audio-visual", 
+  "Info technology", 
+  "Writing media", 
+  "Services"
+] as const;
 
 export type Facilities = Record<typeof FACILITIES_LIST[number], string[]>
+
+export type MappedFacilities = {
+  floor: string;
+  seating: string;
+  microphone: string[];
+  accessibility: string[];
+  audiovisual: string[];
+  infotechnology: string[];
+  writingMedia: string[];
+  service: string[];
+}
 
 export type Room = {
   abbr: string;
