@@ -30,11 +30,11 @@ const facilitiesMapper = (facilities: ScrapedFacilities): MappedFacilities => {
   return {
     floor: floorSeating.floor,
     seating: floorSeating.seating,
-    microphone: facilities.Microphone.map(e => e.toLowerCase()),
-    accessibility: facilities.Accessibility.map(e => e.toLowerCase()),
-    audiovisual: facilities["Audio-visual"].map(e => e.toLowerCase()),
-    infotechnology: facilities["Info technology"].map(e => e.toLowerCase()),
-    writingMedia: facilities["Writing media"].map(e => e.toLowerCase()),
+    microphone: facilities.Microphone,
+    accessibility: facilities.Accessibility,
+    audiovisual: facilities["Audio-visual"],
+    infotechnology: facilities["Info technology"],
+    writingMedia: facilities["Writing media"],
     service: facilities.Services.map(e => e.toLowerCase())
   }
 }
