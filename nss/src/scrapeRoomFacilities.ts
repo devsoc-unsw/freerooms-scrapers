@@ -35,7 +35,7 @@ const facilitiesMapper = (facilities: ScrapedFacilities): MappedFacilities => {
     audiovisual: facilities["Audio-visual"],
     infotechnology: facilities["Info technology"],
     writingMedia: facilities["Writing media"],
-    service: facilities.Services.map(e => e.toLowerCase())
+    service: facilities.Services,
   }
 }
 
