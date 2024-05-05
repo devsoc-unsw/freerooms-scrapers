@@ -20,7 +20,7 @@ const runScrapeJob = async () => {
     (building) => !!rooms.find((room) => room.id.startsWith(building.id))
   );
 
-  const bookingPromises = rooms.map((room) => scrapeBookings(room.id)); 
+  const bookingPromises = rooms.map((room) => scrapeBookings(room.id));
   // we're sending about 1000 requests here
   const [facilities, bookings] = await Promise.all([
     Promise.all(facilitiesPromises),
@@ -79,7 +79,14 @@ const runScraper = async () => {
           "capacity",
           "school",
           "buildingId",
-          "facilities",
+          "floor",
+          "seating",
+          "microphone",
+          "accessibility",
+          "audiovisual",
+          "infotechnology",
+          "writingMedia",
+          "service",
         ],
         sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),
@@ -92,7 +99,7 @@ const runScraper = async () => {
       },
       payload: rooms.map((room, i) => ({
         ...room,
-        facilities: JSON.stringify(facilities[i]),
+        ...facilities[i],
       })),
     },
     requestConfig

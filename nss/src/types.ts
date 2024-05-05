@@ -22,18 +22,29 @@ export type RoomBooking = {
 export const FACILITIES_LIST = [
   "Floor/seating",
   "Microphone",
-  "Accessibility", 
-  "Audio-visual", 
-  "Info technology", 
-  "Writing media", 
+  "Accessibility",
+  "Audio-visual",
+  "Info technology",
+  "Writing media",
   "Services"
 ] as const;
 
-export type Facilities = Record<typeof FACILITIES_LIST[number], string[]>
+export type ScrapedFacilities = Record<typeof FACILITIES_LIST[number], string[]>
+
+export enum FacilityFloor {
+  FLAT = "flat",
+  TIERED = "tiered",
+  OTHER = "other"
+}
+
+export enum FacilitySeating {
+  MOVABLE = "movable",
+  FIXED = "fixed"
+}
 
 export type MappedFacilities = {
-  floor: string;
-  seating: string;
+  floor: FacilityFloor | null;
+  seating: FacilitySeating | null;
   microphone: string[];
   accessibility: string[];
   audiovisual: string[];
