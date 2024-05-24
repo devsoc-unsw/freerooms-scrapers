@@ -204,7 +204,7 @@ const getRoomData = async (roomId: string, buildingId: string) => {
         break;
       default:
         fs.writeFileSync("test", equipment);
-        console.log(
+        console.warn(
           `Got unknown option for library room equipment ${equipment}`
         );
     }
