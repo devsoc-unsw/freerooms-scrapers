@@ -38,13 +38,11 @@ export enum FacilityFloor {
   FLAT = "Flat",
   TIERED = "Tiered",
   OTHER = "Other",
-  UNKNOWN = "Unknown",
 }
 
 export enum FacilitySeating {
   MOVABLE = "Movable",
   FIXED = "Fixed",
-  UNKNOWN = "Unknown",
 }
 
 export type MappedFacilities = {

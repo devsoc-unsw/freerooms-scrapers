@@ -50,7 +50,7 @@ const facilitiesMapper = (facilities: ScrapedFacilities): MappedFacilities => {
 
 const extractFloorSeating = (
   scrapedFloorSeating: string | undefined
-): { floor: FacilityFloor; seating: FacilitySeating } => {
+): { floor: FacilityFloor | null; seating: FacilitySeating | null } => {
   switch (scrapedFloorSeating) {
     // yea, this case is moveable while everything else is movable..
     case "Flat floor node chairs moveable seating":
@@ -89,8 +89,8 @@ const extractFloorSeating = (
           scrapedFloorSeating
       );
       return {
-        floor: FacilityFloor.UNKNOWN,
-        seating: FacilitySeating.UNKNOWN,
+        floor: null,
+        seating: null,
       };
   }
 };

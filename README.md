@@ -38,8 +38,8 @@ For instructions on how you can access this data, see the [DevSoc GraphQL API](h
 | `writingMedia`   | List of writingMedia facilities of the room.      | "Blackboard"         |
 | `service`        | List of service facilities of the room.           | "Break out rooms"    |
 
-Floor type can be 'Flat', 'Tiered', 'Other' or 'Unknown'.
-Seating type can be 'Movable', 'Fixed' or 'Unknown'.
+Floor type can be 'Flat', 'Tiered', 'Other' or null.
+Seating type can be 'Movable', 'Fixed' or null.
 
 Mapping of room usages can be found [here](https://github.com/devsoc-unsw/freerooms/blob/dev/common/roomUsages.ts).
 Mapping of school codes can be found [here](https://github.com/devsoc-unsw/freerooms/blob/dev/common/schools.ts).
