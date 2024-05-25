@@ -1,13 +1,19 @@
 import { load } from "cheerio";
 import nssFetch from "./nssFetch";
-import { ScrapedFacilities, FACILITIES_LIST, MappedFacilities, FacilityFloor, FacilitySeating } from "./types";
+import {
+  ScrapedFacilities,
+  FACILITIES_LIST,
+  MappedFacilities,
+  FacilityFloor,
+  FacilitySeating,
+} from "./types";
 
 export const scrapeRoomFacilities = async (
   id: string
 ): Promise<MappedFacilities> => {
   const additionalParams: Record<string, string> = {
     show: "show_facilities",
-    room: id
+    room: id,
   };
   const response = await nssFetch("view_rooms", additionalParams);
   const $ = load(response.data);
@@ -15,15 +21,18 @@ export const scrapeRoomFacilities = async (
   const additionalInformationData = {} as ScrapedFacilities;
   for (const field of FACILITIES_LIST) {
     const data = $(`td:contains("${field}")`).parent();
-    additionalInformationData[field] = cleanString(data.find('td.data').text())
+    additionalInformationData[field] = cleanString(data.find("td.data").text());
   }
 
   return facilitiesMapper(additionalInformationData);
 };
 
 const cleanString = (input: string): string[] => {
-  return input.split('|').map(e => e.trim()).filter(e => e.length)
-}
+  return input
+    .split("|")
+    .map((e) => e.trim())
+    .filter((e) => e.length);
+};
 
 const facilitiesMapper = (facilities: ScrapedFacilities): MappedFacilities => {
   const floorSeating = extractFloorSeating(facilities["Floor/seating"][0]);
@@ -36,50 +45,52 @@ const facilitiesMapper = (facilities: ScrapedFacilities): MappedFacilities => {
     infotechnology: facilities["Info technology"],
     writingMedia: facilities["Writing media"],
     service: facilities.Services,
-  }
-}
+  };
+};
 
-const extractFloorSeating = (scrapedFloorSeating: string | undefined): { floor: FacilityFloor | null, seating: FacilitySeating | null } => {
-  if (!scrapedFloorSeating) {
-    return {
-      floor: null,
-      seating: null
-    }
-  }
-
+const extractFloorSeating = (
+  scrapedFloorSeating: string | undefined
+): { floor: FacilityFloor; seating: FacilitySeating } => {
   switch (scrapedFloorSeating) {
     // yea, this case is moveable while everything else is movable..
     case "Flat floor node chairs moveable seating":
       return {
         floor: FacilityFloor.FLAT,
-        seating: FacilitySeating.MOVABLE
-      }
+        seating: FacilitySeating.MOVABLE,
+      };
     case "Flat floor, fixed seating":
       return {
         floor: FacilityFloor.FLAT,
-        seating: FacilitySeating.FIXED
-      }
+        seating: FacilitySeating.FIXED,
+      };
     case "Flat floor, movable seating":
       return {
         floor: FacilityFloor.FLAT,
-        seating: FacilitySeating.MOVABLE
-      }
+        seating: FacilitySeating.MOVABLE,
+      };
     case "Other Floor, Movable Seating":
       return {
         floor: FacilityFloor.OTHER,
-        seating: FacilitySeating.MOVABLE
-      }
+        seating: FacilitySeating.MOVABLE,
+      };
     case "Tiered Floor, Movable Seating":
       return {
         floor: FacilityFloor.TIERED,
-        seating: FacilitySeating.MOVABLE
-      }
+        seating: FacilitySeating.MOVABLE,
+      };
     case "Tiered floor, fixed seating":
       return {
         floor: FacilityFloor.TIERED,
-        seating: FacilitySeating.FIXED
-      }
+        seating: FacilitySeating.FIXED,
+      };
     default:
-      throw new Error("Not an expected scraped floor/seating type!")
+      console.warn(
+        "Got unknown option for floor/seating combination!" +
+          scrapedFloorSeating
+      );
+      return {
+        floor: FacilityFloor.UNKNOWN,
+        seating: FacilitySeating.UNKNOWN,
+      };
   }
-}
+};

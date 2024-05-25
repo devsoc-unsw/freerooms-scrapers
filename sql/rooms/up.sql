@@ -1,12 +1,14 @@
 CREATE TYPE FloorTypeEnum AS ENUM (
     'Flat', 
     'Tiered', 
-    'Other'
+    'Other',
+    'Unknown'
 );
 
 CREATE TYPE SeatingTypeEnum AS ENUM (
     'Movable', 
-    'Fixed'
+    'Fixed',
+    'Unknown'
 );
 
 -- CREATE TYPE MicrophoneTypeEnum AS ENUM (

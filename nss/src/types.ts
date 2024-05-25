@@ -33,15 +33,18 @@ export type ScrapedFacilities = Record<
   string[]
 >;
 
+// remember to change the sql enum type as well!
 export enum FacilityFloor {
   FLAT = "Flat",
   TIERED = "Tiered",
   OTHER = "Other",
+  UNKNOWN = "Unknown",
 }
 
 export enum FacilitySeating {
   MOVABLE = "Movable",
   FIXED = "Fixed",
+  UNKNOWN = "Unknown",
 }
 
 export type MappedFacilities = {
