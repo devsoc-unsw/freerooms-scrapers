@@ -79,7 +79,7 @@ To update the schema, you will need to:
 To add additional scrapers, you will need to:
 
 - Create a new subdirectory with the scraper inside it
-- Ensure that if you are using the schema SQL files, you reference them using symlinks so all scrapers are updated
+- Ensure that if you are using the shared schema SQL files, you reference them using symlinks so all scrapers are updated
 - Add to the GitHub workflow so that it also tests/builds/deploys the new scraper
 
 ### Testing
