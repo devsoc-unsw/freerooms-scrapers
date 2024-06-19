@@ -4,51 +4,37 @@ import scrapeBookings from "./scrapeBookings";
 import parseBooking from "./parseBooking";
 import scrapeBuildings from "./scrapeBuildings";
 import { DRYRUN, HASURAGRES_API_KEY, HASURAGRES_URL, YEAR } from "./config";
-import axios from "axios";
-import { formatString } from "./stringUtils";
-import { scrapeRoomFacilities } from "./scrapeRoomFacilities";
+import axios from 'axios';
+import { formatString } from './stringUtils';
 
 const runScrapeJob = async () => {
   const buildings = await scrapeBuildings();
   const rooms = await scrapeRooms();
-  const facilitiesPromises = rooms.map((room) =>
-    scrapeRoomFacilities(room.id)
-  );
 
   // Filter buildings with no rooms
   const filteredBuildings = buildings.filter(
-    (building) => !!rooms.find((room) => room.id.startsWith(building.id))
+    building => !!rooms.find(room => room.id.startsWith(building.id))
   );
 
-  const bookingPromises = rooms.map((room) => scrapeBookings(room.id));
-  // we're sending about 1000 requests here
-  const [facilities, bookings] = await Promise.all([
-    Promise.all(facilitiesPromises),
-    Promise.all(bookingPromises),
-  ]);
-  const parsedBookings = bookings.flat().map(parseBooking).flat();
+  const bookingPromises = rooms.map(room => scrapeBookings(room.id));
+  const bookings = (await Promise.all(bookingPromises)).flat();
+  const parsedBookings = bookings.map(parseBooking).flat();
   parsedBookings.sort((a, b) => a.start.getTime() - b.start.getTime());
 
-  return {
-    buildings: filteredBuildings,
-    rooms,
-    facilities,
-    bookings: parsedBookings,
-  };
-};
+  return { buildings: filteredBuildings, rooms, bookings: parsedBookings };
+}
 
 const runScraper = async () => {
-  console.time("Scraping");
-  const { buildings, rooms, facilities, bookings } =
-    await runScrapeJob();
-  console.timeEnd("Scraping");
+  console.time('Scraping');
+  const { buildings, rooms, bookings } = await runScrapeJob();
+  console.timeEnd('Scraping');
 
   const requestConfig = {
     headers: {
       "Content-Type": "application/json",
       "X-Api-Key": HASURAGRES_API_KEY,
-    },
-  };
+    }
+  }
 
   await axios.post(
     `${HASURAGRES_URL}/insert`,
@@ -58,10 +44,10 @@ const runScraper = async () => {
         sql_up: fs.readFileSync("./sql/buildings/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/buildings/down.sql", "utf8"),
         columns: ["id", "name", "lat", "long", "aliases"],
-        write_mode: "overwrite",
+        write_mode: 'overwrite',
         dryrun: DRYRUN,
       },
-      payload: buildings,
+      payload: buildings
     },
     requestConfig
   );
@@ -71,36 +57,17 @@ const runScraper = async () => {
     {
       metadata: {
         table_name: "Rooms",
-        columns: [
-          "abbr",
-          "name",
-          "id",
-          "usage",
-          "capacity",
-          "school",
-          "buildingId",
-          "floor",
-          "seating",
-          "microphone",
-          "accessibility",
-          "audiovisual",
-          "infotechnology",
-          "writingMedia",
-          "service",
-        ],
+        columns: ["abbr", "name", "id", "usage", "capacity", "school", "buildingId"],
         sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
         sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),
         sql_before: formatString(
           fs.readFileSync("./sql/rooms/before.sql", "utf8"),
-          rooms.map((room) => `'${room.id}'`).join(",")
+          rooms.map(room => `'${room.id}'`).join(",")
         ),
-        write_mode: "append",
+        write_mode: 'append',
         dryrun: DRYRUN,
       },
-      payload: rooms.map((room, i) => ({
-        ...room,
-        ...facilities[i],
-      })),
+      payload: rooms
     },
     requestConfig
   );
@@ -118,13 +85,13 @@ const runScraper = async () => {
           new Date(YEAR, 0, 1).toISOString(),
           new Date(YEAR + 1, 0, 1).toISOString()
         ),
-        write_mode: "append",
+        write_mode: 'append',
         dryrun: DRYRUN,
       },
-      payload: bookings,
+      payload: bookings
     },
     requestConfig
   );
-};
+}
 
 runScraper();
