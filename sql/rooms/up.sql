@@ -1,12 +1,12 @@
 CREATE TYPE FloorTypeEnum AS ENUM (
     'Flat', 
     'Tiered', 
-    'Other',
+    'Other'
 );
 
 CREATE TYPE SeatingTypeEnum AS ENUM (
     'Movable', 
-    'Fixed',
+    'Fixed'
 );
 
 CREATE TABLE Rooms (
