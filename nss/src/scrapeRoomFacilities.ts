@@ -24,7 +24,7 @@ export const scrapeRoomFacilities = async (
     additionalInformationData[field] = cleanString(data.find("td.data").text());
   }
 
-  return facilitiesMapper(additionalInformationData);
+  return facilitiesMapper(id, additionalInformationData);
 };
 
 const cleanString = (input: string): string[] => {
@@ -34,8 +34,11 @@ const cleanString = (input: string): string[] => {
     .filter((e) => e.length);
 };
 
-const facilitiesMapper = (facilities: ScrapedFacilities): MappedFacilities => {
-  const floorSeating = extractFloorSeating(facilities["Floor/seating"][0]);
+const facilitiesMapper = (
+  id: string,
+  facilities: ScrapedFacilities
+): MappedFacilities => {
+  const floorSeating = extractFloorSeating(id, facilities["Floor/seating"][0]);
   return {
     floor: floorSeating.floor,
     seating: floorSeating.seating,
@@ -49,6 +52,7 @@ const facilitiesMapper = (facilities: ScrapedFacilities): MappedFacilities => {
 };
 
 const extractFloorSeating = (
+  id: string,
   scrapedFloorSeating: string | undefined
 ): { floor: FacilityFloor | null; seating: FacilitySeating | null } => {
   switch (scrapedFloorSeating) {
@@ -85,8 +89,7 @@ const extractFloorSeating = (
       };
     default:
       console.warn(
-        "Got unknown option for floor/seating combination!" +
-          scrapedFloorSeating
+        `In Room ${id}, got unknown option for floor/seating combination! ${scrapedFloorSeating}`
       );
       return {
         floor: null,
