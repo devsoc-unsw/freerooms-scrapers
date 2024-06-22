@@ -244,7 +244,7 @@ const runScrapeJob = async () => {
   };
 
   await axios.post(
-    `${HASURAGRES_URL}/batch-insert`,
+    `${HASURAGRES_URL}/batch_insert`,
     [
       {
         metadata: {
