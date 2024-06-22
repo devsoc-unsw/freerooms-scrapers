@@ -244,59 +244,53 @@ const runScrapeJob = async () => {
   };
 
   await axios.post(
-    `${HASURAGRES_URL}/insert`,
-    {
-      metadata: {
-        table_name: "Rooms",
-        columns: [
-          "abbr",
-          "name",
-          "id",
-          "usage",
-          "capacity",
-          "school",
-          "buildingId",
-          "microphone",
-          "accessibility",
-          "audiovisual",
-          "infotechnology",
-          "writingMedia",
-          "service",
-        ],
-        sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
-        sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),
-        // overwrite all outdated lib rooms
-        sql_before:
-          "DELETE FROM Rooms WHERE \"usage\" = 'LIB' " +
-          `AND "id" NOT IN (${allRooms
-            .map((room) => `'${room.id}'`)
-            .join(",")});`,
-        write_mode: "append",
-        dryrun: DRYRUN,
+    `${HASURAGRES_URL}/batch-insert`,
+    [
+      {
+        metadata: {
+          table_name: "Rooms",
+          columns: [
+            "abbr",
+            "name",
+            "id",
+            "usage",
+            "capacity",
+            "school",
+            "buildingId",
+            "microphone",
+            "accessibility",
+            "audiovisual",
+            "infotechnology",
+            "writingMedia",
+            "service",
+          ],
+          sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
+          sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),
+          // overwrite all outdated lib rooms
+          sql_before:
+            "DELETE FROM Rooms WHERE \"usage\" = 'LIB' " +
+            `AND "id" NOT IN (${allRooms
+              .map((room) => `'${room.id}'`)
+              .join(",")});`,
+          write_mode: "append",
+          dryrun: DRYRUN,
+        },
+        payload: allRooms,
       },
-      payload: allRooms,
-    },
-    requestConfig
-  );
-
-  // libcal shows all bookings that start during or after the current 30-min period
-  const baseTime = new Date();
-  baseTime.setMinutes(baseTime.getMinutes() < 30 ? 0 : 30, 0, 0);
-  await axios.post(
-    `${HASURAGRES_URL}/insert`,
-    {
-      metadata: {
-        table_name: "Bookings",
-        columns: ["bookingType", "name", "roomId", "start", "end"],
-        sql_up: fs.readFileSync("./sql/bookings/up.sql", "utf8"),
-        sql_down: fs.readFileSync("./sql/bookings/down.sql", "utf8"),
-        sql_before: fs.readFileSync("./sql/bookings/before.sql", "utf8"),
-        sql_after: fs.readFileSync("./sql/bookings/after.sql", "utf8"),
-        write_mode: "append",
-        dryrun: DRYRUN,
+      {
+        metadata: {
+          table_name: "Bookings",
+          columns: ["bookingType", "name", "roomId", "start", "end"],
+          sql_up: fs.readFileSync("./sql/bookings/up.sql", "utf8"),
+          sql_down: fs.readFileSync("./sql/bookings/down.sql", "utf8"),
+          sql_before: fs.readFileSync("./sql/bookings/before.sql", "utf8"),
+          sql_after: fs.readFileSync("./sql/bookings/after.sql", "utf8"),
+          write_mode: "append",
+          dryrun: DRYRUN,
+        },
+        payload: allBookings,
       },
-      payload: allBookings,
-    },
+    ],
     requestConfig
   );
 };
