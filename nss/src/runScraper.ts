@@ -4,9 +4,8 @@ import scrapeBookings from "./scrapeBookings";
 import parseBooking from "./parseBooking";
 import scrapeBuildings from "./scrapeBuildings";
 import { DRYRUN, HASURAGRES_API_KEY, HASURAGRES_URL, YEAR } from "./config";
-import axios from "axios";
-import { formatString } from "./stringUtils";
-import { scrapeRoomFacilities } from "./scrapeRoomFacilities";
+import axios from 'axios';
+import { formatString } from './stringUtils';
 
 const runScrapeJob = async () => {
   const buildings = await scrapeBuildings();
@@ -15,25 +14,16 @@ const runScrapeJob = async () => {
 
   // Filter buildings with no rooms
   const filteredBuildings = buildings.filter(
-    (building) => !!rooms.find((room) => room.id.startsWith(building.id))
+    building => !!rooms.find(room => room.id.startsWith(building.id))
   );
 
-  const bookingPromises = rooms.map((room) => scrapeBookings(room.id));
-  // we're sending about 1000 requests here
-  const [facilities, bookings] = await Promise.all([
-    Promise.all(facilitiesPromises),
-    Promise.all(bookingPromises),
-  ]);
-  const parsedBookings = bookings.flat().map(parseBooking).flat();
+  const bookingPromises = rooms.map(room => scrapeBookings(room.id));
+  const bookings = (await Promise.all(bookingPromises)).flat();
+  const parsedBookings = bookings.map(parseBooking).flat();
   parsedBookings.sort((a, b) => a.start.getTime() - b.start.getTime());
 
-  return {
-    buildings: filteredBuildings,
-    rooms,
-    facilities,
-    bookings: parsedBookings,
-  };
-};
+  return { buildings: filteredBuildings, rooms, bookings: parsedBookings };
+}
 
 const runScraper = async () => {
   console.time("Scraping");
@@ -44,8 +34,8 @@ const runScraper = async () => {
     headers: {
       "Content-Type": "application/json",
       "X-Api-Key": HASURAGRES_API_KEY,
-    },
-  };
+    }
+  }
 
   await axios.post(
     `${HASURAGRES_URL}/batch_insert`,
@@ -114,6 +104,6 @@ const runScraper = async () => {
     ],
     requestConfig
   );
-};
+}
 
 runScraper();
