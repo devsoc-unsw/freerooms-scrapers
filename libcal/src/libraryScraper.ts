@@ -228,11 +228,11 @@ const runScrapeJob = async () => {
   console.time("Scraping");
   const allRooms: Room[] = [];
   const allBookings: RoomBooking[] = [];
-  for (const library of LIBRARIES) {
-    const { rooms, bookings } = await scrapeLibrary(library);
-    allRooms.push(...rooms);
-    allBookings.push(...bookings);
-  }
+  // for (const library of LIBRARIES) {
+  //   const { rooms, bookings } = await scrapeLibrary(library);
+  //   allRooms.push(...rooms);
+  //   allBookings.push(...bookings);
+  // }
   console.timeEnd("Scraping");
 
   // Send to Hasuragres
