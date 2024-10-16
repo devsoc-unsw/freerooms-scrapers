@@ -270,7 +270,7 @@ const runScrapeJob = async () => {
           // overwrite all outdated lib rooms
           sql_before:
             "DELETE FROM Rooms WHERE \"usage\" = 'LIB' " +
-            `AND "id" NOT IN (${allRooms
+            `AND "id" NOT IN (${[...allRooms, { id: "DUMMY" }]
               .map((room) => `'${room.id}'`)
               .join(",")});`,
           write_mode: "append",
