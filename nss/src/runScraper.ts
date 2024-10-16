@@ -47,6 +47,7 @@ const runScraper = async () => {
     },
   };
 
+  console.time("Inserting");
   await axios.post(
     `${HASURAGRES_URL}/batch_insert`,
     [
@@ -114,6 +115,7 @@ const runScraper = async () => {
     ],
     requestConfig
   );
+  console.timeEnd("Inserting");
 };
 
 runScraper();
