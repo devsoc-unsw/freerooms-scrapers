@@ -243,6 +243,7 @@ const runScrapeJob = async () => {
     },
   };
 
+  console.time("Inserting");
   await axios.post(
     `${HASURAGRES_URL}/batch_insert`,
     [
@@ -293,6 +294,7 @@ const runScrapeJob = async () => {
     ],
     requestConfig
   );
+  console.timeEnd("Inserting");
 };
 
 runScrapeJob();
