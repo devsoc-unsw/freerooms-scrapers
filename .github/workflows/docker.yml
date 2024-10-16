@@ -12,7 +12,9 @@ jobs:
       fail-fast: true
       max-parallel: 1
       matrix:
-        scraper: [ nss, libcal ]
+        scraper:
+#          - nss
+          - libcal
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
