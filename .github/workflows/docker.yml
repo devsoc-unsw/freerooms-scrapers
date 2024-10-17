@@ -13,7 +13,7 @@ jobs:
       max-parallel: 1
       matrix:
         scraper:
-#          - nss
+          - nss
           - libcal
     steps:
       - uses: actions/checkout@v4
