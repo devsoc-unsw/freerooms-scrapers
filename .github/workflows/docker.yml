@@ -95,3 +95,4 @@ jobs:
           git push -u origin update/freerooms-scrapers/${{ github.sha }}
           gh pr create -B migration --title "feat(freerooms-scrapers): update images" --body "Updates the images for the nss-scraper and libcal-scraper deployments to commit devsoc-unsw/freerooms-scrapers@${{ github.sha }}." > URL
           gh pr merge $(cat URL) --squash -d
+          
