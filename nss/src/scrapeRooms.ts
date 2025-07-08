@@ -1,9 +1,12 @@
-import { Room } from "./types";
+import { Room, RoomMarkers } from "./types";
 import { load } from "cheerio";
 import nssFetch from "./nssFetch";
 import { excludeRoom } from './exclusions';
+import fs from "fs";
 
 const ROOM_REGEX = /^K-[A-Z][0-9]{1,2}-.+$/;
+const ROOM_OVERRIDES_PATH = "./roomOverrides.json";
+
 
 // Returns an array of objects containing classroom info
 // {
@@ -13,6 +16,8 @@ const ROOM_REGEX = /^K-[A-Z][0-9]{1,2}-.+$/;
 //   type: 'LAB',
 //   capacity: 100,
 //   school: 'BIOS'
+//   lat: -33
+//   long: 151
 // }
 const scrapeRooms = async (): Promise<Room[]> => {
   const response = await nssFetch('find_rooms');
@@ -29,7 +34,9 @@ const scrapeRooms = async (): Promise<Room[]> => {
       usage: $(data[3]).text(),
       capacity: parseInt($(data[4]).text()),
       school: $(data[5]).text(),
-      buildingId: $(data[2]).text().split('-').slice(0, 2).join('-')
+      buildingId: $(data[2]).text().split('-').slice(0, 2).join('-'),
+      lat: 0,
+      long: 0
     };
 
     if (room.id.match(ROOM_REGEX) && !excludeRoom(room)) {
@@ -37,7 +44,24 @@ const scrapeRooms = async (): Promise<Room[]> => {
     }
   })
 
+  overrideLocations(classroomData);
+
   return classroomData;
 }
 
 export default scrapeRooms;
+
+
+const overrideLocations = (data: Room[]) => {
+  const rawLocations = fs.readFileSync(ROOM_OVERRIDES_PATH, 'utf8');
+  const locations = JSON.parse(rawLocations) as RoomMarkers[];
+
+  // For each building in location data, replace the location in original data
+  for (const room of locations) {
+    const roomData = data.find(r => r.id === room.id);
+    if (roomData) {
+      roomData.lat = room.lat;
+      roomData.long = room.long;
+    }
+  }
+}
