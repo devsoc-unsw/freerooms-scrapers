@@ -45,7 +45,6 @@ const scrapeRooms = async (): Promise<Room[]> => {
   })
 
   overrideLocations(classroomData);
-
   return classroomData;
 }
 
@@ -56,7 +55,7 @@ const overrideLocations = (data: Room[]) => {
   const rawLocations = fs.readFileSync(ROOM_OVERRIDES_PATH, 'utf8');
   const locations = JSON.parse(rawLocations) as RoomMarkers[];
 
-  // For each building in location data, replace the location in original data
+  // For each room in location data, replace the location in original data
   for (const room of locations) {
     const roomData = data.find(r => r.id === room.id);
     if (roomData) {

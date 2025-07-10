@@ -25,5 +25,7 @@ CREATE TABLE Rooms (
     "infotechnology"     TEXT[] NOT NULL,
     "writingMedia"       TEXT[] NOT NULL,
     "service"            TEXT[] NOT NULL,
+    "lat"                DOUBLE PRECISION NOT NULL,
+    "long"               DOUBLE PRECISION NOT NULL,
     FOREIGN KEY ("buildingId") REFERENCES Buildings("id") ON DELETE CASCADE
 );
