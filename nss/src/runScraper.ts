@@ -81,8 +81,6 @@ const runScraper = async () => {
             "infotechnology",
             "writingMedia",
             "service",
-            "lat", 
-            "long"
           ],
           sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
           sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),
