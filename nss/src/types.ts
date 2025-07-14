@@ -64,8 +64,6 @@ export type Room = {
   capacity: number;
   school: string;
   buildingId: string;
-  lat: number;
-  long: number;
 };
 
 export type ParsedName = {
@@ -89,9 +87,3 @@ export type Building = {
 export type OverrideData = {
   buildings: Building[];
 };
-
-export type RoomMarkers = {
-  id: string;
-  lat: number;
-  long: number;
-}
