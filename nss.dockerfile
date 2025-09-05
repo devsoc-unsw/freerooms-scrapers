@@ -23,6 +23,7 @@ RUN npm ci
 # Root sql should be sibling of project directory
 COPY --from=builder /app/dist ./dist
 COPY nss/buildingOverrides.json ./
+COPY nss/roomOverrides.json ./
 COPY nss/sql ./sql
 COPY sql ../sql
 
