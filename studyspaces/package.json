@@ -1,0 +1,28 @@
+{
+    "name": "freerooms-studyspaces-scraper",
+    "private": true,
+    "version": "0.1.0",
+    "type": "module",
+    "engines": {
+        "node": ">=20"
+    },
+    "scripts": {
+        "build": "tsc -p .",
+        "start": "node dist/index.js",
+        "dev": "node --loader ts-node/esm src/index.ts",
+        "lint": "eslint . --ext .ts",
+        "format": "prettier -w .",
+        "clean": "rimraf dist"
+    },
+    "dependencies": {
+        "cheerio": "^1.0.0",
+        "p-limit": "^6.1.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.18.12",
+        "prettier": "^3.3.3",
+        "rimraf": "^6.0.1",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.6.3"
+    }
+}

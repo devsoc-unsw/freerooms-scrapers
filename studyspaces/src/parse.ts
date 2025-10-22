@@ -1,0 +1,43 @@
+import * as cheerio from "cheerio";
+import { BASE, LIST_URL } from "./config.js"
+import { fetchText } from "./http.js";
+
+export type ListItem = { name?: string; url: string; capacity?: number };
+export type Detail = { title: string; buildingId?: string };
+
+function parseCapacity(text: string): number | undefined {
+    const m = text.match(/Capacity\s+(\d+)/i);
+    return m ? Number(m[1]) : undefined;
+}
+
+export async function parseList(): Promise<ListItem[]> {
+    const html = await fetchText(LIST_URL);
+    const $ = cheerio.load(html);
+    const out: ListItem[] = [];
+
+    $('a').each((_, a) => {
+        const href = $(a).attr("href");
+        if (!href) return;
+
+        const url = new URL(href, LIST_URL).toString();
+        if (!/\/physical-spaces\/study-spaces\//.test(url)) return;
+
+        const text = $(a).text().replace(/\s+/g, " ").trim();
+        const capacity = parseCapacity(text);
+        const name = text.replace(/Capacity.*$/i, '').trim() || undefined;
+
+        out.push({ name, url, capacity });
+    });
+
+    const seen = new Set<string>();
+    return out.filter(i => (seen.has(i.url) ? false : seen.add(i.url)));
+}
+
+export async function parseDetail(url: string): Promise<Detail> {
+    const html = await fetchText(url);
+    const $ = cheerio.load(html);
+    const title = ($("h1").first().text() || $("h2").first().text()).trim();
+    const body = $("body").text();
+    const buildingId = body.match(/Building ID\s+([A-Z]-[A-Z]\d{2})/i)?.[1];
+    return { title, buildingId };
+}
