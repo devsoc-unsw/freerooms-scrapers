@@ -3,7 +3,7 @@ import { BASE, LIST_URL } from "./config.js"
 import { fetchText } from "./http.js";
 
 export type ListItem = { name?: string; url: string; capacity?: number };
-export type Detail = { title: string; buildingId?: string };
+export type Detail = { title: string; buildingId?: string; coords?: { lat: number, long: number } };
 
 function parseCapacity(text: string): number | undefined {
     const m = text.match(/Capacity\s+(\d+)/i);

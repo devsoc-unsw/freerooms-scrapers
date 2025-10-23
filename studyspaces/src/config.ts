@@ -1,6 +1,9 @@
 export const BASE = "https://www.learningenvironments.unsw.edu.au";
 export const LIST_URL = `${BASE}/physical-spaces/study-spaces`;
 
+export const ALLOW_FAKE_COORDS = (process.env.ALLOW_FAKE_COORDS ?? 'false') === 'true';
+
+
 
 function getEnv(name: string): string {
     const v = process.env[name];

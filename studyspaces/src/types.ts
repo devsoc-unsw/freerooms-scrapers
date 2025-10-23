@@ -1,4 +1,4 @@
-export type BuildingRow = { id: string; name: string };
+export type BuildingRow = { id: string; name: string; lat: number; long: number; aliases: string[] };
 
 export type RoomRow = {
     id: string;

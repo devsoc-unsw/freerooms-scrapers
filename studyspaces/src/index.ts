@@ -9,7 +9,7 @@ async function main() {
         {
             metadata: {
                 table_name: "Buildings",
-                columns: ["id", "name"],
+                columns: ["id", "name", "lat", "long", "aliases"],
                 write_mode: "append",
                 sql_up: SQL.Buildings.up,
                 sql_down: SQL.Buildings.down,
