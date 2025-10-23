@@ -19,7 +19,9 @@ async function main() {
         {
             metadata: {
                 table_name: "Rooms",
-                columns: ["id", "name", "usage", "capacity", "buildingId"],
+                columns: ["id", "name", "abbr", "usage", "capacity", "school", "buildingId", "microphone",
+                    "accessibility", "audiovisual", "infotechnology", "writingMedia", "service",
+                    "lat", "long"],
                 write_mode: "append",
                 sql_up: SQL.Rooms.up,
                 sql_down: SQL.Rooms.down,

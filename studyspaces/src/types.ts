@@ -3,11 +3,19 @@ export type BuildingRow = { id: string; name: string; lat: number; long: number;
 export type RoomRow = {
     id: string;
     name: string;
-    abbr?: string | null;
+    abbr: string;
     usage: string; // "study"
-    capacity?: number | null;
-    school?: string | null;
+    capacity: number;
+    school: string;
     buildingId: string;
     floor?: string | null;
     seating?: string | null;
+    microphone: string[];
+    accessibility: string[];
+    audiovisual: string[];
+    infotechnology: string[];
+    writingMedia: string[];
+    service: string[];
+    lat: number;
+    long: number;
 };

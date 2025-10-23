@@ -15,11 +15,12 @@ export async function buildRows(): Promise<{ buildings: BuildingRow[]; rooms: Ro
         const item = list[i];
         const det = details[i];
 
-        const slug = new URL(item.url).pathname.split("/").filter(Boolean).pop()!;
-        const roomName = det.title || item.name || slug.replace(/-/g, " ");
-
         const buildingId = det.buildingId;
         if (!buildingId) continue;
+
+        const slug = new URL(item.url).pathname.split("/").filter(Boolean).pop()!;
+        const roomName = det.title || item.name || slug.replace(/-/g, " ");
+        const capacity = Number.isFinite(item.capacity!) ? (item.capacity as number) : 0;
 
 
         if (!buildings.has(buildingId)) {
@@ -28,18 +29,32 @@ export async function buildRows(): Promise<{ buildings: BuildingRow[]; rooms: Ro
             const lat = det.coords?.lat ?? (ALLOW_FAKE_COORDS ? 0 : undefined);
             const long = det.coords?.long ?? (ALLOW_FAKE_COORDS ? 0 : undefined);
 
-            if (lat !== undefined && long !== undefined) {
-                buildings.set(buildingId, { id: buildingId, name: buildingName, lat, long, aliases: [] });
-            }
+            if (lat === undefined || long === undefined) continue;
+            buildings.set(buildingId, { id: buildingId, name: buildingName, lat, long, aliases: [] });
         }
+
+        const building = buildings.get(buildingId);
+        const lat = building?.lat ?? (ALLOW_FAKE_COORDS ? 0 : undefined);
+        const long = building?.long ?? (ALLOW_FAKE_COORDS ? 0 : undefined);
+        if (lat === undefined || long === undefined) continue;
 
 
         rooms.push({
             id: `study-${slug}`,
             name: roomName,
+            abbr: roomName,
             usage: "study",
-            capacity: item.capacity ?? null,
-            buildingId
+            capacity: item.capacity ?? 0,
+            school: "General",
+            buildingId,
+            microphone: [],
+            accessibility: [],
+            audiovisual: [],
+            infotechnology: [],
+            writingMedia: [],
+            service: [],
+            lat,
+            long
         });
     }
 
