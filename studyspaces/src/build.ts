@@ -44,7 +44,7 @@ export async function buildRows(): Promise<{ buildings: BuildingRow[]; rooms: Ro
             name: roomName,
             abbr: roomName,
             usage: "study",
-            capacity: item.capacity ?? 0,
+            capacity: capacity,
             school: "General",
             buildingId,
             microphone: [],

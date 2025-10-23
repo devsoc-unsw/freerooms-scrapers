@@ -6,7 +6,7 @@ export type ListItem = { name?: string; url: string; capacity?: number };
 export type Detail = { title: string; buildingId?: string; coords?: { lat: number, long: number } };
 
 function parseCapacity(text: string): number | undefined {
-    const m = text.match(/Capacity\s+(\d+)/i);
+    const m = text.match(/\bCapacity\s+(\d{1,4})\b/);
     return m ? Number(m[1]) : undefined;
 }
 
@@ -15,16 +15,20 @@ export async function parseList(): Promise<ListItem[]> {
     const $ = cheerio.load(html);
     const out: ListItem[] = [];
 
-    $('a').each((_, a) => {
-        const href = $(a).attr("href");
+    $("article.view-mode-teaser").each((_, el) => {
+        const $card = $(el);
+        const $a = $card.find("h3 a").first();
+        const href = String($a.attr("href") || "");
         if (!href) return;
 
         const url = new URL(href, LIST_URL).toString();
         if (!/\/physical-spaces\/study-spaces\//.test(url)) return;
 
-        const text = $(a).text().replace(/\s+/g, " ").trim();
+
+        const name = $a.text().replace(/Capacity.*$/i, '').trim() || undefined;
+
+        const text = $card.find(".field--name-field-body-text").text().replace(/\s+/g, " ").trim();
         const capacity = parseCapacity(text);
-        const name = text.replace(/Capacity.*$/i, '').trim() || undefined;
 
         out.push({ name, url, capacity });
     });
