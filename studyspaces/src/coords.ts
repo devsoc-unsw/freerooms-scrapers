@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import axios from "axios";
 
-export type Coords = { lat?: number; long?: number; };
+export type Coords = { long?: number; lat?: number; };
 
 export async function getCoords(buildingId: string): Promise<Coords> {
     const writeObj = {};
@@ -10,7 +10,7 @@ export async function getCoords(buildingId: string): Promise<Coords> {
 
     const response = await axios.get(requestString);
     const coords = response.data.result[0]?.point?.coordinates;
-    const res: Coords = { lat: coords[0] ?? 0, long: coords[1] ?? 0 };
+    const res: Coords = { long: coords[0] ?? 0, lat: coords[1] ?? 0 };
     if (!coords) {
         console.log(`No coordinates for room ${buildingId}`);
     }
