@@ -2,6 +2,7 @@ import pLimit from "p-limit";
 import { parseList, parseDetail } from "./parse.js"
 import type { BuildingRow, RoomRow } from "./types.js";
 import { ALLOW_FAKE_COORDS } from "./config.js";
+import { getCoords } from "./coords.js";
 
 export async function buildRows(): Promise<{ buildings: BuildingRow[]; rooms: RoomRow[] }> {
     const list = await parseList();
@@ -26,8 +27,9 @@ export async function buildRows(): Promise<{ buildings: BuildingRow[]; rooms: Ro
         if (!buildings.has(buildingId)) {
             const buildingName = det.title.split(" ")[0];
 
-            const lat = det.coords?.lat ?? (ALLOW_FAKE_COORDS ? 0 : undefined);
-            const long = det.coords?.long ?? (ALLOW_FAKE_COORDS ? 0 : undefined);
+            const coords = await getCoords(buildingId);
+            const lat = coords?.lat ?? (ALLOW_FAKE_COORDS ? 0 : undefined);
+            const long = coords?.long ?? (ALLOW_FAKE_COORDS ? 0 : undefined);
 
             if (lat === undefined || long === undefined) continue;
             buildings.set(buildingId, { id: buildingId, name: buildingName, lat, long, aliases: [] });
