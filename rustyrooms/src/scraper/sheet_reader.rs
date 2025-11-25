@@ -26,11 +26,15 @@ pub struct RemoteSheetRow {
     #[serde(rename = "Allocated Location Name")]
     pub allocated_location_name: String,
     #[serde(rename = "Source")]
-    pub source: String
+    pub source: String,
 }
 
 pub fn read_xlsx(path: String) -> Result<Vec<Result<RemoteSheetRow, DeError>>, Box<dyn Error>> {
     let mut workbook: Xlsx<_> = open_workbook(path)?;
     let range = workbook.worksheet_range("Sheet1")?;
-    Ok(RangeDeserializerBuilder::with_deserialize_headers::<RemoteSheetRow>().from_range(&range)?.collect())
+    Ok(
+        RangeDeserializerBuilder::with_deserialize_headers::<RemoteSheetRow>()
+            .from_range(&range)?
+            .collect(),
+    )
 }

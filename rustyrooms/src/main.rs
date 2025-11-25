@@ -8,7 +8,7 @@ fn main() {
             for row in rows {
                 let _ = dbg!(row);
             }
-        },
+        }
         Err(err) => {
             dbg!(err);
         }
