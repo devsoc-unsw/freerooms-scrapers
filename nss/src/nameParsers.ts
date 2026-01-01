@@ -98,7 +98,7 @@ const PARSERS: Record<string, NameParser> = {
   // Examples:
   //   Misc >*C2205-2605JM2023SuppExamsT1-001c
   //   Misc >*C0708-2508JM2023ExamsT2-005
-  EXAMS: 
+  EXAMS:
   {
     pattern: /Misc[^\u00a0]*\u00a0.*\d(?<name>SuppExams|Exams)(?<term>T[1-3])/,
     parser: (matchGroups) => ({ bookingType: 'MISC', name: matchGroups['name'] + ' ' + matchGroups['term'] })
@@ -128,5 +128,10 @@ const PARSERS: Record<string, NameParser> = {
     parser: (matchGroups) => ({ bookingType: 'BLOCK', name: matchGroups['reason'] })
   },
 }
+
+export function normaliseRoomName(name: string): string {
+  return name.split(" ")[0].trim();
+}
+
 
 export default PARSERS;
