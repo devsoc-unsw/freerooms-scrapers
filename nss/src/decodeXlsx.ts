@@ -1,11 +1,12 @@
-import * as XLSX from "xlsx";
+import fs from "fs";
+import xlsx from "xlsx";
 import { BookingsExcelRow } from "./types";
 
 const decodeXlsx = (path: string): BookingsExcelRow[] => {
   // Setup the excel sheet
-  const workbook = XLSX.readFile(path);
+  const workbook = xlsx.readFile(path);
   const sheet = workbook.Sheets[workbook.SheetNames[0]];
-  const rows = XLSX.utils.sheet_to_json(sheet);
+  const rows = xlsx.utils.sheet_to_json(sheet);
 
   // Decode the rows
   const bookingRows = rows.map((row: any) => {
@@ -25,7 +26,7 @@ const decodeXlsx = (path: string): BookingsExcelRow[] => {
   });
 
   // Delete the file after reading it
-  //   fs.unlinkSync(path);
+  fs.unlinkSync(path);
 
   return bookingRows;
 };
