@@ -105,5 +105,7 @@ export type BookingsExcelRow = {
   duration: string;
   start_time: string;
   end_time: string;
+  dates: string;
   allocated_location_name: string;
+  weeks: string;
 }
