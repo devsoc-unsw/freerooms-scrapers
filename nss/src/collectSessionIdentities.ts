@@ -20,6 +20,7 @@ async function main() {
         clickDelayMs: 2,
     });
 
+
     console.log(`Collected ${abbrToSession.size} session identities`);
 
     const updates = [];
@@ -29,41 +30,43 @@ async function main() {
         updates.push({ id, sessionIdentity });
     }
 
-    console.log(`Matched ${updates.length} identities to existing Rooms rows`);
+    console.log(updates);
 
-    const requestConfig = {
-        headers: {
-            "Content-Type": "application/json",
-            "X-Api-Key": HASURAGRES_API_KEY,
-        },
-    };
+    // console.log(`Matched ${updates.length} identities to existing Rooms rows`);
 
-    console.time("Updating session identities");
+    // const requestConfig = {
+    //     headers: {
+    //         "Content-Type": "application/json",
+    //         "X-Api-Key": HASURAGRES_API_KEY,
+    //     },
+    // };
 
-    if (updates.length === 0) {
-        console.warn("No matching rooms to update — skipping DB write");
-    } else {
-        await axios.post(
-            `${HASURAGRES_URL}/batch_insert`,
-            [
-                {
-                    metadata: {
-                        table_name: "Rooms",
-                        columns: ["id", "sessionIdentity"],
-                        write_mode: "update",
-                        dryrun: DRYRUN,
-                    },
-                    payload: updates,
-                },
-            ],
-            requestConfig
-        );
-    }
+    // console.time("Updating session identities");
 
-    console.timeEnd("Updating session identities");
+    // if (updates.length === 0) {
+    //     console.warn("No matching rooms to update — skipping DB write");
+    // } else {
+    //     await axios.post(
+    //         `${HASURAGRES_URL}/batch_insert`,
+    //         [
+    //             {
+    //                 metadata: {
+    //                     table_name: "Rooms",
+    //                     columns: ["id", "sessionIdentity"],
+    //                     write_mode: "update",
+    //                     dryrun: DRYRUN,
+    //                 },
+    //                 payload: updates,
+    //             },
+    //         ],
+    //         requestConfig
+    //     );
+    // }
+
+    // console.timeEnd("Updating session identities");
 
 
-    console.log("Done");
+    // console.log("Done");
 }
 
 main().catch(err => {
