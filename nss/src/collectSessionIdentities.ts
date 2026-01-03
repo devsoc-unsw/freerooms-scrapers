@@ -5,8 +5,8 @@ import { collectSessionIdentities } from "./sessionCollector";
 import { DRYRUN, HASURAGRES_API_KEY, HASURAGRES_URL } from "./config";
 import { formatString } from "./stringUtils";
 
-const NSS_URL =
-    "https://publish.sit1.unsw.edu.au/timetables?date=2025-12-22&view=week&timetableTypeSelected=1e042cb1-547d-41d4-ae93-a1f2c3d34538&searchText=K-";
+
+const NSS_URL = "https://publish.unsw.edu.au/timetables?date=2025-12-22&view=week&timetableTypeSelected=1e042cb1-547d-41d4-ae93-a1f2c3d34538&searchText=K-";
 
 async function main() {
     console.log("Collecting session identities (browser will open)…");
@@ -30,43 +30,46 @@ async function main() {
         updates.push({ id, sessionIdentity });
     }
 
-    console.log(updates);
+    fs.writeFileSync("../sessionIdentities.json", JSON.stringify(updates, null, 4), "utf8");
+    console.log(`Saved ${updates.length} session identities to sessionIdentities.json`);
+//     }
 
-    // console.log(`Matched ${updates.length} identities to existing Rooms rows`);
+//     console.log(`Matched ${updates.length} identities to existing Rooms rows`);
 
-    // const requestConfig = {
-    //     headers: {
-    //         "Content-Type": "application/json",
-    //         "X-Api-Key": HASURAGRES_API_KEY,
-    //     },
-    // };
+//     const requestConfig = {
+//         headers: {
+//             "Content-Type": "application/json",
+//             "X-Api-Key": HASURAGRES_API_KEY,
+//         },
+//     };
 
-    // console.time("Updating session identities");
+//     console.time("Updating session identities");
 
-    // if (updates.length === 0) {
-    //     console.warn("No matching rooms to update — skipping DB write");
-    // } else {
-    //     await axios.post(
-    //         `${HASURAGRES_URL}/batch_insert`,
-    //         [
-    //             {
-    //                 metadata: {
-    //                     table_name: "Rooms",
-    //                     columns: ["id", "sessionIdentity"],
-    //                     write_mode: "update",
-    //                     dryrun: DRYRUN,
-    //                 },
-    //                 payload: updates,
-    //             },
-    //         ],
-    //         requestConfig
-    //     );
-    // }
+//     if (updates.length === 0) {
+//         console.warn("No matching rooms to update — skipping DB write");
+//     } else {
+//         await axios.post(
+//             `${HASURAGRES_URL}/batch_insert`,
+//             [
+//                 {
+//                     metadata: {
+//                         table_name: "Rooms",
+//                         columns: ["id", "sessionIdentity"],
+//                         write_mode: "update",
+//                         dryrun: DRYRUN,
+//                     },
+//                     payload: updates,
+//                 },
+//             ],
+//             requestConfig
+//         );
+//     }
 
-    // console.timeEnd("Updating session identities");
+//     console.timeEnd("Updating session identities");
 
 
-    // console.log("Done");
+//     console.log("Done");
+// }
 }
 
 main().catch(err => {
