@@ -1,4 +1,5 @@
 import * as XLSX from "xlsx";
+import fs from "fs";
 import { BookingsExcelRow } from "./types";
 
 const decodeXlsx = (path: string): BookingsExcelRow[] => {
@@ -20,6 +21,9 @@ const decodeXlsx = (path: string): BookingsExcelRow[] => {
       allocated_location_name: row["Allocated Location Name"],
     };
   });
+
+  // Delete the file after reading it
+  fs.unlinkSync(path);
 
   return bookingRows;
 };

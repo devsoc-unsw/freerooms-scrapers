@@ -1,31 +1,11 @@
 
 import fs from "fs";
-import { Browser, chromium, Page } from "playwright";
+import fetchXlsx from "./fetchXlsx";
+import decodeXlsx from "./decodeXlsx";
+import { BookingsExcelRow, RawRoomBooking, UngroupedRoomBooking } from "./types";
 
 const TT_URL = "https://publish.sit1.unsw.edu.au/timetables?date=2026-02-16&view=week&timetableTypeSelected=1e042cb1-547d-41d4-ae93-a1f2c3d34538&selections=1e042cb1-547d-41d4-ae93-a1f2c3d34538__";
 const BATCH_SIZE = 20;
-
-const fetchXlsx = async (url: string, filename: string) => {
-    // Setup page and go to url
-    const browser: Browser = await chromium.launch({ headless: false });
-    const page: Page = await browser.newPage();
-    
-    try {
-        await page.goto(url);
-        // Get click excel button
-        const downloadPromise = page.waitForEvent("download");
-        await page.waitForSelector(".e-excel-export button");
-        await page.waitForSelector(".e-appointment-details div");
-        await page.click(".e-excel-export button");
-        const download = await downloadPromise;
-      
-        await download.saveAs(`${filename}.xlsx`);
-    } catch (error) {
-        console.error(`Error fetching ${url}: ${error}`);
-    } finally {
-        await browser.close();
-    }
-  };
 
 const scrapeTTRooms = async () => {
     const sessionIdentitiesRaw = fs.readFileSync("../sessionIdentities.json", "utf8");
@@ -40,6 +20,20 @@ const scrapeTTRooms = async () => {
         try {
             setTimeout(async () => {
                 await fetchXlsx(url, `./${i}.xlsx`);
+                const ttBookings = decodeXlsx(`./${i}.xlsx`);
+                const bookings: RawRoomBooking[] = [];
+
+                for (const booking of ttBookings) {
+                    bookings.push({
+                        name: booking.name,
+                        day: booking.day,
+                        start: booking.start_time,
+                        weekPattern: 0,
+                        roomId: booking.allocated_location_name.split('-')[0].trimEnd(),
+                        end: booking.end_time,
+                    });
+                }
+
             }, 3000);
         } catch (error) {
             console.log(`Continuing with next batch...`);
