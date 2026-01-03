@@ -1,0 +1,1838 @@
+[
+    {
+        "Room": "K-B16-LG01 - Col LG01",
+        "Identity": "6c9102c5-c2ba-ff7d-93a0-22c5abaea1eb"
+    },
+    {
+        "Room": "K-B16-LG02 - Col LG02 - Hybrid",
+        "Identity": "ba288364-4871-a499-28a8-f5f3e370b53b"
+    },
+    {
+        "Room": "K-B16-LG03 - ColomboThA",
+        "Identity": "326a5b78-9bd3-b27f-ce50-6997c06e4f10"
+    },
+    {
+        "Room": "K-B16-LG04 - ColomboThB",
+        "Identity": "b6944c8a-426b-4f21-bccb-e75a4c1cac75"
+    },
+    {
+        "Room": "K-B16-LG05 - ColomboThC - Hybrid",
+        "Identity": "e5061bb2-282a-eecf-461b-4ec7ec832c94"
+    },
+    {
+        "Room": "K-C20-103 - MorvB 103",
+        "Identity": "6f3c93b4-d4ad-8dc0-640d-3ae376e70fcd"
+    },
+    {
+        "Room": "K-C20-105 - MorvB 105",
+        "Identity": "bfb99335-fa9a-8d62-4567-5904c8056bd1"
+    },
+    {
+        "Room": "K-C20-106 - MorvB 106",
+        "Identity": "f68237f7-7e25-62c5-60e5-5982892dc34f"
+    },
+    {
+        "Room": "K-C20-G3 - MorvB G3",
+        "Identity": "c3d18f7c-3368-64a7-0f1a-4a32d7800e1c"
+    },
+    {
+        "Room": "K-C20-G4 - MorvB G4",
+        "Identity": "3a0db059-c177-988f-748f-23766e0dd3c9"
+    },
+    {
+        "Room": "K-C20-G5 - MorvB G5",
+        "Identity": "9dbc0d8d-5cb2-f040-6043-75a21522a2ac"
+    },
+    {
+        "Room": "K-C20-G6 - MorvB G6",
+        "Identity": "e127f7fd-b69a-f00d-b159-bb198a04463c"
+    },
+    {
+        "Room": "K-C20-LG09 - MorvB LG09",
+        "Identity": "c67010cf-dacb-d8f1-da77-5a7a17777b55"
+    },
+    {
+        "Room": "K-C20-LG2 - MorvB LG2",
+        "Identity": "48e8d7f1-39e8-e7d3-662a-4c6194bd342d"
+    },
+    {
+        "Room": "K-C20-LG28 - MorvB LG28",
+        "Identity": "37dfd3ff-9c60-e946-2ac5-7e3ee91954f3"
+    },
+    {
+        "Room": "K-C20-LG30 - MorvB LG30",
+        "Identity": "b9599534-e1d0-4d74-0cc2-f38f0bbb55bd"
+    },
+    {
+        "Room": "K-C24-G17 - Clancy Aud - Hybrid",
+        "Identity": "b5347e67-ee95-193d-e07b-0675bb6ec645"
+    },
+    {
+        "Room": "K-C27-110 - ExPhysGym",
+        "Identity": "e6a099e0-93c6-95ee-85d0-63816d431931"
+    },
+    {
+        "Room": "K-C27-111 - ExPhysLab",
+        "Identity": "d89e758a-a7ba-44b2-7de3-a38825f4737f"
+    },
+    {
+        "Room": "K-C27-115 - Wurth 115 - Hybrid",
+        "Identity": "f56a0efa-209a-d2cc-0c64-e966c7f072de"
+    },
+    {
+        "Room": "K-C27-116 - Wurth 116 - Hybrid",
+        "Identity": "646f8a1f-93b7-4d45-7108-3fe3b60c431d"
+    },
+    {
+        "Room": "K-C27-120 - Wurth 120 - Hybrid",
+        "Identity": "f0e84c3f-89b2-f720-6de5-6b4de436ce0b"
+    },
+    {
+        "Room": "K-C27-122 - Wurth 122",
+        "Identity": "0eee8a8f-3cd6-b451-bae8-402f1d7ed774"
+    },
+    {
+        "Room": "K-C27-123 - Wurth 123",
+        "Identity": "2639cf22-c18d-6122-0d4e-672ed9951a87"
+    },
+    {
+        "Room": "K-C27-G01 - Wurth G01 - Hybrid",
+        "Identity": "10a6b71e-6c49-6052-8853-d36d0c1a82f9"
+    },
+    {
+        "Room": "K-C27-G02 - Wurth G02 - Hybrid",
+        "Identity": "a7fd5240-5863-5eb4-e1e2-279e5c463071"
+    },
+    {
+        "Room": "K-C27-G06 - Wurth G06 - Hybrid",
+        "Identity": "eab5b053-d169-79a1-cd1f-81bfba983ad7"
+    },
+    {
+        "Room": "K-C27-G07 - Wurth G07 - Hybrid",
+        "Identity": "3235327e-3eb7-761f-0723-61c4b8458cad"
+    },
+    {
+        "Room": "K-C27-G08 - Wurth G08",
+        "Identity": "d2742991-9c66-42ad-ab47-53490c03e6d5"
+    },
+    {
+        "Room": "K-C27-G10 - Wurth G10",
+        "Identity": "05740305-a189-385c-e8af-a9fb17a67a4f"
+    },
+    {
+        "Room": "K-C27-G11 - Wurth G11",
+        "Identity": "b4c51708-f388-3d89-b1c0-c3b521e5d870"
+    },
+    {
+        "Room": "K-C27-G12 - Wurth G12",
+        "Identity": "1c36414a-2d6c-217f-7da4-5e82231c178b"
+    },
+    {
+        "Room": "K-C27-G13 - Wurth G13",
+        "Identity": "82ec5358-238d-a4a7-7a3b-47e739f7adb7"
+    },
+    {
+        "Room": "K-C27-G14 - Wurth G14",
+        "Identity": "2c26d5c0-6192-3fc0-d984-5fa0891db179"
+    },
+    {
+        "Room": "K-C27-G15 - Wurth G15",
+        "Identity": "89e46531-5749-7b23-b272-1a3818c810df"
+    },
+    {
+        "Room": "K-C27-G17 - WurthG17 - Hybrid",
+        "Identity": "3848e72f-aaa8-fdf8-6409-29a8f4b73d85"
+    },
+    {
+        "Room": "K-C27-G18 - Wurth G18",
+        "Identity": "37c513d8-9362-2bf6-055e-b10e9cba7dfc"
+    },
+    {
+        "Room": "K-C27-G30 - Wurth G30",
+        "Identity": "d0c47b43-f608-94ce-055a-b9b95fcdf3a6"
+    },
+    {
+        "Room": "K-C27-G31 - Wurth G31",
+        "Identity": "da4da913-7e19-c0c3-b584-7e0366e25989"
+    },
+    {
+        "Room": "K-C27-G39 - Cl Rm G39",
+        "Identity": "f1fa3e23-ad77-659e-2e5b-6008d7ec689e"
+    },
+    {
+        "Room": "K-C27-LG02 - WurthLG02 - Hybrid",
+        "Identity": "ace38688-3da3-b481-8e3e-85f48e2ac527"
+    },
+    {
+        "Room": "K-C27-LG03 - WurthLG03 - Hybrid",
+        "Identity": "39998310-d97d-ffe8-885e-de0662e6b82c"
+    },
+    {
+        "Room": "K-D16-G01 - Gold G01",
+        "Identity": "7bc29092-8c37-a79b-1390-7dd8f208a7dd"
+    },
+    {
+        "Room": "K-D16-G02 - Gold G02",
+        "Identity": "350d786d-084d-8b16-922f-6abb66ca2d32"
+    },
+    {
+        "Room": "K-D16-G03 - Gold G03 - Hybrid",
+        "Identity": "80a131e2-c5c6-b364-2c9b-02cd273aef90"
+    },
+    {
+        "Room": "K-D16-G04 - Gold G04",
+        "Identity": "3bef2bf4-c4bb-0330-647c-c9c5f16c18c8"
+    },
+    {
+        "Room": "K-D16-G05 - Gold G05",
+        "Identity": "adbd3aa5-5c88-0e77-02d5-b99faf3665b5"
+    },
+    {
+        "Room": "K-D16-G06 - Gold G06",
+        "Identity": "79c754ff-fc3d-e2ed-7144-03992591baf8"
+    },
+    {
+        "Room": "K-D16-G07 - Gold G07",
+        "Identity": "3541cf7a-0596-f318-0f29-aad360ecc2d4"
+    },
+    {
+        "Room": "K-D16-G09 - Gold G09 - Hybrid",
+        "Identity": "54ca8f21-eb1f-5956-3240-eb5cf7396a78"
+    },
+    {
+        "Room": "K-D23-201 - MathewsThA - Hybrid",
+        "Identity": "aadc21ef-02af-33d2-3c61-10929f8db585"
+    },
+    {
+        "Room": "K-D23-203 - MathewsThB - Hybrid",
+        "Identity": "2127c2cf-6ac6-256d-ac3e-15140376d64a"
+    },
+    {
+        "Room": "K-D23-303 - MathewsThC - Hybrid",
+        "Identity": "9176c2e9-0cfc-7ce4-0186-ea6a53ff263b"
+    },
+    {
+        "Room": "K-D23-304 - MathewsThD - Hybrid",
+        "Identity": "6e26567a-f26e-cf8e-5991-3475365776e6"
+    },
+    {
+        "Room": "K-D26-102 - TchLab 10",
+        "Identity": "bd78b189-6a0e-2e03-e153-d57b82e30e6f"
+    },
+    {
+        "Room": "K-D26-103 - AnatLab8A",
+        "Identity": "0cb8d831-0bac-8021-995d-b1cb48fd37e0"
+    },
+    {
+        "Room": "K-D26-106 - AnatLab7",
+        "Identity": "6b89bb63-c243-a410-0d04-615c44f683f3"
+    },
+    {
+        "Room": "K-D26-110 - AnatLab8B",
+        "Identity": "2e3364a0-34f7-86c3-2c44-919c8e27a6f6"
+    },
+    {
+        "Room": "K-D26-G01 - TchLab 2",
+        "Identity": "6c2aa987-64b1-f627-44d7-3c89cbf94483"
+    },
+    {
+        "Room": "K-D26-G04 - TchLab 1",
+        "Identity": "60f58b4c-4700-241a-4210-5db477ac0a4a"
+    },
+    {
+        "Room": "K-D26-G07 - BioSci G07",
+        "Identity": "21ac415b-f76c-bb14-6f89-b914456af825"
+    },
+    {
+        "Room": "K-D26-G29 - Biosc G29",
+        "Identity": "b72d9628-6012-9800-9ff2-f59471e90af5"
+    },
+    {
+        "Room": "K-D8-STD - Studio One",
+        "Identity": "dfb00d84-6ff9-4046-e2b5-8c138577e446"
+    },
+    {
+        "Room": "K-D8-THTR - Io Myers Studio",
+        "Identity": "5c9add21-11f5-775a-7d07-ec376e12c328"
+    },
+    {
+        "Room": "K-E10-104 - MetMicroMS",
+        "Identity": "6e099f28-e4a9-e8c8-6433-8e964bd66a54"
+    },
+    {
+        "Room": "K-E10-107 - MetPolMSE",
+        "Identity": "2f7981d2-8b61-be03-7967-bb0b98e67f0c"
+    },
+    {
+        "Room": "K-E10-110 - MetCutMSE",
+        "Identity": "35b2aef0-3b1a-397b-0a2a-b1bdd4b9f1a5"
+    },
+    {
+        "Room": "K-E10-111 - FnacMSE111",
+        "Identity": "5e441ca0-0665-7fe9-7cce-bb939f5315e8"
+    },
+    {
+        "Room": "K-E10-113 - MechTestMS",
+        "Identity": "69638c15-120f-2e2d-efc0-0dc4ce822758"
+    },
+    {
+        "Room": "K-E10-123 - CompLabMSE",
+        "Identity": "3227895e-6b87-7f1b-6864-746d3917c4b3"
+    },
+    {
+        "Room": "K-E10-125 - TchLbMS125",
+        "Identity": "273361d2-9ad2-50a0-8e88-41475283352c"
+    },
+    {
+        "Room": "K-E10-127 - TchLbMS127",
+        "Identity": "182861b5-74f1-8b68-9559-734c2206b3cf"
+    },
+    {
+        "Room": "K-E10-129 - TchLbMS129",
+        "Identity": "6913d09d-a194-7903-a914-075d2ed6cf3c"
+    },
+    {
+        "Room": "K-E10-131 - TchLbMS131",
+        "Identity": "5332ec0a-c5a8-dc41-9a7f-a95bac52c001"
+    },
+    {
+        "Room": "K-E10-433 - MatScLab 433",
+        "Identity": "b2c44cac-5846-0095-dcdb-821c200b107b"
+    },
+    {
+        "Room": "K-E10-G12 - DemoMSE",
+        "Identity": "981ad727-5ee7-55e7-5a1e-4d081b7328b9"
+    },
+    {
+        "Room": "K-E10-G14 - DemoMSE",
+        "Identity": "6099727c-adc0-cd16-ba3f-fd760d9cc0ca"
+    },
+    {
+        "Room": "K-E12-105 - BUS 105 - Hybrid",
+        "Identity": "61f18048-e850-98c1-b57a-9ee375e2a096"
+    },
+    {
+        "Room": "K-E12-107 - BUS 107",
+        "Identity": "946d5726-54d5-9194-49c4-00a2e8fe65a3"
+    },
+    {
+        "Room": "K-E12-114 - BUS 114",
+        "Identity": "472e611c-af7f-7f80-b401-1fe3154ff50a"
+    },
+    {
+        "Room": "K-E12-115 - BUS 115 - Hybrid",
+        "Identity": "f46cca02-677a-8a60-cc41-beac8c6cfb61"
+    },
+    {
+        "Room": "K-E12-118 - BUS 118",
+        "Identity": "59868204-13f4-1e11-3762-86afabbf1734"
+    },
+    {
+        "Room": "K-E12-119 - BUS 119 - Hybrid",
+        "Identity": "54137d79-ab42-a922-419a-e68de8910f51"
+    },
+    {
+        "Room": "K-E12-130 - BUS 130 - Hybrid",
+        "Identity": "45171f54-e4e7-337f-9f90-f13c68bc6705"
+    },
+    {
+        "Room": "K-E12-205 - BUS 205 - Hybrid",
+        "Identity": "3dbe2db4-6c0f-6a31-b521-6e9c9f0f33fe"
+    },
+    {
+        "Room": "K-E12-207 - BUS 207",
+        "Identity": "e85d9c0a-8934-8661-12a3-6f7d94ef4c5c"
+    },
+    {
+        "Room": "K-E12-215 - BUS 215",
+        "Identity": "e173e704-780b-cd15-5959-8a287e3c3961"
+    },
+    {
+        "Room": "K-E12-216 - BUS 216 - Hybrid",
+        "Identity": "e0bbc79f-a03d-1ef7-2dda-5071e33e566b"
+    },
+    {
+        "Room": "K-E12-219 - BUS 219",
+        "Identity": "25ab8f4e-4008-b4ed-684f-7122c1fbf441"
+    },
+    {
+        "Room": "K-E12-220 - BUS 220 - Hybrid",
+        "Identity": "8446b31f-d21e-54bf-5921-88115d472a91"
+    },
+    {
+        "Room": "K-E12-232 - BUS 232 - Hybrid",
+        "Identity": "980524ca-61a2-be7e-e648-1906b4fabbf3"
+    },
+    {
+        "Room": "K-E12-G21 - BUS G21 IL",
+        "Identity": "6b26793e-5a7e-9cbf-afc1-5a8d56d2ae6f"
+    },
+    {
+        "Room": "K-E12-G23 - BUS G23",
+        "Identity": "f854b766-186a-7cdb-1bf1-6a418d829162"
+    },
+    {
+        "Room": "K-E12-G24 - BUS G24",
+        "Identity": "f738039b-41c5-f540-f57f-00cc3d336d1c"
+    },
+    {
+        "Room": "K-E12-G26 - BUS G26",
+        "Identity": "63594811-c7f6-daa8-d419-0b7e04a0623c"
+    },
+    {
+        "Room": "K-E15-1001 - Quad 1001",
+        "Identity": "77a45a04-a289-b91d-4564-35f56d273e6e"
+    },
+    {
+        "Room": "K-E15-1027 - MacauleyTh - Hybrid",
+        "Identity": "62a7fba1-2dcc-f224-3a7d-fd239f594d13"
+    },
+    {
+        "Room": "K-E15-1042 - Quad 1042",
+        "Identity": "67e6c518-6063-4a2f-dda9-18db573185f1"
+    },
+    {
+        "Room": "K-E15-1043 - Quad 1043 - Hybrid",
+        "Identity": "19c8c498-dc9d-ccb3-8d7f-eb6720cc8a5e"
+    },
+    {
+        "Room": "K-E15-1045 - Quad 1045",
+        "Identity": "8ffcbc40-7ed7-7f4c-7be2-14924348253b"
+    },
+    {
+        "Room": "K-E15-1046 - Quad 1046",
+        "Identity": "c39e757d-6a98-529c-9358-4ac933d47a6c"
+    },
+    {
+        "Room": "K-E15-1047 - Quad 1047",
+        "Identity": "bd915519-6b5f-095f-7221-2dca44659fe2"
+    },
+    {
+        "Room": "K-E15-1048 - Quad 1048",
+        "Identity": "c177bd53-1dd9-e249-2ed3-ac0afb67d338"
+    },
+    {
+        "Room": "K-E15-1049 - Quad 1049",
+        "Identity": "d4708c94-1b04-099c-7306-f7f261c4e5ce"
+    },
+    {
+        "Room": "K-E15-2082 - Quad 2082",
+        "Identity": "42768455-f993-a052-722e-08798cb210a4"
+    },
+    {
+        "Room": "K-E15-3054 - Quad 3054",
+        "Identity": "42344761-5841-5264-e366-30af9511f834"
+    },
+    {
+        "Room": "K-E15-G021 - Quad G021",
+        "Identity": "0dc65588-7337-55ec-e1d8-9f65387be7f5"
+    },
+    {
+        "Room": "K-E15-G025 - Quad G025 - Hybrid",
+        "Identity": "8ec9be3b-2d4d-468e-8fb5-12673b096ed2"
+    },
+    {
+        "Room": "K-E15-G026 - Quad G026 - Hybrid",
+        "Identity": "f779f61b-d5af-9b7e-b712-e8f987f4cde2"
+    },
+    {
+        "Room": "K-E15-G027 - Quad G027 - Hybrid",
+        "Identity": "2a81433d-ab26-e4a9-7112-6592c5b7599d"
+    },
+    {
+        "Room": "K-E15-G031 - Quad G031",
+        "Identity": "41d8554e-fb82-9bd8-2474-c947f0ab7529"
+    },
+    {
+        "Room": "K-E15-G032 - Quad G032",
+        "Identity": "58bde621-54f0-9713-8793-5377091dd538"
+    },
+    {
+        "Room": "K-E15-G033 - Quad G033",
+        "Identity": "76b170fd-d6d7-7995-15c8-776eb21f1099"
+    },
+    {
+        "Room": "K-E15-G034 - Quad G034 - Hybrid",
+        "Identity": "d8a638d6-d27e-e59c-2f02-6b56c02a3d21"
+    },
+    {
+        "Room": "K-E15-G040 - Quad G040",
+        "Identity": "fd9fa47a-9762-bba7-c0c8-34a1cb28c288"
+    },
+    {
+        "Room": "K-E15-G042 - Quad G042",
+        "Identity": "d0d8d55b-7358-3636-305a-75ddadc10613"
+    },
+    {
+        "Room": "K-E15-G044 - Quad G044",
+        "Identity": "cce2a290-ed68-e6a4-e8bf-fddf7656686b"
+    },
+    {
+        "Room": "K-E15-G045 - Quad G045",
+        "Identity": "f77428b0-96b1-a9e4-499f-58ce42189746"
+    },
+    {
+        "Room": "K-E15-G046 - Quad G046",
+        "Identity": "78b55df3-7332-8b2e-c519-2846202747c4"
+    },
+    {
+        "Room": "K-E15-G047 - Quad G047",
+        "Identity": "361fd97b-020d-140e-5295-ec192b41eb03"
+    },
+    {
+        "Room": "K-E15-G048 - Quad G048",
+        "Identity": "d50ae59c-de7d-1361-3221-a121d8da769c"
+    },
+    {
+        "Room": "K-E15-G052 - Quad G052",
+        "Identity": "46f7b9ad-cf8b-adf0-378b-657735cd28aa"
+    },
+    {
+        "Room": "K-E15-G053 - Quad G053 - Hybrid",
+        "Identity": "6a90c0c8-89c9-1ad3-7d04-efd8dfc2e034"
+    },
+    {
+        "Room": "K-E15-G054 - Quad G054",
+        "Identity": "1c870856-6cf5-3df4-1a64-2f81c1027119"
+    },
+    {
+        "Room": "K-E15-G055 - Quad G055",
+        "Identity": "c474359f-0bbd-4a5f-d509-cfba72f17ca5"
+    },
+    {
+        "Room": "K-E19-103 - Oshane 103 - Hybrid",
+        "Identity": "ea14c5d6-87b9-b8d4-de43-67fad348ee69"
+    },
+    {
+        "Room": "K-E19-104 - Oshane 104 - Hybrid",
+        "Identity": "bad73d3c-343e-a076-c413-c922552fb08d"
+    },
+    {
+        "Room": "K-E19-105 - Oshane 105 - Hybrid",
+        "Identity": "21e7bed8-b747-d970-33af-e5a978681ff4"
+    },
+    {
+        "Room": "K-E19-G02 - Oshane G02 - Hybrid",
+        "Identity": "f76ffeea-966e-4591-7f26-7c020aa5a1ad"
+    },
+    {
+        "Room": "K-E19-G03 - Oshane G03 - Hybrid",
+        "Identity": "8dd77bdb-6acd-b631-a9fa-60a783934d9b"
+    },
+    {
+        "Room": "K-E19-G04 - Oshane G04 - Hybrid",
+        "Identity": "150ec75c-8a32-95a6-b69a-78ef0bfeb848"
+    },
+    {
+        "Room": "K-E19-G05 - Oshane G05 - Hybrid",
+        "Identity": "c253fca8-60bb-c5e7-353e-39413b4abd9e"
+    },
+    {
+        "Room": "K-E19-G06 - Oshane G06 - Hybrid",
+        "Identity": "f769b0c3-2529-3064-e3ef-1915da420577"
+    },
+    {
+        "Room": "K-E26-1101 - TchLab 11",
+        "Identity": "94062866-81a0-f0c6-8a35-b950ea7845bf"
+    },
+    {
+        "Room": "K-E26-1102 - TchLab 12",
+        "Identity": "f4331ded-8985-511f-f9bf-2e760f6905ce"
+    },
+    {
+        "Room": "K-E26-G001 - TchLab 3",
+        "Identity": "e089607e-0fd9-03eb-fe2a-4439db8d83d7"
+    },
+    {
+        "Room": "K-E26-G002 - TchLab 4",
+        "Identity": "da8ad74c-ee2e-c3e2-eed5-9fd40e0d12e7"
+    },
+    {
+        "Room": "K-E26-G006 - TchLab 5",
+        "Identity": "0d81fa52-a14b-fd1d-17da-337123d84da7"
+    },
+    {
+        "Room": "K-E26-G007 - TchLab 6",
+        "Identity": "79f90cd1-00b3-32ea-3b16-0f440250e201"
+    },
+    {
+        "Room": "K-E4-103 - SQR 103",
+        "Identity": "8628f999-14e9-40c7-2d81-0fb02e5199da"
+    },
+    {
+        "Room": "K-E4-104 - SQR 104",
+        "Identity": "e3db0b94-c922-88c7-cef9-fc02fffc17df"
+    },
+    {
+        "Room": "K-E4-114 - Sqhouse114",
+        "Identity": "01c362bd-36dd-43fc-bf76-4c06cab33b52"
+    },
+    {
+        "Room": "K-E4-115 - Sqhouse115",
+        "Identity": "dc34c20a-d7ff-bec8-7f59-bc810115ffb4"
+    },
+    {
+        "Room": "K-E4-203 - Sqhouse203",
+        "Identity": "d3c17fab-41b3-bb3b-d8cd-48382efb4584"
+    },
+    {
+        "Room": "K-E4-205 - Sqhouse205",
+        "Identity": "abf5c510-d1d1-4206-0a7b-fe2126bc4854"
+    },
+    {
+        "Room": "K-E4-206 - Sqhouse206",
+        "Identity": "2d42f4c2-3082-ac28-2cae-b0f9e661f8a9"
+    },
+    {
+        "Room": "K-E4-207 - Sqhouse207",
+        "Identity": "19a3c353-175d-f775-2144-98c23872812f"
+    },
+    {
+        "Room": "K-E4-208 - Sqhouse208",
+        "Identity": "28158be9-9714-d49b-48ea-0e41356cba93"
+    },
+    {
+        "Room": "K-E4-211 - Sqhouse211",
+        "Identity": "c9e81a1c-f9da-3fad-d447-cda3a95a1708"
+    },
+    {
+        "Room": "K-E4-214 - Sqhouse214 - Hybrid",
+        "Identity": "dfc3c254-341e-a6f7-20a3-af12dea4b4b7"
+    },
+    {
+        "Room": "K-E4-217 - Sqhouse217",
+        "Identity": "12745c91-d747-3e11-d09f-9b8a90054529"
+    },
+    {
+        "Room": "K-E4-218 - Sqhouse218",
+        "Identity": "aa5fbe65-10fb-ff4d-b2d9-cb446daf6cb0"
+    },
+    {
+        "Room": "K-E4-G14 - SqhouseG14",
+        "Identity": "f04f7c82-6eea-d21a-bb35-5f56cbaf8455"
+    },
+    {
+        "Room": "K-E4-G15 - SqhouseG15",
+        "Identity": "f2b52908-e5b4-901c-74ae-8331dcebaed3"
+    },
+    {
+        "Room": "K-E8-B24 - SEB B24",
+        "Identity": "ac4fa220-e002-ddf2-838a-9c43b3256c10"
+    },
+    {
+        "Room": "K-E8-B25 - SEB B25",
+        "Identity": "7689a777-8994-55b9-f10d-2d5516995b1e"
+    },
+    {
+        "Room": "K-E8-B26 - SEB B26",
+        "Identity": "2e560027-c1e3-0f6a-a7ed-57b608d1560a"
+    },
+    {
+        "Room": "K-E8-B27 - SEB B27",
+        "Identity": "ecbd8c21-4d7d-7659-f0cb-73f1c335d111"
+    },
+    {
+        "Room": "K-E8-G02 - SEB G02 - Hybrid",
+        "Identity": "bb9c3ed7-0e65-eccb-f148-e42c09aff5df"
+    },
+    {
+        "Room": "K-E8-G05 - SEB G05 - Hybrid",
+        "Identity": "cfd3856e-7af4-ac42-46f7-f7bd0450055e"
+    },
+    {
+        "Room": "K-E8-G07 - SEB G07 - Hybrid",
+        "Identity": "c28f5e2d-8da1-61aa-9fa0-c109bb285e32"
+    },
+    {
+        "Room": "K-F10-113A - Griff 113A",
+        "Identity": "e37b6ec7-8de4-333f-6708-30654c280341"
+    },
+    {
+        "Room": "K-F10-131 - Griff 131",
+        "Identity": "256641c0-6e5a-3a0b-f2ce-e2ce9cfb0927"
+    },
+    {
+        "Room": "K-F10-133 - Griff 133",
+        "Identity": "0421226b-ca95-4314-749d-004cbdd10298"
+    },
+    {
+        "Room": "K-F10-162 - Griff 162",
+        "Identity": "5697a02b-833c-eacc-2780-62db833e291e"
+    },
+    {
+        "Room": "K-F10-165 - Griff 165",
+        "Identity": "d89cfd00-37f5-516a-af0c-f746643b065a"
+    },
+    {
+        "Room": "K-F10-262 - Griff 262",
+        "Identity": "536f39c9-7656-7c92-6812-4f64aadac833"
+    },
+    {
+        "Room": "K-F10-713 - Griff 713",
+        "Identity": "15f85ab8-2059-d22b-52eb-7fcf84dd502c"
+    },
+    {
+        "Room": "K-F10-M03 - Griff M03",
+        "Identity": "2f542758-b843-55a9-4d52-bd2fa1f9e839"
+    },
+    {
+        "Room": "K-F10-M10 - Griff M10 - Hybrid",
+        "Identity": "dced55e0-a87a-a4d4-bff1-a54b9e719cde"
+    },
+    {
+        "Room": "K-F10-M11 - Griff M11 - Hybrid",
+        "Identity": "28b4f25f-49c6-4ade-e590-89358e0d2d7d"
+    },
+    {
+        "Room": "K-F10-M17 - Griff M17 - Hybrid",
+        "Identity": "462c5bee-b8cd-8f04-d671-7bcc82b344e4"
+    },
+    {
+        "Room": "K-F10-M18 - Griff M18 - Hybrid",
+        "Identity": "2ac08d06-15ad-2f2f-49ba-c5558600bdd6"
+    },
+    {
+        "Room": "K-F12-G05 - Dalton G05",
+        "Identity": "115d542e-291e-22ff-5ed9-5bcea7343996"
+    },
+    {
+        "Room": "K-F13-G09 - Science Th - Hybrid",
+        "Identity": "34edd4f3-ad45-e10a-c91b-50e259eb7dc8"
+    },
+    {
+        "Room": "K-F17-LG3 - Rex Vowels - Hybrid",
+        "Identity": "ac3cb9c1-f74f-4d15-2322-b647fe246936"
+    },
+    {
+        "Room": "K-F20-LG19 - JGoodsLG19",
+        "Identity": "17d9aeb0-a3f8-f2b1-2093-397e1a7ee6c0"
+    },
+    {
+        "Room": "K-F20-LG21 - JGoodsLG21",
+        "Identity": "3f8274d3-6cc6-4249-4dd4-a0403e233202"
+    },
+    {
+        "Room": "K-F21-176A - Lib 176A",
+        "Identity": "585a5bee-8a22-b0db-8a5a-1422485e9ca9"
+    },
+    {
+        "Room": "K-F21-176B - Lib 176B",
+        "Identity": "e54bb9e8-0719-cedb-65c6-804fcabb400c"
+    },
+    {
+        "Room": "K-F23-101 - Mat 101 - Hybrid",
+        "Identity": "30769207-85e0-9768-a070-59f4eca68bc1"
+    },
+    {
+        "Room": "K-F23-102 - Mat 102 - Hybrid",
+        "Identity": "02213186-7fc0-b954-9855-e3b3cb0009c5"
+    },
+    {
+        "Room": "K-F23-103 - Mat 103 - Hybrid",
+        "Identity": "d23ca163-0482-160c-37f4-dfd3cd5c9e68"
+    },
+    {
+        "Room": "K-F23-104 - Mat 104 - Hybrid",
+        "Identity": "55e249bb-5951-25e5-e765-a53425b6231c"
+    },
+    {
+        "Room": "K-F23-105 - Mat 105 - Hybrid",
+        "Identity": "06a242e3-ae5b-4603-bad0-fa28738923ca"
+    },
+    {
+        "Room": "K-F23-106 - Mat 106",
+        "Identity": "80c302ed-38d1-ce0a-966c-9af68c1f9b39"
+    },
+    {
+        "Room": "K-F23-107 - Mat 107",
+        "Identity": "cc941065-2640-1987-ca05-6fcbfd7839ba"
+    },
+    {
+        "Room": "K-F23-108 - Mat 108",
+        "Identity": "1af03a39-57a8-61ae-3293-d8f9b71a6985"
+    },
+    {
+        "Room": "K-F23-203 - Mat 203",
+        "Identity": "22cbaac0-aee8-04cc-8bcc-50e1b6838238"
+    },
+    {
+        "Room": "K-F23-209 - Mat 209",
+        "Identity": "bb7cf94b-5295-2d87-4ab3-b4aba30b2499"
+    },
+    {
+        "Room": "K-F23-209A - Mat 209A",
+        "Identity": "efd69501-a996-c58f-c691-8f8ecb9932eb"
+    },
+    {
+        "Room": "K-F23-211 - Mat 211",
+        "Identity": "7b1f3248-2386-81b2-0a4f-cfaf37ed968c"
+    },
+    {
+        "Room": "K-F23-214 - Mat 214",
+        "Identity": "c9875dbd-926d-e281-c4ac-77931fa5135e"
+    },
+    {
+        "Room": "K-F23-226 - Mat 226",
+        "Identity": "055c8e22-d89b-65c3-40a8-e8ff423873eb"
+    },
+    {
+        "Room": "K-F23-227 - Mat 227",
+        "Identity": "94860a74-8ab6-83b8-d31c-c5cdc2d691d3"
+    },
+    {
+        "Room": "K-F23-228 - Mat 228",
+        "Identity": "763b3510-4e9e-3d96-aad1-27640427a338"
+    },
+    {
+        "Room": "K-F23-230 - Mat 230",
+        "Identity": "0f97a39b-566e-2629-dcf5-531270f2b558"
+    },
+    {
+        "Room": "K-F23-231 - Mat 231",
+        "Identity": "287b1900-91d7-3c54-7459-a80d188743c5"
+    },
+    {
+        "Room": "K-F23-232 - Mat 232",
+        "Identity": "22bf61a0-655a-85bd-9388-8beff76b226d"
+    },
+    {
+        "Room": "K-F23-301 - Mat 301",
+        "Identity": "b9c63b57-c67d-c003-d12b-3e9883e9c6c8"
+    },
+    {
+        "Room": "K-F23-303 - Mat 303",
+        "Identity": "0c0888c8-6627-1ae9-893b-63df51952a30"
+    },
+    {
+        "Room": "K-F23-306 - Mat 306",
+        "Identity": "8c6909ad-8f9a-bf91-a1c5-f94e48d9414b"
+    },
+    {
+        "Room": "K-F23-307 - Mat 307",
+        "Identity": "e24c8cb5-2e98-3076-aa12-e42e90e30360"
+    },
+    {
+        "Room": "K-F23-308 - Mat 308",
+        "Identity": "ab5bd44d-7942-b40c-d4fc-ac270e60e591"
+    },
+    {
+        "Room": "K-F23-309 - Mat 309",
+        "Identity": "6b3bdbde-ea17-fbba-501f-2131646ce273"
+    },
+    {
+        "Room": "K-F23-310 - Mat 310 - Hybrid",
+        "Identity": "ab0d2a5d-7614-923d-3f94-4d72ed7573c1"
+    },
+    {
+        "Room": "K-F23-311 - Mat 311 -Hybrid",
+        "Identity": "bc0dac94-93aa-8b4b-cffe-46661c0a5d55"
+    },
+    {
+        "Room": "K-F23-419 - Mat 419",
+        "Identity": "3d3474c7-24ad-4bd3-8469-6c1aa0e5196d"
+    },
+    {
+        "Room": "K-F23-927 - Mat 927",
+        "Identity": "a4293525-c23f-3e1b-62e1-39c4c9774e91"
+    },
+    {
+        "Room": "K-F25-241 - Sam 241",
+        "Identity": "ad7319e5-91d9-2238-fa68-ab1d5ce2ef08"
+    },
+    {
+        "Room": "K-F25-305 - Sam 305",
+        "Identity": "cfe81521-77c0-ab96-d0d5-d11d68a3b494"
+    },
+    {
+        "Room": "K-F25-306 - Sam 306",
+        "Identity": "4e8de0cb-f7eb-dfd8-a114-f6a33f88d56a"
+    },
+    {
+        "Room": "K-F25-513 - Sam 513",
+        "Identity": "e2643aac-4285-6891-cbf4-6570cab9ae65"
+    },
+    {
+        "Room": "K-F25-518 - Sam 518",
+        "Identity": "1655f8f6-dba5-1a56-7c76-8e70d2f2b630"
+    },
+    {
+        "Room": "K-F31-4111 - IASB-4.111",
+        "Identity": "df4a8758-400e-0ed9-d66e-d5986b3d8c99"
+    },
+    {
+        "Room": "K-F31-4112 - IASB-4.112",
+        "Identity": "393801e7-1066-1a82-e927-9abd85630165"
+    },
+    {
+        "Room": "K-F31-5111 - IASB-5.111",
+        "Identity": "72f7e237-4b09-d4f9-a79d-de8678560005"
+    },
+    {
+        "Room": "K-F31-5112 - IASB-5.112",
+        "Identity": "9c1eca8b-2afb-6aff-4d21-e1d66f9078fa"
+    },
+    {
+        "Room": "K-F31-6111 - IASB-6.111",
+        "Identity": "3d885616-253f-1923-3009-8c78fd9c8b22"
+    },
+    {
+        "Room": "K-F31-6112 - IASB-6.112",
+        "Identity": "7e5b9062-403a-ed00-703a-6643110240af"
+    },
+    {
+        "Room": "K-F31-7111 - IASB-7.111",
+        "Identity": "a63b812f-099f-06c8-c408-db2e000583ed"
+    },
+    {
+        "Room": "K-F31-7112 - IASB-7.112",
+        "Identity": "ade2ed4d-2a89-ddbd-c23d-cd954c8a99ff"
+    },
+    {
+        "Room": "K-F8-101 - Law 101",
+        "Identity": "60cef2c2-8ec7-3fa9-1084-ec991b78afdc"
+    },
+    {
+        "Room": "K-F8-111 - Law 111",
+        "Identity": "b3839c6c-82a5-3a42-aa65-2b025ac3ba67"
+    },
+    {
+        "Room": "K-F8-160 - Law 160 Moot Court",
+        "Identity": "368e7ceb-67db-c654-2a6d-ef66a8fd04ec"
+    },
+    {
+        "Room": "K-F8-162 - Law 162",
+        "Identity": "c7d3d457-441c-e03b-1893-73c73aa30d48"
+    },
+    {
+        "Room": "K-F8-163 - Law 163",
+        "Identity": "87af4936-2524-6d08-7db2-c25df494fd92"
+    },
+    {
+        "Room": "K-F8-201 - Law 201",
+        "Identity": "86066281-e98e-3ccc-f9a0-2c4df39e7b89"
+    },
+    {
+        "Room": "K-F8-202 - Law 202",
+        "Identity": "829c14fc-9102-4dfa-408f-08f434e20ffb"
+    },
+    {
+        "Room": "K-F8-203 - Law 203",
+        "Identity": "06bbfd85-5df7-4ccd-5ce1-cfab970d7e95"
+    },
+    {
+        "Room": "K-F8-275 - Law 275",
+        "Identity": "d13132ae-58d8-e8d1-0168-312bc3d44f94"
+    },
+    {
+        "Room": "K-F8-276 - Law 276",
+        "Identity": "934bf2ac-bcee-5d8e-44dd-300d60439db7"
+    },
+    {
+        "Room": "K-F8-301 - Law 301",
+        "Identity": "f2cb9a25-4142-3ed2-a7d2-f39a0f600bdc"
+    },
+    {
+        "Room": "K-F8-302 - Law 302",
+        "Identity": "567f15a0-36b7-a52b-97c6-267fe4138c47"
+    },
+    {
+        "Room": "K-F8-388 - Law 388",
+        "Identity": "6555d705-51ad-50a2-994c-9e57afdd4fad"
+    },
+    {
+        "Room": "K-F8-389 - Law 389",
+        "Identity": "d0c5a704-4c54-66fd-66e7-2f98fa04cdc6"
+    },
+    {
+        "Room": "K-F8-G02 - Law Th G02 - Hybrid",
+        "Identity": "03f8b8c0-83cb-822b-2596-43f5d1a25f4b"
+    },
+    {
+        "Room": "K-F8-G04 - Law Th G04 - Hybrid",
+        "Identity": "785cb741-8a59-1ffd-de29-d731333aceb9"
+    },
+    {
+        "Room": "K-F8-G17 - Law G17 - Hybrid",
+        "Identity": "fed4a6f7-43ad-99f5-23f0-495f8f58d8ab"
+    },
+    {
+        "Room": "K-F8-G23 - Law Th G23 - Hybrid",
+        "Identity": "272f21fb-dfdc-04dd-5365-90779f40ae35"
+    },
+    {
+        "Room": "K-G14-127 - NSGlob Th - Hybrid",
+        "Identity": "c1b940d0-8217-bf3a-95d2-8232456ae0d0"
+    },
+    {
+        "Room": "K-G14-136 - Webst 136",
+        "Identity": "31680038-b982-e8c8-e91e-d90e10419e5a"
+    },
+    {
+        "Room": "K-G14-137 - Webst 137",
+        "Identity": "56913c3f-2b98-abcb-8152-8d76293ff334"
+    },
+    {
+        "Room": "K-G14-138 - Webst 138",
+        "Identity": "13d32722-05d6-7ad8-0ed8-0716e72ba0f1"
+    },
+    {
+        "Room": "K-G14-139 - Webst 139",
+        "Identity": "c063e343-122f-01b1-6307-7a8f845f47a1"
+    },
+    {
+        "Room": "K-G14-140 - Webst 140",
+        "Identity": "27180e39-595b-ee81-3d4b-d2d83da462ec"
+    },
+    {
+        "Room": "K-G14-141 - Webst 141",
+        "Identity": "ad9dc09f-6aa4-7807-7451-c74445009c4c"
+    },
+    {
+        "Room": "K-G14-250 - Webst 250",
+        "Identity": "71da41ad-c8fb-21bb-4323-4dea1d3b0f2c"
+    },
+    {
+        "Room": "K-G14-251 - Webst 251",
+        "Identity": "bed34c1b-8017-bc4c-4267-bed6d411d1d6"
+    },
+    {
+        "Room": "K-G14-252 - Webst 252",
+        "Identity": "6af127ac-7b6d-261d-b511-821e6eecce45"
+    },
+    {
+        "Room": "K-G14-256 - Webst 256",
+        "Identity": "4956e236-f32f-4941-16f3-3e6549f357f8"
+    },
+    {
+        "Room": "K-G14-302 - Webst 302",
+        "Identity": "945e6fba-4a74-6f58-c96a-5dcf7f33faf4"
+    },
+    {
+        "Room": "K-G14-304 - Webst 304",
+        "Identity": "59816a3c-2928-db53-f90d-b581933df9d1"
+    },
+    {
+        "Room": "K-G14-306 - Webst 306",
+        "Identity": "9370da78-4194-2705-7065-02a2f670e3b6"
+    },
+    {
+        "Room": "K-G14-307 - Webst 307",
+        "Identity": "4ee2d951-efe2-a1f1-c9a6-731f6cb448b0"
+    },
+    {
+        "Room": "K-G14-311A - Webst 311A",
+        "Identity": "f0dc3542-5e6a-4dba-3ff6-cdcae1dc6435"
+    },
+    {
+        "Room": "K-G14-327 - Webst 327",
+        "Identity": "ca65e55a-39f3-0ec6-44c9-1be262546060"
+    },
+    {
+        "Room": "K-G14-331 - Webst 331",
+        "Identity": "893df58b-163a-3e99-dde8-d43d7b92b6d0"
+    },
+    {
+        "Room": "K-G14-332 - Webst 332",
+        "Identity": "620faa57-512f-d890-4331-6236e54f93df"
+    },
+    {
+        "Room": "K-G14-334 - Webst 334",
+        "Identity": "a5b49d2a-a50d-cb25-0712-12471f38acf3"
+    },
+    {
+        "Room": "K-G14-335 - Webst 335",
+        "Identity": "b67fbb8b-86f0-0167-2601-c5f68a275ae8"
+    },
+    {
+        "Room": "K-G14-G15 - Webst G15",
+        "Identity": "ede3087e-1c78-bb37-75bc-eb8790c217b7"
+    },
+    {
+        "Room": "K-G14-G16 - Webst G16",
+        "Identity": "de0d7a60-8594-29cd-0644-929fef20e56e"
+    },
+    {
+        "Room": "K-G14-G17 - Webst G17",
+        "Identity": "e9eaf34b-ae15-9763-af31-9430b964dbe9"
+    },
+    {
+        "Room": "K-G14-G18 - Webst G18 Music Room",
+        "Identity": "5871ca0c-9b34-ce12-0aad-78fe8c6584e5"
+    },
+    {
+        "Room": "K-G15-190 - Webst ThA - Hybrid",
+        "Identity": "dde15282-138d-f442-c844-6f352dbfedda"
+    },
+    {
+        "Room": "K-G15-290 - Webst ThB - Hybrid",
+        "Identity": "539c4438-e38c-c120-0d1c-249294ab8209"
+    },
+    {
+        "Room": "K-G17-108 - ElecEng108",
+        "Identity": "67e0cdfa-1636-1fdb-5716-760144f27513"
+    },
+    {
+        "Room": "K-G17-109 - ElecEng109",
+        "Identity": "7a4e31a1-071d-9c8e-3bd1-f4f996190ed3"
+    },
+    {
+        "Room": "K-G17-113 - ElecEng113",
+        "Identity": "97ff0326-9552-97bd-a308-e7e72ec74293"
+    },
+    {
+        "Room": "K-G17-115 - ElecEng115",
+        "Identity": "df0a6235-87dd-a4b0-d00c-f141db323790"
+    },
+    {
+        "Room": "K-G17-119 - ElecEng119",
+        "Identity": "3babd722-333c-4782-a44b-35697cc312d2"
+    },
+    {
+        "Room": "K-G17-201 - ElecEng201",
+        "Identity": "c29f23c9-70f9-174d-d4f9-635401c376c7"
+    },
+    {
+        "Room": "K-G17-205 - ElecEng205",
+        "Identity": "94350909-c740-2f40-d240-fb2b43af77eb"
+    },
+    {
+        "Room": "K-G17-206 - ElecEng206",
+        "Identity": "a5d5b081-792b-3809-25ee-91c9fac671c1"
+    },
+    {
+        "Room": "K-G17-214 - ElecEng214",
+        "Identity": "608095c4-a071-6fd6-81fa-fc9275a4985b"
+    },
+    {
+        "Room": "K-G17-218 - ElecEng218",
+        "Identity": "382d599a-1be7-e7cc-5d2f-9dcb42f27d7b"
+    },
+    {
+        "Room": "K-G17-219 - ElecEng219",
+        "Identity": "43f39406-047d-54fc-2a6c-62afbbc47d27"
+    },
+    {
+        "Room": "K-G17-224 - ElecEng224",
+        "Identity": "803c858f-c732-3efc-d1e4-41e98a8c8439"
+    },
+    {
+        "Room": "K-G17-225 - ElecEng225",
+        "Identity": "6b6b2a4a-d23a-a782-04ad-2dc178909e02"
+    },
+    {
+        "Room": "K-G17-324 - ElecEng324",
+        "Identity": "5d656840-9715-f42a-fa71-cb8daefa16c5"
+    },
+    {
+        "Room": "K-G17-332 - ElecEng332",
+        "Identity": "09a5dcbe-6d09-9d94-8612-37d0f3bfdaab"
+    },
+    {
+        "Room": "K-G17-426 - ElecEng426",
+        "Identity": "715b6858-bbb7-82e9-8d84-1b046e23558d"
+    },
+    {
+        "Room": "K-G17-G03 - ElecEngG03",
+        "Identity": "9df939c9-f1fd-42df-337f-3f2da561f574"
+    },
+    {
+        "Room": "K-G17-G04 - ElecEngG04",
+        "Identity": "bacbcf79-0190-e697-1035-7a20066a97b7"
+    },
+    {
+        "Room": "K-G17-G09 - ElecEngG09",
+        "Identity": "0dfe6209-89c3-1128-e83f-1ebbcb7b3811"
+    },
+    {
+        "Room": "K-G17-G10 - ElecEngG10",
+        "Identity": "5249ac26-5278-c262-42b7-5e69738f1263"
+    },
+    {
+        "Room": "K-G17-G14 - ElecEngG14",
+        "Identity": "c9adef5f-db0a-fe7d-3898-bec16722dcc2"
+    },
+    {
+        "Room": "K-G17-G22 - ElecEngG22 - Hybrid",
+        "Identity": "484fc83b-b2a5-ce44-07c6-b388e1de631b"
+    },
+    {
+        "Room": "K-G17-G23 - ElecEngG23 - Hybrid",
+        "Identity": "e9f437cf-4a1b-e96d-779c-88154a4e5efc"
+    },
+    {
+        "Room": "K-G19-LG02 - Ritchie Th - Hybrid",
+        "Identity": "5f89a79f-2c9b-4f22-cbe6-2ff2ab650e09"
+    },
+    {
+        "Room": "K-G27-G03 - AGSM G03 - Hybrid",
+        "Identity": "c6be41c7-64a6-4ccb-4af6-23aeb8b0df70"
+    },
+    {
+        "Room": "K-G27-G04 - PioneerTh - Hybrid",
+        "Identity": "6c9e751b-9ae8-a172-6ca0-81e377388f06"
+    },
+    {
+        "Room": "K-G27-G05 - AGSM G05",
+        "Identity": "9871aa84-0f5d-0f62-e770-94e5607b96d1"
+    },
+    {
+        "Room": "K-G27-G06 - AGSM G06 - Hybrid",
+        "Identity": "e30ffa44-12d8-6661-19a7-acf64c49d1e2"
+    },
+    {
+        "Room": "K-G27-G07 - AGSM G07",
+        "Identity": "bd5912e1-f00a-9604-8a42-bf1747d559e4"
+    },
+    {
+        "Room": "K-G27-LG06 - AGSM LG06",
+        "Identity": "fae134d7-2a93-2121-02ea-98b9cad954e7"
+    },
+    {
+        "Room": "K-G27-LG07 - AGSM LG07",
+        "Identity": "29b233fc-cf6a-f9c7-aab3-f3347aa593f4"
+    },
+    {
+        "Room": "K-G6-105 - Block 105",
+        "Identity": "d3659d85-d00c-fc46-8aba-26605a7e72ec"
+    },
+    {
+        "Room": "K-G6-106 - Block 106",
+        "Identity": "167c5c7a-90ce-c0c1-55f4-c66d2bde170c"
+    },
+    {
+        "Room": "K-G6-107 - Block 107",
+        "Identity": "3d6a1ff4-d410-1ef3-4490-8cd736ad0faa"
+    },
+    {
+        "Room": "K-G6-108 - Block 108",
+        "Identity": "8d3cccdb-df3d-31df-9615-7578ef1bdb8c"
+    },
+    {
+        "Room": "K-G6-109 - Block 109",
+        "Identity": "0e91aef7-f49c-b14f-8f99-fba53c507557"
+    },
+    {
+        "Room": "K-G6-110 - Block 110",
+        "Identity": "ef3ad23d-224f-55b5-86f1-0d1943f10a3b"
+    },
+    {
+        "Room": "K-G6-111 - Block 111",
+        "Identity": "de27c2c7-8f32-eb08-787a-a5b036824868"
+    },
+    {
+        "Room": "K-G6-113 - Block 113",
+        "Identity": "22dda4bc-21f7-e53b-5be6-ee458133c1ae"
+    },
+    {
+        "Room": "K-G6-114 - Block 114",
+        "Identity": "8caeb01b-7f4f-7f49-8810-74f9d1cdc3d0"
+    },
+    {
+        "Room": "K-G6-115 - Block 115",
+        "Identity": "e18025b9-055b-5ffa-dd5c-72063acca5df"
+    },
+    {
+        "Room": "K-G6-116 - Block 116",
+        "Identity": "8b01148e-84a7-2eaa-04f8-9fd756e7c9d7"
+    },
+    {
+        "Room": "K-G6-117 - Block 117",
+        "Identity": "8e356172-3d61-7a15-e20d-de7cda64c7ec"
+    },
+    {
+        "Room": "K-G6-118 - Block 118",
+        "Identity": "127e8a89-cd74-2245-54ca-44a13c831925"
+    },
+    {
+        "Room": "K-G6-122 - Block 122",
+        "Identity": "4edb8701-22a9-9bef-5800-be8d3e699cfb"
+    },
+    {
+        "Room": "K-G6-123 - Block 123",
+        "Identity": "51999f1b-404e-0b09-e7e5-603bf8c02fd2"
+    },
+    {
+        "Room": "K-G6-124 - Block 124",
+        "Identity": "d5547d28-faa3-d37f-b8ba-d8d8d731606b"
+    },
+    {
+        "Room": "K-G6-125 - Block 125",
+        "Identity": "1a0cf548-ebd0-b8c0-99f0-3d781b1e3b76"
+    },
+    {
+        "Room": "K-G6-201 - Block 201",
+        "Identity": "84747cef-69ac-f39e-886d-05c68bbd8824"
+    },
+    {
+        "Room": "K-G6-202 - Block 202",
+        "Identity": "9531fff6-395c-b21e-1191-633172ee585b"
+    },
+    {
+        "Room": "K-G6-203 - Block 203",
+        "Identity": "5c804499-57a2-79d3-8b32-affc2b15ea1e"
+    },
+    {
+        "Room": "K-G6-204 - Block 204",
+        "Identity": "146fa292-e4c5-040c-1450-e2f23b93f3c9"
+    },
+    {
+        "Room": "K-G6-205 - Block 205",
+        "Identity": "f6875e73-9dd3-fe44-fb3b-758521bf1959"
+    },
+    {
+        "Room": "K-G6-206 - Block 206",
+        "Identity": "bcc28817-c10a-5935-1def-84b4102031c1"
+    },
+    {
+        "Room": "K-G6-207 - Block 207",
+        "Identity": "c9109ffe-3716-cd39-dcbc-52751eb2d40f"
+    },
+    {
+        "Room": "K-G6-209 - Block 209",
+        "Identity": "810d2e56-a471-ebb7-ab7d-d099e3887927"
+    },
+    {
+        "Room": "K-G6-210 - Block 210",
+        "Identity": "4a4cca1d-1496-2301-28a8-b8e88bf7d9e2"
+    },
+    {
+        "Room": "K-G6-211 - Block 211",
+        "Identity": "8880b5b1-f120-629c-920e-20f849efccd3"
+    },
+    {
+        "Room": "K-G6-212 - Block 212",
+        "Identity": "8d4de1fd-72fc-3f49-3df0-70db0efd7633"
+    },
+    {
+        "Room": "K-G6-213 - Block 213",
+        "Identity": "57787836-249e-8763-286f-ad4a403d1494"
+    },
+    {
+        "Room": "K-G6-214 - Block 214",
+        "Identity": "c7c18cf5-3334-d334-2835-03975fff098f"
+    },
+    {
+        "Room": "K-G6-215 - Block 215",
+        "Identity": "34fef7af-0245-20fb-a54a-7d8d2bd4da4e"
+    },
+    {
+        "Room": "K-G6-216 - Block 216",
+        "Identity": "c4324443-b1ca-61ca-eec3-652c0cbe269f"
+    },
+    {
+        "Room": "K-G6-217 - Block 217",
+        "Identity": "07efc716-af1e-58d9-11e5-222a2cf2aa66"
+    },
+    {
+        "Room": "K-G6-218 - Block 218",
+        "Identity": "c5232991-524d-c1a8-517d-66cd57056fa0"
+    },
+    {
+        "Room": "K-G6-219 - Block 219",
+        "Identity": "6445b843-e5e0-7097-4562-0d2857f197b1"
+    },
+    {
+        "Room": "K-G6-G13 - Block G13",
+        "Identity": "3232e84c-d626-f42b-ec98-9e1e5ba66144"
+    },
+    {
+        "Room": "K-G6-G15 - Block G15",
+        "Identity": "928ca0fe-18f4-e6ff-f770-cf3d99f4f7fd"
+    },
+    {
+        "Room": "K-G6-G2 - Block G2",
+        "Identity": "8f2cace2-8443-06ea-5dc9-d5817f1b6af4"
+    },
+    {
+        "Room": "K-G6-G3 - Block G3",
+        "Identity": "6faa95a4-b82d-9592-fe16-2bd4cd7d4182"
+    },
+    {
+        "Room": "K-G6-G4 - Block G4",
+        "Identity": "dba6e9e0-59e8-a132-e33e-d203cfb62eb8"
+    },
+    {
+        "Room": "K-G6-G5 - Block G5",
+        "Identity": "6347a1dd-a392-3276-0722-fa91f26838c8"
+    },
+    {
+        "Room": "K-G6-G6 - Block G6",
+        "Identity": "2418fd49-ce5e-aefc-a7aa-afebe13c0fb0"
+    },
+    {
+        "Room": "K-H13-1003 - H13-W 1003",
+        "Identity": "8e43f3c4-ee08-249f-5f19-df227592fea6"
+    },
+    {
+        "Room": "K-H13-1004 - H13-W 1004",
+        "Identity": "c2407c4a-e023-8c8a-aa51-742abbffbc93"
+    },
+    {
+        "Room": "K-H13-1005 - H13-W 1005",
+        "Identity": "dc9f610c-b684-3925-f47b-87e9414b168e"
+    },
+    {
+        "Room": "K-H13-1006 - H13-W 1006",
+        "Identity": "41472d6b-77cc-e2f2-52ff-5dbf1b6e27b7"
+    },
+    {
+        "Room": "K-H13-1040 - H13-E 1040",
+        "Identity": "5db6bb1b-0c13-6718-1508-36092f52d980"
+    },
+    {
+        "Room": "K-H13-1041 - H13-E 1041",
+        "Identity": "a65f441b-6e2f-4ac9-a9f2-952ddefbfbb8"
+    },
+    {
+        "Room": "K-H13-1042 - H13-E 1042",
+        "Identity": "4a6dff26-01f2-13d6-625a-8c5aae6d6eef"
+    },
+    {
+        "Room": "K-H13-1043 - H13-E 1043",
+        "Identity": "6f92970d-4fff-ff99-f29f-f79f02570d82"
+    },
+    {
+        "Room": "K-H13-2001 - H13-W 2001",
+        "Identity": "ff5a2f83-c94a-b6be-8230-166ad41d303a"
+    },
+    {
+        "Room": "K-H13-2033 - H13-W 2033",
+        "Identity": "957f796e-58be-27d0-d596-aa53ecb06706"
+    },
+    {
+        "Room": "K-H13-2034 - H13-W 2034",
+        "Identity": "75259387-f116-b4f5-a8cc-0a9acd18225e"
+    },
+    {
+        "Room": "K-H13-2035 - H13-W 2035",
+        "Identity": "ff4f9080-1185-e8eb-5303-52f1201d89eb"
+    },
+    {
+        "Room": "K-H13-2060 - H13-E 2060",
+        "Identity": "3358be75-9af8-62d9-80f5-ff4fb5ebcdb9"
+    },
+    {
+        "Room": "K-H13-2061 - H13-E 2061",
+        "Identity": "bdc1aa9f-2719-101e-2874-54d9594dc605"
+    },
+    {
+        "Room": "K-H13-2062 - H13-E 2062",
+        "Identity": "4169d9f9-79c1-4792-826c-6a00994d1b1d"
+    },
+    {
+        "Room": "K-H13-2063 - H13-E 2063",
+        "Identity": "80c427f1-dda5-92aa-de35-8cddef3e6757"
+    },
+    {
+        "Room": "K-H13-3034 - H13-W 3034",
+        "Identity": "e08b304d-25f7-261a-caad-0073aa97ae12"
+    },
+    {
+        "Room": "K-H13-3035 - H13-W 3035",
+        "Identity": "1af06040-4350-0822-d317-47e33439936a"
+    },
+    {
+        "Room": "K-H13-3036 - H13-W 3036",
+        "Identity": "7b05aab1-c9ef-8af3-d79e-45db5d2116a9"
+    },
+    {
+        "Room": "K-H13-3037 - H13-W 3037",
+        "Identity": "ce87c737-6133-0944-fa08-64cfd98055bf"
+    },
+    {
+        "Room": "K-H13-3085 - H13-E 3085",
+        "Identity": "880cd75e-1545-3ff5-1183-1977f0ddc683"
+    },
+    {
+        "Room": "K-H13-4030 - H13-W 4030",
+        "Identity": "c8d4afa9-83a1-a080-3f30-0800bead8451"
+    },
+    {
+        "Room": "K-H13-4034 - H13-W 4034",
+        "Identity": "b9e06d74-765e-e3d6-43b2-f0dbb3e27bb5"
+    },
+    {
+        "Room": "K-H13-4037 - H13-W 4037",
+        "Identity": "9ff7b832-0577-bef0-f1c4-c3230d5ef1a6"
+    },
+    {
+        "Room": "K-H13-4082 - H13-E 4082",
+        "Identity": "442800d0-9782-0e11-2e24-87b3fa1ac41c"
+    },
+    {
+        "Room": "K-H13-5003 - H13-W 5003",
+        "Identity": "a911a59d-dcc6-0d65-3b25-a591849eba19"
+    },
+    {
+        "Room": "K-H13-5006 - H13-W 5006",
+        "Identity": "c821b5b0-3e48-5b9c-e352-63607b07e033"
+    },
+    {
+        "Room": "K-H13-5007 - H13-W 5007",
+        "Identity": "d5f92df7-fbbf-15e0-4b26-295cea117985"
+    },
+    {
+        "Room": "K-H13-5008 - H13-W 5008",
+        "Identity": "f6904765-1de7-aa6f-3417-d69b974a1844"
+    },
+    {
+        "Room": "K-H13-6001 - H13-W 6001",
+        "Identity": "39cbd49a-f0d3-56cd-356a-e3494ad547e9"
+    },
+    {
+        "Room": "K-H13-6002 - H13-W 6002",
+        "Identity": "3c5a317b-675f-3968-3c35-90360d7221c9"
+    },
+    {
+        "Room": "K-H13-6003 - H13-W 6003",
+        "Identity": "d95a3430-90ee-2514-0a85-b840aeff406e"
+    },
+    {
+        "Room": "K-H13-6004 - H13-W 6004",
+        "Identity": "9f01e36e-761a-3d7e-8811-274b09750a46"
+    },
+    {
+        "Room": "K-H13-6005 - H13-W 6005",
+        "Identity": "f2eeea38-0233-f883-964c-b1fe55763ce9"
+    },
+    {
+        "Room": "K-H13-6007 - H13-W 6007",
+        "Identity": "c9e99aa7-9acc-1f37-8e27-2b435f175748"
+    },
+    {
+        "Room": "K-H13-G001 - H13-W Theatre - Hybrid",
+        "Identity": "c154d4c4-f877-cc88-b36c-8a1ced31235d"
+    },
+    {
+        "Room": "K-H13-G12A - H13-E G12A",
+        "Identity": "f6019a3d-c0f0-dbcb-a4a0-720c4b4a1cc5"
+    },
+    {
+        "Room": "K-H13-G12B - H13-E G12B",
+        "Identity": "52639ce3-06ef-2a2f-29e2-601fe5ddf2d7"
+    },
+    {
+        "Room": "K-H13-G12C - H13-E G12C",
+        "Identity": "9ac2a1cf-cf73-85f2-b2c1-995e7dc0055d"
+    },
+    {
+        "Room": "K-H13-G12D - H13-E G12D - Hybrid",
+        "Identity": "26d36ef3-8e65-2f47-8462-49d0a5d2a829"
+    },
+    {
+        "Room": "K-H13-G13D - H13-E G13D - replaced by G12D",
+        "Identity": "e3a08c8c-95a6-21ec-2f7a-c0b596fdc855"
+    },
+    {
+        "Room": "K-H13-M010 - H13-W M010",
+        "Identity": "7de88946-0ece-0375-c09e-8a2e26524faf"
+    },
+    {
+        "Room": "K-H13-M020 - H13-E M020",
+        "Identity": "145c04fe-f650-7a17-d1ca-9bbcf9a60a6a"
+    },
+    {
+        "Room": "K-H13-M032 - H13-E M032 - Hybrid",
+        "Identity": "6a6ec03e-0441-4411-391a-58fdfcfaaecf"
+    },
+    {
+        "Room": "K-H20-101 - CivEng 101",
+        "Identity": "6d1b1ba6-26e3-9bfb-88b6-2a74951129f2"
+    },
+    {
+        "Room": "K-H20-102 - CivEng 102",
+        "Identity": "ffe1f366-2fe7-7653-1760-dd8c250b7dab"
+    },
+    {
+        "Room": "K-H20-109 - CivEng 109 - Hybrid",
+        "Identity": "6316cb28-024a-8c7c-e7c1-dfeabf432296"
+    },
+    {
+        "Room": "K-H20-201 - CivEng 201",
+        "Identity": "e01048b0-2c56-a3ab-c0fe-a19298695e46"
+    },
+    {
+        "Room": "K-H20-701 - CivEng 701 - Hybrid",
+        "Identity": "2fa9e6da-536a-11b2-0035-a294017c209a"
+    },
+    {
+        "Room": "K-H20-G1 - CivEng G1 - Hybrid",
+        "Identity": "49f04767-a193-71b7-f96c-85fc7e47af13"
+    },
+    {
+        "Room": "K-H20-G6 - CivEng G6",
+        "Identity": "3dde67ee-87bc-8264-3b8c-96ec9d78f578"
+    },
+    {
+        "Room": "K-H20-G8 - CivEng G8",
+        "Identity": "2acf867c-9973-e863-b24c-64b5b669ae61"
+    },
+    {
+        "Room": "K-H22-121 - Vall 121 - Hybrid",
+        "Identity": "01348c9b-82be-9802-960f-fe20d42e8515"
+    },
+    {
+        "Room": "K-H6-G15 - TETB G15",
+        "Identity": "3b5ee82b-f3f5-66c2-2f00-cc2af18d486f"
+    },
+    {
+        "Room": "K-H6-G16 - TETB G16",
+        "Identity": "547d9c81-6fef-036f-cd5f-d577ce5fbe4d"
+    },
+    {
+        "Room": "K-H6-LG03 - TETB LG03 - Hybrid",
+        "Identity": "d3e3b6a1-00a3-75e1-a6ef-184ca6f68f9c"
+    },
+    {
+        "Room": "K-H6-LG05 - TETB LG05",
+        "Identity": "eadf4084-a824-930e-f674-7a9752e263b9"
+    },
+    {
+        "Room": "K-H6-LG07 - TETB LG07",
+        "Identity": "7214dd00-ef04-a736-8a1a-0344358ba0e5"
+    },
+    {
+        "Room": "K-H6-LG09 - TETB LG09",
+        "Identity": "c249ee25-ac32-4a07-ae8e-426813d56412"
+    },
+    {
+        "Room": "K-H6-LG10 - TETB LG10",
+        "Identity": "95f18add-a025-d597-c1ea-7f30950e7897"
+    },
+    {
+        "Room": "K-H6-LG29 - TETB LG29",
+        "Identity": "634b6abd-b0ff-5dca-38a4-0262abc98afc"
+    },
+    {
+        "Room": "K-H6-LG34 - TETB LG34",
+        "Identity": "f486b97a-1e8e-7054-717c-fd8963e5c341"
+    },
+    {
+        "Room": "K-H6-LG35 - TETB LG35",
+        "Identity": "69411bf6-383d-bff5-028a-1ad6ab86ae1c"
+    },
+    {
+        "Room": "K-J12-306 - Newt 306",
+        "Identity": "2b2ea262-6d24-a6ec-0f0f-ee97444bf5bd"
+    },
+    {
+        "Room": "K-J12-307 - Newt 307",
+        "Identity": "1bc7dd0a-f901-7dfb-7322-f47b6dd0e244"
+    },
+    {
+        "Room": "K-J14-G5 - Burrows Th - Hybrid",
+        "Identity": "3e3f224b-7562-5849-7820-adaab4949e4c"
+    },
+    {
+        "Room": "K-J17-101 - Ainswth101",
+        "Identity": "ee913e76-a3bf-54ae-970b-07cfae721870"
+    },
+    {
+        "Room": "K-J17-102 - Ainswth102 - Hybrid",
+        "Identity": "23b1dfd2-1807-e23a-bf55-89fa6cce4341"
+    },
+    {
+        "Room": "K-J17-201 - Ainswth201",
+        "Identity": "624da40d-cd94-a2ff-261d-5f54e1968abf"
+    },
+    {
+        "Room": "K-J17-202 - Ainswth202 - Hybrid",
+        "Identity": "f449e46a-56c5-e507-e062-2cd9146ffbf1"
+    },
+    {
+        "Room": "K-J17-203 - Ainswth203",
+        "Identity": "eb709681-f9e2-eef4-e47e-70f76d88ebd9"
+    },
+    {
+        "Room": "K-J17-204 - Ainswth204",
+        "Identity": "484b13c7-d63f-8f14-9632-526574a2c273"
+    },
+    {
+        "Room": "K-J17-302 - StrngME302",
+        "Identity": "12e5753c-1508-4430-9eb8-1c1de33c6cb9"
+    },
+    {
+        "Room": "K-J17-303 - FluteME303",
+        "Identity": "bfc77667-ac80-0036-fac0-b4c6c9401329"
+    },
+    {
+        "Room": "K-J17-304 - Oboe ME304",
+        "Identity": "64dbd165-e6c5-d500-9369-8cc3ae9ea931"
+    },
+    {
+        "Room": "K-J17-305 - BrassME305",
+        "Identity": "6d364e1e-6df6-1c93-94f2-950329808976"
+    },
+    {
+        "Room": "K-J17-306 - SitarME306",
+        "Identity": "fa2703f4-3804-5de5-5638-05e73ce0897a"
+    },
+    {
+        "Room": "K-J17-307 - KoraME307",
+        "Identity": "0dc51808-f4f3-03dc-b944-bbf3cdc0398f"
+    },
+    {
+        "Room": "K-J17-G01 - AinswthG01",
+        "Identity": "0b75db1e-2862-8789-6620-1e376e8e9de9"
+    },
+    {
+        "Room": "K-J17-G02 - AinswthG02 - Hybrid",
+        "Identity": "c9990af8-312a-1364-bef3-f5e327faad33"
+    },
+    {
+        "Room": "K-J17-G03 - AinswthG03 - Hybrid",
+        "Identity": "3746073c-50b0-32b0-1c05-fe3a27ba9e40"
+    },
+    {
+        "Room": "K-J18-102 - WAnnex 102",
+        "Identity": "f52d7351-1cd7-f5cd-6d04-e5791ac20691"
+    },
+    {
+        "Room": "K-J18-202 - WAnnex202",
+        "Identity": "64270066-6463-62fe-b5e1-270f8c71a007"
+    },
+    {
+        "Room": "K-J18-204 - WAnnex204",
+        "Identity": "0c28dd33-d1d7-d10b-92af-ce243c3bd7f7"
+    },
+    {
+        "Room": "K-J18-212 - WAnnex 212",
+        "Identity": "b5f5bcdd-936f-165c-7bb6-332d70a9ef6b"
+    },
+    {
+        "Room": "K-J18-213 - WAnnex 213",
+        "Identity": "a727ce5f-53a9-8136-79de-fb862ddc3cf0"
+    },
+    {
+        "Room": "K-J18-214G - UTL 214G",
+        "Identity": "73284747-e4e2-fcea-36bb-6fc142788455"
+    },
+    {
+        "Room": "K-J18-214N - UTL 214N",
+        "Identity": "e822a0f8-b911-11f1-a88e-925e2024f388"
+    },
+    {
+        "Room": "K-J18-214S - UTL 214S",
+        "Identity": "602cf401-fe79-933a-bc84-51661c6495b0"
+    },
+    {
+        "Room": "K-K14-19 - PhysicsTh - Hybrid",
+        "Identity": "0c5c646a-0076-ffe8-4466-21fdb7ae9f3c"
+    },
+    {
+        "Room": "K-K14-LG18 - PianoPhysU",
+        "Identity": "cf8306af-1daf-9a05-deec-46db4f87133a"
+    },
+    {
+        "Room": "K-K14-LG19 - OrganPhysU",
+        "Identity": "8bf0404e-cb6a-c8c2-0313-1425159a33ef"
+    },
+    {
+        "Room": "K-K14-LG20 - ClavierPhU",
+        "Identity": "da5a4095-57b7-2401-09ae-93314ba8656f"
+    },
+    {
+        "Room": "K-K15-112 - OMB 112",
+        "Identity": "8a2edff4-4b10-ba4d-af17-8b4cd3f5b021"
+    },
+    {
+        "Room": "K-K15-114 - OMB 114",
+        "Identity": "47c07edc-5bee-69ef-80ed-c2df38e96567"
+    },
+    {
+        "Room": "K-K15-115 - OMB 115",
+        "Identity": "7fb08922-0991-0d36-2e4c-a13cd3d8f92a"
+    },
+    {
+        "Room": "K-K15-142 - OMB 142",
+        "Identity": "ef7ddca7-d5f5-e13b-1051-769b63aa8233"
+    },
+    {
+        "Room": "K-K15-149A - AltoOMB149",
+        "Identity": "a43bd5d8-27e6-d2f9-4dfe-2c77954a3e1c"
+    },
+    {
+        "Room": "K-K15-149B - BassOMB149",
+        "Identity": "01ecf9c3-7023-aa59-e643-4aff5ff46e1b"
+    },
+    {
+        "Room": "K-K15-150 - OMB 150",
+        "Identity": "bbf19347-4adc-2f42-d739-fd6a5cf9598b"
+    },
+    {
+        "Room": "K-K15-151 - OMB151",
+        "Identity": "8434b394-c974-00df-70b8-8dab4eaa0a40"
+    },
+    {
+        "Room": "K-K15-229 - OMB 229 - Hybrid",
+        "Identity": "cb1f5bed-b9d2-52ba-bb34-2b46ba5f8ab9"
+    },
+    {
+        "Room": "K-K15-230 - OMB 230 - Hybrid",
+        "Identity": "c9629721-f42f-e86e-aad3-d0fb14043c34"
+    },
+    {
+        "Room": "K-K15-G31 - OMB G31 - Hybrid",
+        "Identity": "6f6c029f-bd7b-b185-2226-2b2212247827"
+    },
+    {
+        "Room": "K-K15-G32 - OMB G32",
+        "Identity": "0c970056-fc25-4bd2-e657-d4167f61a059"
+    },
+    {
+        "Room": "K-K15-LG21 - OPTM CL",
+        "Identity": "4dec39bd-6ca3-cf7c-f30c-af2216049866"
+    },
+    {
+        "Room": "K-K15-LG46 - OMB LG46",
+        "Identity": "18feaac7-0e54-9a8c-bb04-e7a823a263bd"
+    },
+    {
+        "Room": "K-K17-G05 - HelpK17G05",
+        "Identity": "af34ee53-3b7d-7120-1fbc-7bfae5d92506"
+    },
+    {
+        "Room": "K-K17-G07A - BongoK17G7",
+        "Identity": "5927eb02-96d9-1b12-5c4a-e917bc3b4067"
+    },
+    {
+        "Room": "K-K17-G07B - TablaK17G7",
+        "Identity": "e30be3d4-1ded-0648-d193-72113dba7199"
+    },
+    {
+        "Room": "K-K17-G11 - CybSK17G11",
+        "Identity": "081b549d-d99e-7e54-9df3-882d57260b27"
+    },
+    {
+        "Room": "K-K17-G12 - LyreK17G12",
+        "Identity": "bfcc3817-33d4-bd35-4686-b585eae64fbe"
+    },
+    {
+        "Room": "K-K17-G13 - CHIK17G13",
+        "Identity": "e705a936-ffb3-4a42-0e32-55051f1fa446"
+    },
+    {
+        "Room": "K-K17-G14 - VRK17G14",
+        "Identity": "80f97bdc-a2d3-7c2b-c5e5-1a9a13167f6a"
+    },
+    {
+        "Room": "K-M15-1001 - Myers Thtr - Hybrid",
+        "Identity": "d486d7fc-9b66-97e1-e823-d6741d97cb56"
+    },
+    {
+        "Room": "K-M15-2009 - Myers 2009",
+        "Identity": "c4db5635-745f-6731-d7f3-dc236d8af0e0"
+    },
+    {
+        "Room": "K-M15-3049 - Myers 3049",
+        "Identity": "b414b4bf-39b4-7276-f7ca-f2e3d57c79dc"
+    },
+    {
+        "Room": "K-M15-3050 - Myers 3050",
+        "Identity": "ec76390b-aa6e-387d-de1d-41e7ed9b213f"
+    },
+    {
+        "Room": "K-M15-3051 - Myers 3051",
+        "Identity": "3feb0391-43e9-201d-2705-e51b6cc45490"
+    }
+]
