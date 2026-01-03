@@ -2,7 +2,8 @@ import { Browser, chromium, Page } from "playwright";
 
 const fetchXlsx = async (url: string, filename: string) => {
   // Setup page and go to url
-  const browser: Browser = await chromium.launch({ headless: false });
+  const browser: Browser = await chromium.launch({ headless: false, args: ["--start-maximized"], }
+  );
   const page: Page = await browser.newPage();
   await page.goto(url);
 
