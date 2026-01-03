@@ -26,7 +26,8 @@
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
     "dotenv": "^16.3.1",
-    "playwright": "^1.57.0"
+    "playwright": "^1.57.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "^20.1.7",
