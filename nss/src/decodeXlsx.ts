@@ -25,7 +25,7 @@ const decodeXlsx = (path: string): BookingsExcelRow[] => {
   });
 
   // Delete the file after reading it
-//   fs.unlinkSync(path);
+  //   fs.unlinkSync(path);
 
   return bookingRows;
 };

@@ -1,12 +1,12 @@
-import { Browser, chromium, Page } from "playwright";
+import { chromium } from "playwright";
 
 const fetchXlsx = async (url: string, filename: string) => {
   // Setup page and go to url
-  const browser: Browser = await chromium.launch({ headless: false });
+  const browser = await chromium.launch({ headless: false });
   const zoomedBrowser = await browser.newContext({
     viewport: { width: 1920, height: 1080 },
   });
-  const page: Page = await zoomedBrowser.newPage();
+  const page = await zoomedBrowser.newPage();
   await page.goto(url);
 
   // Get click excel button
