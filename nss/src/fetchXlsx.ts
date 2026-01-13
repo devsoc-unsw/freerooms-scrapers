@@ -4,7 +4,7 @@ import { BOOKING_LOADING_TIMEOUT } from "./config";
 const fetchXlsx = async (url: string, filename: string) => {
   // Setup page and go to url
   console.log("Opening browser");
-  const browser = await chromium.launch({ headless: false });
+  const browser = await chromium.launch({ headless: true });
   const zoomedBrowser = await browser.newContext({
     viewport: { width: 1920, height: 1080 },
   });
