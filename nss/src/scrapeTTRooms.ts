@@ -51,7 +51,7 @@ const scrapeTTRooms = async (): Promise<RoomBooking[]> => {
     });
 };
 
-const getBookings = async (url: string, i: number) => {
+const getBookings = async (url: string, i: number): Promise<RoomBooking[]> => {
   await fetchXlsx(url, `./${i}`);
   const ttBookings = decodeXlsx(`./${i}.xlsx`); // This returns excel booking row type
   const bookings = [];
