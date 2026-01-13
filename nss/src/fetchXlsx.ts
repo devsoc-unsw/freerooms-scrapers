@@ -21,7 +21,15 @@ const fetchXlsx = async (url: string, filename: string) => {
   } catch (error) {
     // Note: If bookings are supposed to show up, tweak loading timeout
     console.log("No bookings shown for", url);
-    return;
+    console.log(
+      "Note: Very low chance this should be happening, please double check theres no bookings via the link. If there is, tweak booking loading timeout"
+    );
+    // Close browser
+    console.log("Closing browser");
+    await zoomedBrowser.close();
+    await browser.close();
+
+    return false;
   }
   console.log("Waiting for download");
   const downloadPromise = page.waitForEvent("download");
@@ -36,6 +44,8 @@ const fetchXlsx = async (url: string, filename: string) => {
   console.log("Closing browser");
   await zoomedBrowser.close();
   await browser.close();
+
+  return true;
 };
 
 export default fetchXlsx;

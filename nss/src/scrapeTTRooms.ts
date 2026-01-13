@@ -52,13 +52,14 @@ const scrapeTTRooms = async (): Promise<RoomBooking[]> => {
 };
 
 const getBookings = async (url: string, i: number): Promise<RoomBooking[]> => {
-  await fetchXlsx(url, `./${i}`);
-  const ttBookings = decodeXlsx(`./${i}.xlsx`); // This returns excel booking row type
   const bookings = [];
 
-  // Call your function here to test and run 'npm run scrape-publish'
-  for (let i = 0; i < ttBookings.length; i++) {
-    bookings.push(parseBookingRow(ttBookings[i]));
+  if (await fetchXlsx(url, `./${i}`)) {
+    const ttBookings = decodeXlsx(`./${i}.xlsx`); // This returns excel booking row type
+    // Call your function here to test and run 'npm run scrape-publish'
+    for (let i = 0; i < ttBookings.length; i++) {
+      bookings.push(parseBookingRow(ttBookings[i]));
+    }
   }
 
   return bookings.flat();
