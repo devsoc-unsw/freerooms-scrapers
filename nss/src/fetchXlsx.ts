@@ -1,4 +1,5 @@
 import { chromium } from "playwright";
+import { BOOKING_LOADING_TIMEOUT } from "./config";
 
 const fetchXlsx = async (url: string, filename: string) => {
   // Setup page and go to url
@@ -15,10 +16,12 @@ const fetchXlsx = async (url: string, filename: string) => {
   try {
     await page.waitForSelector(".e-appointment div", {
       state: "attached",
-      timeout: 10000,
+      timeout: BOOKING_LOADING_TIMEOUT,
     });
   } catch (error) {
+    // Note: If bookings are supposed to show up, tweak loading timeout
     console.log("No bookings shown for", url);
+    return;
   }
   console.log("Waiting for download");
   const downloadPromise = page.waitForEvent("download");
