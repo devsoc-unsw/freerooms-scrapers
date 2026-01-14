@@ -96,13 +96,17 @@ export async function collectSessionIdentities(
     await page.reload({ waitUntil: "domcontentloaded" });
     await page.waitForSelector("mat-list-option", { timeout: 0 });
 
-    const total = await page.evaluate(() => document.querySelectorAll("mat-list-option").length);
-    console.log(`Rooms in list: ${total}`);
-
     const roomMap = new Map<string, string>();
 
     let processed = 0;
-    while (processed < total && processed < maxRooms) {
+    while (processed < maxRooms) {
+        const total = await page.evaluate(() => document.querySelectorAll("mat-list-option").length);
+
+        if (processed >= total) {
+            console.log("No new rooms loaded - stopping.")
+            break;
+        }
+
         const end = Math.min(processed + batchSize, total, maxRooms);
         const batchIndices = Array.from({ length: end - processed }, (_, k) => processed + k);
 

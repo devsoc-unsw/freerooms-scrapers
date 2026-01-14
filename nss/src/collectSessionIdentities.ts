@@ -14,7 +14,7 @@ async function main() {
   const abbrToSession = await collectSessionIdentities(NSS_URL, {
     batchSize: 20,
     maxRooms: Infinity,
-    clickDelayMs: 2,
+    clickDelayMs: 1,
   });
 
   console.log(`Collected ${abbrToSession.size} session identities`);
