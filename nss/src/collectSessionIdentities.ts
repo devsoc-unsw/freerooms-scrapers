@@ -1,6 +1,8 @@
 import fs from "fs";
 import scrapeRooms from "./scrapeRooms";
 import { collectSessionIdentities } from "./sessionCollector";
+import path from 'path';
+
 
 const NSS_URL =
   "https://publish.unsw.edu.au/timetables?date=2025-12-22&view=week&timetableTypeSelected=1e042cb1-547d-41d4-ae93-a1f2c3d34538&searchText=K-";
@@ -10,6 +12,8 @@ async function main() {
 
   const rooms = await scrapeRooms();
   const roomIds = rooms.map((r) => r.id);
+
+  const filePath = path.join(__dirname, '..', 'sessionIdentities.json');
 
   const abbrToSession = await collectSessionIdentities(NSS_URL, {
     batchSize: 20,
@@ -27,7 +31,7 @@ async function main() {
   }
 
   fs.writeFileSync(
-    "../sessionIdentities.json",
+    filePath,
     JSON.stringify(updates, null, 4),
     "utf8"
   );
