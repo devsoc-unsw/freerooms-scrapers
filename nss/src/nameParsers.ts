@@ -4,134 +4,152 @@
  */
 import { NameParser } from "./types";
 
-
 const PARSERS: Record<string, NameParser> = {
   // Matches standard classes
+  // - Starts with the class name, then separator '-'
+  // - A bunch of characters before the next separator '-'
   // - 3 chars form the class type
-  // - A bunch of characters before the separator
-  // - Then the class name
   // Examples:
-  //   TUT/14:1 COMM1150
-  //   LEC/A:2 <13-16> - 2 LEC comb CHEM1811
-  //   LA2/04:1 SOMS1912
-  CLASS:
-  {
-    pattern: /(?<type>[A-Z0-9]{3})[^\u00a0]*\u00a0(?<name>.*)/,
-    parser: (matchGroups) => ({ bookingType: 'CLASS', name: matchGroups['name'] + ' ' + matchGroups['type'] })
+  //   ARTS2871-T3U1-TUT/02:1
+  //   ~COMP9417-T3P1+COMP9417-T3U1-TUT/S8:1
+  CLASS: {
+    pattern: /(?<name>[A-Z]{4}[0-9]{4})-.*-(?<type>[A-Z0-9]{3})/,
+    parser: (matchGroups) => ({
+      bookingType: "CLASS",
+      name: matchGroups["name"] + " " + matchGroups["type"],
+    }),
   },
 
   // Matches Arc society bookings
-  // - Starts with 'StuGrp', then separator
-  // - Name of society
+  // - Starts with * and a date, then separator '-'
+  // - ARC followed by name of society
+  // - Numbers at the end for each distinct booking of soc
   // Examples:
-  //   StuGrp DEBATING-005
-  //   StuGrp ACTUARIALSOC-003
-  SOCIETY:
-  {
-    pattern: /StuGrp[^\u00a0]*\u00a0(?<name>[^-]*)/,
-    parser: (matchGroups) => ({ bookingType: 'SOCIETY', name: matchGroups['name'] })
+  //  *20251103-ARCMEDSOC-003
+  //	*20251105-ARCSTAFF-002
+  SOCIETY: {
+    pattern: /\*\d{8}-ARC(?<name>[A-Z0-9]+)-/,
+    parser: (matchGroups) => ({
+      bookingType: "SOCIETY",
+      name: matchGroups["name"],
+    }),
   },
 
   // Matches society bookings that are done internally
-  // - Starts with 'Misc', then separator
-  // - Followed by * and a date
+  // - Starts with * and a date
   // - ARCSG followed by name of society
   // - Numbers at the end for each distinct booking of soc
   // Examples:
-  //   Misc *20230307-ARCSGCSE-001
-  //   Misc *20230405-ARCSGWOMENINENGINEERING-002
-  INTERNAL_SOCIETY:
-  {
-    pattern: /Misc[^\u00a0]*\u00a0\*\d{8}-ARCSG(?<name>[A-Z]*)/,
-    parser: (matchGroups) => ({ bookingType: 'SOCIETY', name: matchGroups['name'] })
+  //  *20230307-ARCSGCSE-001
+  //  *20230405-ARCSGWOMENINENGINEERING-002
+  //	*20251104-ARCSGLAW-002
+  INTERNAL_SOCIETY: {
+    pattern: /\*\d{8}-ARCSG(?<name>[A-Z0-9]+)-/,
+    parser: (matchGroups) => ({
+      bookingType: "SOCIETY",
+      name: matchGroups["name"],
+    }),
   },
 
   // Matches bookings from faculty and UNSW internal programs
   // - As with INTERNAL_SOCIETY, but it doesn't have ARCSG
   // Examples:
-  //   Misc *20230404-FUTURESTUDENTS-001
-  //   Misc *20230206-HUMSLANG-001
-  INTERNAL:
-  {
-    pattern: /Misc[^\u00a0]*\u00a0\*\d{8}-(?<name>[A-Z]*)/,
-    parser: (matchGroups) => ({ bookingType: 'INTERNAL', name: matchGroups['name'] })
+  //   *20230404-FUTURESTUDENTS-001
+  //   *20230206-HUMSLANG-001
+  INTERNAL: {
+    pattern: /\*\d{8}-(?<name>[A-Z]*)/,
+    parser: (matchGroups) => ({
+      bookingType: "INTERNAL",
+      name: matchGroups["name"],
+    }),
   },
 
+  // DEPRECATED - This type is combined with MISC_CLASS
   // Matches 'External' bookings (idk what that means)
-  // - Starts with 'External', then separator, then *
-  // - Contains course code of booking (then term and id which is ignored)
+  // - Starts with *, then course code of booking
+  // - then term and id which is ignored
   // Examples:
-  //   External *COMP2521-T1U1-001
-  //   External *CHEM4506-T1U1-003
-  EXTERNAL:
-  {
-    pattern: /External[^\u00a0]*\u00a0\*(?<name>[A-Z0-9]*)/,
-    parser: (matchGroups) => ({ bookingType: 'INTERNAL', name: matchGroups['name'] })
-  },
+  //   *COMP2521-T1U1-001
+  //   *CHEM4506-T1U1-003
+  // EXTERNAL: {
+  //   pattern: /\*(?<name>[A-Z0-9]*)/,
+  //   parser: (matchGroups) => ({
+  //     bookingType: "INTERNAL",
+  //     name: matchGroups["name"],
+  //   }),
+  // },
 
   // Matches OWeek bookings
-  // - Starts with Misc
-  // - Some mess, then "OWeek" and a building/term/room
+  // - Starts with "<*", then "block"
+  // - Followed by the booker and the location
+  // - Finally "O-Week"
   // Examples:
-  //   Misc >*C0602-1002EROweekColomboT2
-  //   Misc >*C0602-1002EROweekCLBT1CLB6a
-  OWEEK:
-  {
-    pattern: /Misc[^\u00a0]*\u00a0.*Oweek.*(?<term>T[1-3])/,
-    parser: (matchGroups) => ({ bookingType: 'MISC', name: 'OWeek' + matchGroups['term'] })
+  //   <*BlockV&EClancyO-Week
+  OWEEK: {
+    pattern: /.*Block(?<name>[^ ]*)O-Week/,
+    parser: (matchGroups) => ({
+      bookingType: "MISC",
+      name: "OWeek" + matchGroups["name"],
+    }),
   },
 
   // Matches MISC events that are for a class
   // - Literally the same as EXTERNAL but starts with misc
   // Examples:
-  //   Misc *MATH1141-T1U1-004
-  //   Misc *FINS5516-T1P1-001
-  MISC_CLASS:
-  {
-    pattern: /Misc[^\u00a0]*\u00a0\*(?<name>[A-Z0-9]*)/,
-    parser: (matchGroups) => ({ bookingType: 'MISC', name: matchGroups['name'] })
+  //   *MATH1141-T1U1-004
+  //   *FINS5516-T1P1-001
+  MISC_CLASS: {
+    pattern: /\*(?<name>[A-Z0-9]*)/,
+    parser: (matchGroups) => ({
+      bookingType: "MISC",
+      name: matchGroups["name"],
+    }),
   },
 
   // Matches Exams bookings
-  // - Starts with Misc then separator
-  // - SuppExams or Exams then the term
+  // - Contains Final Exam, Supp Exam, SuppExams or Exams
   // Examples:
-  //   Misc >*C2205-2605JM2023SuppExamsT1-001c
-  //   Misc >*C0708-2508JM2023ExamsT2-005
-  EXAMS:
-  {
-    pattern: /Misc[^\u00a0]*\u00a0.*\d(?<name>SuppExams|Exams)(?<term>T[1-3])/,
-    parser: (matchGroups) => ({ bookingType: 'MISC', name: matchGroups['name'] + ' ' + matchGroups['term'] })
+  //  ECON1401 Final Exam
+  //	<*BlockExamsT3-004
+  //
+  EXAMS: {
+    pattern: /(?<name>Final Exam|Supp Exam|SuppExams|Exams)/,
+    parser: (matchGroups) => ({
+      bookingType: "MISC",
+      name: matchGroups["name"],
+    }),
+  },
+
+  // Matches blocker bookings that restrict bookings being made at certain times
+  // - Starts with 'Block'
+  // - Possibly also contains a reason e.g. weekend, fri night
+  // Examples:
+  //  <*BlockHospitalityClancyFri
+  BLOCK: {
+    pattern: /.*(?<reason>Block|Weekend|Weekday|FriNight|Fri)/i,
+    parser: (matchGroups) => ({
+      bookingType: "BLOCK",
+      name: matchGroups["reason"],
+    }),
   },
 
   // Other Misc bookings
   // - Starts with Misc then separator
   // - Two chars, then hyphen, then the name
   // Examples:
-  //   Misc C1-EstateManagement-001
-  //   Misc WY-ANGLICAN-016a
-  MISC:
-  {
-    pattern: /Misc[^\u00a0]*\u00a0.{2}-(?<name>[^-]*)/,
-    parser: (matchGroups) => ({ bookingType: 'MISC', name: matchGroups['name'] })
+  //   C1-EstateManagement-001
+  //   WY-ANGLICAN-016a
+  MISC: {
+    pattern: /.{2}-(?<name>[^-]*)|(?<name2>.*)/,
+    parser: (matchGroups) => ({
+      bookingType: "MISC",
+      name: (matchGroups["name"] || matchGroups["name2"]).trim(),
+    }),
   },
-
-  // Matches blocker bookings that restrict bookings being made at certain times
-  // - Starts with 'Misc' and contains 'Block'
-  // - Possibly also contains a reason e.g. weekend, fri night
-  // Examples:
-  //   Misc >*C0201-0101JMRichieBlockFriNights
-  //   Misc >*C0201-0101JMRichieBlockWeekends
-  BLOCK:
-  {
-    pattern: /Misc.*(?<reason>Block|Weekend|Weekday|Fri|FriNight)/i,
-    parser: (matchGroups) => ({ bookingType: 'BLOCK', name: matchGroups['reason'] })
-  },
-}
+};
 
 export function normaliseRoomName(name: string): string {
   return name.split(" ")[0].trim();
 }
-
 
 export default PARSERS;

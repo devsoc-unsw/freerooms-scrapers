@@ -3,41 +3,54 @@ import PARSERS from "./nameParsers";
 import parseRoomIds from "./parseRoomIds";
 import { BookingsExcelRow, ParsedName, RoomBooking } from "./types";
 
-const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const DAYS = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 export function parseBookingRow(booking: BookingsExcelRow): RoomBooking[] {
+  // TODO: Clean up the console.logs
   // console.log("BookingExcelRow input: ");
   // console.log(booking);
 
   const bookings: RoomBooking[] = [];
-  // TODO: uncomment when done
-  // const { bookingType, name } = parseName(booking.name);
+  const { bookingType, name } = parseName(booking.name);
   const roomIds: string[] = parseRoomIds(booking.allocated_location_name);
-  const bookingDates = parseDateRanges(booking.dates, booking.day, booking.start_time);
+  const bookingDates = parseDateRanges(
+    booking.dates,
+    booking.day,
+    booking.start_time
+  );
 
   // console.log("Parsed dates:", bookingDates);
+  // console.log("Parsed from name: ", bookingType, name);
 
   for (const date of bookingDates) {
     const start = date;
 
     // Build end time
-    const dateStr = formatInTimeZone(date, 'Australia/Sydney', 'yyyy-MM-dd');
+    const dateStr = formatInTimeZone(date, "Australia/Sydney", "yyyy-MM-dd");
     const endString = `${dateStr}T${booking.end_time}:00`;
-    const end = zonedTimeToUtc(endString, 'Australia/Sydney');
+    const end = zonedTimeToUtc(endString, "Australia/Sydney");
 
     for (const roomId of roomIds) {
       bookings.push({
-        bookingType: '', // todo: remove placeholder once combined with yanlin's name parsers
-        name: '', // todo: remove placeholder once combined with yanlin's name parsers
+        bookingType,
+        name,
         roomId,
         start,
-        end
+        end,
       });
     }
   }
 
-  // console.log("RoomBooking output: ");
-  // console.log(bookings);
+  console.log("RoomBooking output: ");
+  console.log(bookings);
   return bookings;
 }
 
@@ -51,8 +64,8 @@ const parseName = (rawName: string): ParsedName => {
   }
 
   console.warn(`Warning: No pattern found to parse booking name "${rawName}"`);
-  return { bookingType: 'MISC',  name: 'Misc.' }
-}
+  return { bookingType: "MISC", name: "Misc." };
+};
 
 /**
  * Takes in a date range string
@@ -61,22 +74,39 @@ const parseName = (rawName: string): ParsedName => {
  * Returns Date objects of the specified day and start time within the ranges
  * ex. Date object of all Mondays at 06:00 in the ranges
  */
-const parseDateRanges = (dateRangeString: string, dayOfWeek: string, startTime: string): Date[] => {
+const parseDateRanges = (
+  dateRangeString: string,
+  dayOfWeek: string,
+  startTime: string
+): Date[] => {
   const dates: Date[] = [];
   const targetDay = DAYS.indexOf(dayOfWeek);
-  const ranges = dateRangeString.split('\n').map(s => s.trim()).filter(Boolean);
+  const ranges = dateRangeString
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean);
 
   for (const range of ranges) {
-    if (range.includes(' - ')) {
+    if (range.includes(" - ")) {
       // Date range (ex. "16/02/2026 - 16/03/2026")
-      const [startStr, endStr] = range.split(' - ').map(s => s.trim());
-      const startDate = zonedTimeToUtc(`${formatDateSubstring(startStr)}T${startTime}:00`, 'Australia/Sydney');
-      const endDate = zonedTimeToUtc(`${formatDateSubstring(endStr)}T${startTime}:00`, 'Australia/Sydney');
+      const [startStr, endStr] = range.split(" - ").map((s) => s.trim());
+      const startDate = zonedTimeToUtc(
+        `${formatDateSubstring(startStr)}T${startTime}:00`,
+        "Australia/Sydney"
+      );
+      const endDate = zonedTimeToUtc(
+        `${formatDateSubstring(endStr)}T${startTime}:00`,
+        "Australia/Sydney"
+      );
 
       // Find the first occurrence of target day in the range
       // Need to check the day in sydney time
       let current = new Date(startDate);
-      while (DAYS.indexOf(formatInTimeZone(current, 'Australia/Sydney', 'EEEE')) !== targetDay && current <= endDate) {
+      while (
+        DAYS.indexOf(formatInTimeZone(current, "Australia/Sydney", "EEEE")) !==
+          targetDay &&
+        current <= endDate
+      ) {
         current.setDate(current.getDate() + 1);
       }
 
@@ -87,18 +117,21 @@ const parseDateRanges = (dateRangeString: string, dayOfWeek: string, startTime: 
       }
     } else {
       // Single date (ex. "30/03/2026")
-      const date = zonedTimeToUtc(`${formatDateSubstring(range)}T${startTime}:00`, 'Australia/Sydney');
+      const date = zonedTimeToUtc(
+        `${formatDateSubstring(range)}T${startTime}:00`,
+        "Australia/Sydney"
+      );
       dates.push(date);
     }
   }
 
   return dates;
-}
+};
 
 /**
  * Convert "DD/MM/YYYY" to "YYYY-MM-DD"
  */
 const formatDateSubstring = (dateStr: string): string => {
-  const [day, month, year] = dateStr.split('/');
+  const [day, month, year] = dateStr.split("/");
   return `${year}-${month}-${day}`;
-}
+};
