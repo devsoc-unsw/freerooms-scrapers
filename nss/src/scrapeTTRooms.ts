@@ -1,9 +1,11 @@
 import fs from "fs";
-import { YEAR } from "./config";
+import axios from "axios";
+import { DRYRUN, HASURAGRES_API_KEY, HASURAGRES_URL, YEAR } from "./config";
 import decodeXlsx from "./decodeXlsx";
 import fetchXlsx from "./fetchXlsx";
 import { parseBookingRow } from "./parseBookingRow";
 import { RoomBooking, RoomSessionIdentity } from "./types";
+import { formatString } from "./stringUtils"
 
 const TT_URL =
   "https://publish.unsw.edu.au/timetables?date=2025-11-10&view=week&timetableTypeSelected=1e042cb1-547d-41d4-ae93-a1f2c3d34538&selections=1e042cb1-547d-41d4-ae93-a1f2c3d34538__";
@@ -65,4 +67,56 @@ const getBookings = async (url: string, i: number): Promise<RoomBooking[]> => {
   return bookings.flat();
 };
 
-scrapeTTRooms();
+function toApiBooking(b: any) {
+  return {
+    bookingType: b.bookingType ?? "timetable",
+    name: b.name ?? b.activity ?? b.title ?? b.eventName ?? "",
+    roomId: b.roomId ?? b.room_id ?? b.room ?? "",
+    start: b.start,
+    end: b.end,
+  };
+}
+
+async function run() {
+  console.time("Scrape TT bookings");
+  const bookings = await scrapeTTRooms();
+  console.timeEnd("Scrape TT bookings");
+
+  const payload = bookings.map(toApiBooking);
+
+  const requestConfig = {
+    headers: {
+      "Content-Type": "application/json",
+      "X-Api-Key": HASURAGRES_API_KEY,
+    },
+  };
+
+  console.time("Upload bookings");
+  await axios.post(
+    `${HASURAGRES_URL}/batch_insert`,
+    [
+      {
+        metadata: {
+          table_name: "Bookings",
+          columns: ["bookingType", "name", "roomId", "start", "end"],
+          sql_up: fs.readFileSync("./sql/bookings/up.sql", "utf8"),
+          sql_down: fs.readFileSync("./sql/bookings/down.sql", "utf8"),
+          sql_before: formatString(
+            fs.readFileSync("./sql/bookings/before.sql", "utf8"),
+            new Date(YEAR, 0, 1).toISOString(),
+            new Date(YEAR + 1, 0, 1).toISOString()
+          ),
+          write_mode: "append",
+          dryrun: DRYRUN,
+        },
+        payload,
+      },
+    ],
+    requestConfig
+  );
+  console.timeEnd("Upload bookings");
+
+  console.log(`Uploaded ${payload.length} bookings (dryrun=${DRYRUN})`);
+}
+
+run();
