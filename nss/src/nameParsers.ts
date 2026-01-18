@@ -110,13 +110,21 @@ const PARSERS: Record<string, NameParser> = {
   // - Contains Final Exam, Supp Exam, SuppExams or Exams
   // Examples:
   //  ECON1401 Final Exam
+  //	ENGG1300 Supp Exam
   //	<*BlockExamsT3-004
+  //	MATH5525 Supplementary Exam
+  // 	Supp Exam MMAN4410 and GSOE9830
   //
   EXAMS: {
-    pattern: /(?<name>Final Exam|Supp Exam|SuppExams|Exams)/,
+    pattern:
+      /((<\*Block(?<name2>Exams|SuppExams))(?<term>T[0-3]{1})|(?<name>[A-Z]{4}[0-9]{4})?.*?(?<reason>Final\s+Exams?|Supp\w*\s+Exams?|Exams)(\s(?<name3>.*))?)/i,
     parser: (matchGroups) => ({
       bookingType: "MISC",
-      name: matchGroups["name"],
+      name: matchGroups.name
+        ? matchGroups.name + (matchGroups.reason ?? "")
+        : matchGroups.name3
+        ? matchGroups.name3 + (matchGroups.reasons ?? "")
+        : matchGroups.name2 + matchGroups.term,
     }),
   },
 
