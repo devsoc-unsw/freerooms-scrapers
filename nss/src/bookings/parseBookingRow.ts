@@ -1,6 +1,6 @@
 import { formatInTimeZone, zonedTimeToUtc } from "date-fns-tz";
-import PARSERS from "../nameParsers";
 import { BookingsExcelRow, ParsedName, RoomBooking } from "../types";
+import PARSERS from "./nameParsers";
 
 const DAYS = [
   "Sunday",

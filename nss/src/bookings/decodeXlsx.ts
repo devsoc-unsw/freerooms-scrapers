@@ -1,6 +1,9 @@
 import xlsx from "xlsx";
 import { BookingsExcelRow } from "../types";
 
+// Decodes the buffer data from fetchXlsx
+// - Reads the data in as a buffer
+// - Extracts relevant rows into BookingExcelRow
 const decodeXlsx = (data: Buffer): BookingsExcelRow[] => {
   // Setup the excel sheet
   const workbook = xlsx.read(data, { type: "buffer" });
