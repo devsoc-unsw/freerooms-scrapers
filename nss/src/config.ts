@@ -15,4 +15,4 @@ export const DRYRUN = !!process.env.DRYRUN;
 
 export const BOOKING_LOADING_TIMEOUT = process.env.BOOKING_LOADING_TIMEOUT
   ? parseInt(process.env.BOOKING_LOADING_TIMEOUT)
-  : 30000;
+  : 100000;
