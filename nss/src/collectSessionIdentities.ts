@@ -1,12 +1,20 @@
 import fs from "fs";
+import { SESSION_IDENTITIES_PATH } from "./constants";
 import scrapeRooms from "./scrapeRooms";
 import { collectSessionIdentities } from "./sessionCollector";
-import { SESSION_IDENTITIES_PATH } from "./constants";
 
 const NSS_URL =
   "https://publish.unsw.edu.au/timetables?date=2025-12-22&view=week&timetableTypeSelected=1e042cb1-547d-41d4-ae93-a1f2c3d34538&searchText=K-";
 
 const collectAllSessions = async () => {
+  // TODO: In case new rooms are added maybe periodically expire this?
+  if (fs.existsSync(SESSION_IDENTITIES_PATH)) {
+    console.log("Session identities already exists so fetching from disk");
+    return JSON.parse(fs.readFileSync(SESSION_IDENTITIES_PATH, "utf8"));
+  }
+  console.log(
+    "Session identities does not exist in disk so fetching from publish"
+  );
   console.log("Collecting session identities (browser will open)…");
 
   const rooms = await scrapeRooms();
@@ -37,6 +45,6 @@ const collectAllSessions = async () => {
   );
 
   return updates;
-}
+};
 
-export default collectAllSessions
+export default collectAllSessions;
