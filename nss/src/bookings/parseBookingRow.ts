@@ -15,8 +15,10 @@ const DAYS = [
 /***
  * Takes in a BookingExcelRow and returns a list of RoomBooking(s).
  * A single BookingExcelRow has a string of date ranges
- * (ex. "16/02/2026 - 16/03/2026 \n30/03/2026 \n13/04/2026 - 20/04/2026"), so
- * multiple RoomBooking(s) are created.
+ * (ex. "16/02/2026 - 16/03/2026 \n30/03/2026 \n13/04/2026 - 20/04/2026")
+ * and a string of room ids in allocated_location_name
+ * (ex. "K-E12-205 - UNSW Business School  205, K-F23-307 - Mathews 307, K-F23-301 - Mathews 301"),
+ * so multiple RoomBooking(s) are created.
  */
 export function parseBookingRow(booking: BookingsExcelRow): RoomBooking[] {
   // Parse booking fields
@@ -39,6 +41,7 @@ export function parseBookingRow(booking: BookingsExcelRow): RoomBooking[] {
     const endString = `${dateStr}T${booking.end_time}:00`;
     const end = zonedTimeToUtc(endString, "Australia/Sydney");
 
+    // Create a booking for each room id
     for (const roomId of roomIds) {
       bookings.push({
         bookingType,
