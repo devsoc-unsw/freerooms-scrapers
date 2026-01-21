@@ -1,5 +1,5 @@
 import { chromium, Page } from "playwright";
-import { normaliseRoomName } from "./nameParsers";
+import { normaliseRoomName } from "./bookings/nameParsers";
 
 type CategoryEvent = {
     Identity: string;
@@ -82,7 +82,7 @@ export async function collectSessionIdentities(
     const maxRooms = opts?.maxRooms ?? Infinity;
     const clickDelayMs = opts?.clickDelayMs ?? 80;
 
-    const browser = await chromium.launch({ headless: false });
+    const browser = await chromium.launch({ headless: true });
     const context = await browser.newContext();
     const page = await context.newPage();
 
