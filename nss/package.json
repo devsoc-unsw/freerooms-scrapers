@@ -8,8 +8,7 @@
     "build": "tsc --project ./",
     "start": "node ./dist/runScraper.js",
     "scrape": "ts-node src/runScraper.ts",
-    "collect": "ts-node src/collectSessionIdentities.ts",
-    "scrape-publish": "ts-node src/scrapeTTRooms.ts"
+    "collect": "ts-node src/collectSessionIdentities.ts"
   },
   "repository": {
     "type": "git",
