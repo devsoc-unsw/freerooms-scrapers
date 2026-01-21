@@ -27,7 +27,7 @@ export function parseBookingRow(booking: BookingsExcelRow): RoomBooking[] {
   const bookingDates = parseDateRanges(
     booking.dates,
     booking.day,
-    booking.start_time
+    booking.start_time,
   );
 
   // Create a booking for each parsed date
@@ -75,7 +75,7 @@ const parseName = (rawName: string): ParsedName => {
 const parseDateRanges = (
   dateRangeString: string,
   dayOfWeek: string,
-  startTime: string
+  startTime: string,
 ): Date[] => {
   const dates: Date[] = [];
   const targetDay = DAYS.indexOf(dayOfWeek);
@@ -90,11 +90,11 @@ const parseDateRanges = (
       const [startStr, endStr] = range.split(" - ").map((s) => s.trim());
       const startDate = zonedTimeToUtc(
         `${formatDateSubstring(startStr)}T${startTime}:00`,
-        "Australia/Sydney"
+        "Australia/Sydney",
       );
       const endDate = zonedTimeToUtc(
         `${formatDateSubstring(endStr)}T${startTime}:00`,
-        "Australia/Sydney"
+        "Australia/Sydney",
       );
 
       // Find the first occurrence of target day in the range
@@ -117,7 +117,7 @@ const parseDateRanges = (
       // Single date (ex. "30/03/2026")
       const date = zonedTimeToUtc(
         `${formatDateSubstring(range)}T${startTime}:00`,
-        "Australia/Sydney"
+        "Australia/Sydney",
       );
       dates.push(date);
     }
@@ -142,6 +142,6 @@ const REGEX_ROOM_IDS = /K-[A-Z][0-9]{2}-[^ ]*/g;
 //  K-E15-1048 - Quadrangle 1048, K-E15-1047 - Quadrangle 1047
 const parseRoomIds = (allocated_location_name: string): string[] => {
   return Array.from(allocated_location_name.matchAll(REGEX_ROOM_IDS)).map(
-    (match) => match[0]
+    (match) => match[0],
   );
 };

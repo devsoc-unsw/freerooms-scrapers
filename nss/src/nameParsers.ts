@@ -5,6 +5,20 @@
 import { NameParser } from "./types";
 
 const PARSERS: Record<string, NameParser> = {
+  // Matches MISC events that are for a class
+  // - Literally the same as EXTERNAL but starts with misc
+  // Examples:
+  //   *MATH1141-T1U1-004
+  //   *FINS5516-T1P1-001
+  //	 FS-B-T2-CA-Business Law
+  MISC_CLASS: {
+    pattern: /\*(?<name>[A-Z0-9]*)|(FS-(?<name2>[^-].+))/,
+    parser: (matchGroups) => ({
+      bookingType: "MISC",
+      name: matchGroups.name ? matchGroups.name : "FS-" + matchGroups.name2,
+    }),
+  },
+
   // Matches standard classes
   // - Starts with the class name, then separator '-'
   // - A bunch of characters before the next separator '-'
@@ -158,19 +172,6 @@ const PARSERS: Record<string, NameParser> = {
     parser: (matchGroups) => ({
       bookingType: "MISC",
       name: "OWeek" + matchGroups["name"],
-    }),
-  },
-
-  // Matches MISC events that are for a class
-  // - Literally the same as EXTERNAL but starts with misc
-  // Examples:
-  //   *MATH1141-T1U1-004
-  //   *FINS5516-T1P1-001
-  MISC_CLASS: {
-    pattern: /\*(?<name>[A-Z0-9]*)/,
-    parser: (matchGroups) => ({
-      bookingType: "MISC",
-      name: matchGroups["name"],
     }),
   },
 
