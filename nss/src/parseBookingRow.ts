@@ -13,27 +13,35 @@ const DAYS = [
   "Saturday",
 ];
 
+/***
+ * Takes in a BookingExcelRow and returns a list of RoomBooking(s). 
+ * A single BookingExcelRow has a string of date ranges
+ * (ex. "16/02/2026 - 16/03/2026 \n30/03/2026 \n13/04/2026 - 20/04/2026"), so
+ * multiple RoomBooking(s) are created. 
+ */
 export function parseBookingRow(booking: BookingsExcelRow): RoomBooking[] {
   // TODO: Clean up the console.logs
   // console.log("BookingExcelRow input: ");
   // console.log(booking);
 
+  // Parse booking fields
   const bookings: RoomBooking[] = [];
   const { bookingType, name } = parseName(booking.name);
   const roomIds: string[] = parseRoomIds(booking.allocated_location_name);
+
   const bookingDates = parseDateRanges(
     booking.dates,
     booking.day,
     booking.start_time
   );
-
   // console.log("Parsed dates:", bookingDates);
   // console.log("Parsed from name: ", bookingType, name);
 
+  // Create a booking for each parsed date
   for (const date of bookingDates) {
     const start = date;
 
-    // Build end time
+    // Build end time from the date
     const dateStr = formatInTimeZone(date, "Australia/Sydney", "yyyy-MM-dd");
     const endString = `${dateStr}T${booking.end_time}:00`;
     const end = zonedTimeToUtc(endString, "Australia/Sydney");
