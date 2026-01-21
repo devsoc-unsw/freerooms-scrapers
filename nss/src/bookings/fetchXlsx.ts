@@ -47,7 +47,6 @@ const fetchXlsx = async (url: string): Promise<Buffer> => {
 
   // Close browser
   console.log("Closing browser");
-  await zoomedBrowser.close();
   await browser.close();
 
   return buffer;

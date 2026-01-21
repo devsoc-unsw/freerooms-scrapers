@@ -18,11 +18,7 @@ const TIME_PERIOD = `&datePeriod=${YEAR}&all_weeks=true`;
 
 const generateURLs = async (): Promise<string[]> => {
   // Either read from file or fetch and save to disk
-  const sessionIdentities: RoomSessionIdentity[] = fs.existsSync(
-    SESSION_IDENTITIES_PATH
-  )
-    ? JSON.parse(fs.readFileSync(SESSION_IDENTITIES_PATH, "utf8"))
-    : await collectAllSessions();
+  const sessionIdentities: RoomSessionIdentity[] = await collectAllSessions();
 
   const urlCount = Math.ceil(sessionIdentities.length / 20);
 
