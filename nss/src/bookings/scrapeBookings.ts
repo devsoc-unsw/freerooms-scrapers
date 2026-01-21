@@ -1,7 +1,5 @@
-import fs from "fs";
 import collectAllSessions from "../collectSessionIdentities";
 import { YEAR } from "../config";
-import { SESSION_IDENTITIES_PATH } from "../constants";
 import { RoomBooking, RoomSessionIdentity } from "../types";
 import decodeXlsx from "./decodeXlsx";
 import fetchXlsx from "./fetchXlsx";
@@ -51,11 +49,3 @@ const getBookings = async (url: string): Promise<RoomBooking[]> => {
     .then((bookingExcelRows) => bookingExcelRows.map(parseBookingRow))
     .then((nestedBookings) => nestedBookings.flat());
 };
-
-(async () => {
-  try {
-    console.log(await scrapeBookings());
-  } catch (err) {
-    console.error(err);
-  }
-})();

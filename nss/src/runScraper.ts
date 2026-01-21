@@ -1,12 +1,11 @@
-import fs from "fs";
-import scrapeRooms from "./scrapeRooms";
-import scrapeBookings from "./scrapeBookings";
-import parseBooking from "./parseBooking";
-import scrapeBuildings from "./scrapeBuildings";
-import { DRYRUN, HASURAGRES_API_KEY, HASURAGRES_URL, YEAR } from "./config";
 import axios from "axios";
-import { formatString } from "./stringUtils";
+import fs from "fs";
+import { scrapeBookings } from "./bookings/scrapeBookings";
+import { DRYRUN, HASURAGRES_API_KEY, HASURAGRES_URL, YEAR } from "./config";
+import scrapeBuildings from "./scrapeBuildings";
 import { scrapeRoomFacilities } from "./scrapeRoomFacilities";
+import scrapeRooms from "./scrapeRooms";
+import { formatString } from "./stringUtils";
 
 const runScrapeJob = async () => {
   const buildings = await scrapeBuildings();
@@ -18,20 +17,16 @@ const runScrapeJob = async () => {
     (building) => !!rooms.find((room) => room.id.startsWith(building.id))
   );
 
-  const bookingPromises = rooms.map((room) => scrapeBookings(room.id));
   // we're sending about 1000 requests here
-  const [facilities, bookings] = await Promise.all([
-    Promise.all(facilitiesPromises),
-    Promise.all(bookingPromises),
-  ]);
-  const parsedBookings = bookings.flat().map(parseBooking).flat();
-  parsedBookings.sort((a, b) => a.start.getTime() - b.start.getTime());
+  const facilities = await Promise.all(facilitiesPromises);
+  const bookings = await scrapeBookings();
+  bookings.sort((a, b) => a.start.getTime() - b.start.getTime());
 
   return {
     buildings: filteredBuildings,
     rooms,
     facilities,
-    bookings: parsedBookings,
+    bookings,
   };
 };
 
@@ -81,8 +76,8 @@ const runScraper = async () => {
             "infotechnology",
             "writingMedia",
             "service",
-            "lat", 
-            "long"
+            "lat",
+            "long",
           ],
           sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
           sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),

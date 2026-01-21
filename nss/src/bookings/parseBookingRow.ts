@@ -1,6 +1,6 @@
 import { formatInTimeZone, zonedTimeToUtc } from "date-fns-tz";
-import { BookingsExcelRow, ParsedName, RoomBooking } from "../types";
 import PARSERS from "../nameParsers";
+import { BookingsExcelRow, ParsedName, RoomBooking } from "../types";
 
 const DAYS = [
   "Sunday",
@@ -13,22 +13,21 @@ const DAYS = [
 ];
 
 /***
- * Takes in a BookingExcelRow and returns a list of RoomBooking(s). 
+ * Takes in a BookingExcelRow and returns a list of RoomBooking(s).
  * A single BookingExcelRow has a string of date ranges
  * (ex. "16/02/2026 - 16/03/2026 \n30/03/2026 \n13/04/2026 - 20/04/2026"), so
- * multiple RoomBooking(s) are created. 
+ * multiple RoomBooking(s) are created.
  */
 export function parseBookingRow(booking: BookingsExcelRow): RoomBooking[] {
   // Parse booking fields
   const bookings: RoomBooking[] = [];
   const { bookingType, name } = parseName(booking.name);
-  console.log(booking);
   const roomIds: string[] = parseRoomIds(booking.allocated_location_name);
 
   const bookingDates = parseDateRanges(
     booking.dates,
     booking.day,
-    booking.start_time,
+    booking.start_time
   );
 
   // Create a booking for each parsed date
@@ -76,7 +75,7 @@ const parseName = (rawName: string): ParsedName => {
 const parseDateRanges = (
   dateRangeString: string,
   dayOfWeek: string,
-  startTime: string,
+  startTime: string
 ): Date[] => {
   const dates: Date[] = [];
   const targetDay = DAYS.indexOf(dayOfWeek);
@@ -91,11 +90,11 @@ const parseDateRanges = (
       const [startStr, endStr] = range.split(" - ").map((s) => s.trim());
       const startDate = zonedTimeToUtc(
         `${formatDateSubstring(startStr)}T${startTime}:00`,
-        "Australia/Sydney",
+        "Australia/Sydney"
       );
       const endDate = zonedTimeToUtc(
         `${formatDateSubstring(endStr)}T${startTime}:00`,
-        "Australia/Sydney",
+        "Australia/Sydney"
       );
 
       // Find the first occurrence of target day in the range
@@ -118,7 +117,7 @@ const parseDateRanges = (
       // Single date (ex. "30/03/2026")
       const date = zonedTimeToUtc(
         `${formatDateSubstring(range)}T${startTime}:00`,
-        "Australia/Sydney",
+        "Australia/Sydney"
       );
       dates.push(date);
     }

@@ -9,7 +9,9 @@ const NSS_URL =
 const collectAllSessions = async () => {
   // TODO: In case new rooms are added maybe periodically expire this?
   if (fs.existsSync(SESSION_IDENTITIES_PATH)) {
-    console.log("Session identities already exists so fetching from disk");
+    console.log(
+      "Session identities already exists in disk so fetching from disk"
+    );
     return JSON.parse(fs.readFileSync(SESSION_IDENTITIES_PATH, "utf8"));
   }
   console.log(
