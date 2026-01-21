@@ -1,5 +1,5 @@
 import { chromium, Page } from "playwright";
-import { normaliseRoomName } from "./nameParsers";
+import { normaliseRoomName } from "./bookings/nameParsers";
 
 type CategoryEvent = {
     Identity: string;
@@ -10,6 +10,11 @@ type FilterResponse = {
     CategoryEvents?: CategoryEvent[];
 };
 
+/**
+ * Injects a script that listends for the next JSON payload that matches
+ * '/CategoryTypes/Categories/Events/Filter' as this contains the session identities for the rooms
+ * aswell as the ids
+ */
 const XHR_HOOK = `
 (() => {
   window.__waitForNextCategoryResponse = function () {
@@ -47,11 +52,16 @@ const XHR_HOOK = `
   console.log("Awaitable XHR hook installed");
 })();
 `;
-
+/**
+ * Clicks a batch of the rooms in a list with a delay,
+ * this triggers an XHR request.
+ */
 async function clickBatch(page: Page, indices: number[], clickDelayMs: number) {
     await page.evaluate(
         async ({ indices, clickDelayMs }) => {
             const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
+            // Gets all of the options in the DOM
             const options = Array.from(document.querySelectorAll("mat-list-option"));
 
             for (const i of indices) {
@@ -66,10 +76,19 @@ async function clickBatch(page: Page, indices: number[], clickDelayMs: number) {
     );
 }
 
+
+/**
+ * This deselects the already selected rooms by clicking them again
+ */
 async function deselectBatch(page: Page, indices: number[], clickDelayMs: number) {
     await clickBatch(page, indices, clickDelayMs);
 }
 
+
+/**
+ * This opens the publish website, iterates all of the rooms in batches,
+ * filters the XHR response, and returns a map of room ids to the session identity
+ */
 export async function collectSessionIdentities(
     url: string,
     opts?: {
@@ -82,16 +101,17 @@ export async function collectSessionIdentities(
     const maxRooms = opts?.maxRooms ?? Infinity;
     const clickDelayMs = opts?.clickDelayMs ?? 80;
 
-    const browser = await chromium.launch({ headless: false });
+    const browser = await chromium.launch({ headless: true });
     const context = await browser.newContext();
     const page = await context.newPage();
 
-    console.log("Opening NSS page...");
+    console.log("Opening page...");
     await page.goto(url, { waitUntil: "domcontentloaded" });
 
     console.log("Waiting for room list...");
     await page.waitForSelector("mat-list-option", { timeout: 0 });
 
+    // Adds the hook before the page loads
     await page.addInitScript(XHR_HOOK);
     await page.reload({ waitUntil: "domcontentloaded" });
     await page.waitForSelector("mat-list-option", { timeout: 0 });

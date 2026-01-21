@@ -1,8 +1,8 @@
 /**
- * Parsers for booking names scraped from NSS
+ * Parsers for booking names scraped from Publish
  * These are tried in order so make sure if one is a subset of another, it comes first
  */
-import { NameParser } from "./types";
+import { NameParser } from "../types";
 
 const PARSERS: Record<string, NameParser> = {
   // Matches MISC events that are for a class

@@ -3,9 +3,14 @@ import { SESSION_IDENTITIES_PATH } from "./constants";
 import scrapeRooms from "./scrapeRooms";
 import { collectSessionIdentities } from "./sessionCollector";
 
-const NSS_URL =
+const PUBLISH_URL =
   "https://publish.unsw.edu.au/timetables?date=2025-12-22&view=week&timetableTypeSelected=1e042cb1-547d-41d4-ae93-a1f2c3d34538&searchText=K-";
 
+
+/**
+ * Collects or loads the session identities, and stores them in a json file,
+ * it also filters the rooms for what exists in the database
+ */
 const collectAllSessions = async () => {
   // TODO: In case new rooms are added maybe periodically expire this?
   if (fs.existsSync(SESSION_IDENTITIES_PATH)) {
@@ -22,7 +27,7 @@ const collectAllSessions = async () => {
   const rooms = await scrapeRooms();
   const roomIds = rooms.map((r) => r.id);
 
-  const abbrToSession = await collectSessionIdentities(NSS_URL, {
+  const abbrToSession = await collectSessionIdentities(PUBLISH_URL, {
     batchSize: 20,
     maxRooms: Infinity,
     clickDelayMs: 1,

@@ -14,10 +14,14 @@ const BATCH_SIZE = 20;
 // Specify weeks and year
 const TIME_PERIOD = `&datePeriod=${YEAR}&all_weeks=true`;
 
+// Generates URLs for every batch of rooms
+// - Gets the ids of each session in batches of 20
+// - Constructs the urls
 const generateURLs = async (): Promise<string[]> => {
   // Either read from file or fetch and save to disk
   const sessionIdentities: RoomSessionIdentity[] = await collectAllSessions();
 
+  // Get number of urls
   const urlCount = Math.ceil(sessionIdentities.length / 20);
 
   // Generate all batches of session ids for each rooms in groups of 20
@@ -36,16 +40,26 @@ const generateURLs = async (): Promise<string[]> => {
   );
 };
 
-export const scrapeBookings = async (): Promise<RoomBooking[]> => {
+// Scrapes the bookings
+// - Orchestrates the main booking scraping pipeline
+const scrapeBookings = async (): Promise<RoomBooking[]> => {
   return generateURLs()
     .then((urls) => urls.map(getBookings))
     .then((promisedBookings) => Promise.all(promisedBookings))
     .then((bookings) => bookings.flat());
 };
 
+// Scrapes the bookings of a particular url
+// - Orchestrates booking parsing
 const getBookings = async (url: string): Promise<RoomBooking[]> => {
   return fetchXlsx(url)
     .then(decodeXlsx)
     .then((bookingExcelRows) => bookingExcelRows.map(parseBookingRow))
-    .then((nestedBookings) => nestedBookings.flat());
+    .then((nestedBookings) => nestedBookings.flat())
+    .catch((error) => {
+      console.log(error);
+      return [];
+    })
 };
+
+export default scrapeBookings;

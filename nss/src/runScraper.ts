@@ -1,6 +1,6 @@
 import axios from "axios";
 import fs from "fs";
-import { scrapeBookings } from "./bookings/scrapeBookings";
+import scrapeBookings from "./bookings/scrapeBookings";
 import { DRYRUN, HASURAGRES_API_KEY, HASURAGRES_URL, YEAR } from "./config";
 import scrapeBuildings from "./scrapeBuildings";
 import { scrapeRoomFacilities } from "./scrapeRoomFacilities";

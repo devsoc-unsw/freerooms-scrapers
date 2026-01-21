@@ -1,8 +1,9 @@
 import { chromium } from "playwright";
 import { BOOKING_LOADING_TIMEOUT } from "../config";
-import decodeXlsx from "./decodeXlsx";
-import { data } from "cheerio/lib/api/attributes";
 
+// Fetches booking data by extract the booking data as excel
+// - Loads the browsers and waits for bookings to load
+// - Downloads the bookings and saves into a buffer
 const fetchXlsx = async (url: string): Promise<Buffer> => {
   // Setup page and go to url
   console.log("Opening browser");
@@ -22,15 +23,12 @@ const fetchXlsx = async (url: string): Promise<Buffer> => {
     });
   } catch (error) {
     // Note: If bookings are supposed to show up, tweak loading timeout
-    console.log("No bookings shown for", url);
-    console.log(
-      "Note: Very low chance this should be happening, please double check theres no bookings via the link. If there is, tweak booking loading timeout"
-    );
-    console.log("Closing browser");
-    await zoomedBrowser.close();
     await browser.close();
-
-    return Promise.reject();
+    return Promise.reject(
+      "No bookings shown for " +
+        url +
+        "\nNote: Very low chance this should be happening, please double check theres no bookings via the link. If there is, tweak booking loading timeout"
+    );
   }
   console.log("Waiting for download");
   const downloadPromise = page.waitForEvent("download");
