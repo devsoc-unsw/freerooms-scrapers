@@ -12,7 +12,7 @@ const PARSERS: Record<string, NameParser> = {
   //   *FINS5516-T1P1-001
   //	 FS-B-T2-CA-Business Law
   MISC_CLASS: {
-    pattern: /\*(?<name>[A-Z0-9]*)|(FS-(?<name2>[^-].+))/,
+    pattern: /\*(?!Block)(?<name>[A-Z0-9]*)|(FS-(?<name2>[^-].+))/,
     parser: (matchGroups) => ({
       bookingType: "MISC",
       name: matchGroups.name ? matchGroups.name : "FS-" + matchGroups.name2,
