@@ -24,7 +24,7 @@ export function parseBookingRow(booking: BookingsExcelRow): RoomBooking[] {
   const bookingDates = parseDateRanges(
     booking.dates,
     booking.day,
-    booking.start_time
+    booking.start_time,
   );
 
   // console.log("Parsed dates:", bookingDates);
@@ -77,7 +77,7 @@ const parseName = (rawName: string): ParsedName => {
 const parseDateRanges = (
   dateRangeString: string,
   dayOfWeek: string,
-  startTime: string
+  startTime: string,
 ): Date[] => {
   const dates: Date[] = [];
   const targetDay = DAYS.indexOf(dayOfWeek);
@@ -92,11 +92,11 @@ const parseDateRanges = (
       const [startStr, endStr] = range.split(" - ").map((s) => s.trim());
       const startDate = zonedTimeToUtc(
         `${formatDateSubstring(startStr)}T${startTime}:00`,
-        "Australia/Sydney"
+        "Australia/Sydney",
       );
       const endDate = zonedTimeToUtc(
         `${formatDateSubstring(endStr)}T${startTime}:00`,
-        "Australia/Sydney"
+        "Australia/Sydney",
       );
 
       // Find the first occurrence of target day in the range
@@ -119,7 +119,7 @@ const parseDateRanges = (
       // Single date (ex. "30/03/2026")
       const date = zonedTimeToUtc(
         `${formatDateSubstring(range)}T${startTime}:00`,
-        "Australia/Sydney"
+        "Australia/Sydney",
       );
       dates.push(date);
     }

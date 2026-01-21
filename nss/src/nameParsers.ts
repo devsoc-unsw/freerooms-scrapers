@@ -79,6 +79,74 @@ const PARSERS: Record<string, NameParser> = {
   //   }),
   // },
 
+  // Matches blocker bookings that restrict bookings being made at certain times
+  // - Starts with 'Block'
+  // - Possibly also contains a reason e.g. weekend, fri night
+  // Examples:
+  //  <*BlockHospitalityClancyFri
+  //	<*BlockGraduationsT1-003b
+  // 	<*BlockExamsSuppsT3-2025-001b
+  //	<*BlockT2C-001
+  //	<*BlockExamsT3-004
+  //	<*BlockExamsT1-007
+  //	<*BlockCSE-LAB-002
+  BLOCK: {
+    pattern: /^<?\*?Block(?<name>.+)$/i,
+    parser: (matchGroups) => {
+      let name = matchGroups["name"]?.trim() || "Block";
+      // Remove everything from the last dash onwards
+      const lastDashIndex = name.lastIndexOf("-");
+      if (lastDashIndex !== -1) {
+        name = name.substring(0, lastDashIndex);
+      }
+      return {
+        bookingType: "BLOCK",
+        name: name || "Block", // Fallback if name becomes empty
+      };
+    },
+  },
+
+  // Matches Exams bookings
+  // - Contains Final Exam, Supp Exam, SuppExams or Exams
+  // Examples:
+  //  ECON1401 Final Exam
+  //	ENGG1300 Supp Exam
+  //	MATH5525 Supplementary Exam
+  // 	Supp Exam MMAN4410 and GSOE9830
+  //  SUPP EXAMS
+  //
+  EXAMS: {
+    pattern:
+      /(?:(?<name>[A-Z]{4}[0-9]{4})\s*)?(?<reason>Final\s+Exams?|Supp\w*\s+Exams?|Exams)(?:\s+(?<name3>.*))?/i,
+    parser: (matchGroups) => {
+      if (matchGroups.reason && matchGroups.name3) {
+        return {
+          bookingType: "EXAMS",
+          name: `${matchGroups.reason} ${matchGroups.name3}`.trim(),
+        };
+      }
+
+      if (matchGroups.name && matchGroups.reason) {
+        return {
+          bookingType: "EXAMS",
+          name: `${matchGroups.name} ${matchGroups.reason}`,
+        };
+      }
+
+      if (matchGroups.reason) {
+        return {
+          bookingType: "EXAMS",
+          name: matchGroups.reason,
+        };
+      }
+
+      return {
+        bookingType: "EXAMS",
+        name: "Exams",
+      };
+    },
+  },
+
   // Matches OWeek bookings
   // - Starts with "<*", then "block"
   // - Followed by the booker and the location
@@ -106,41 +174,6 @@ const PARSERS: Record<string, NameParser> = {
     }),
   },
 
-  // Matches Exams bookings
-  // - Contains Final Exam, Supp Exam, SuppExams or Exams
-  // Examples:
-  //  ECON1401 Final Exam
-  //	ENGG1300 Supp Exam
-  //	<*BlockExamsT3-004
-  //	MATH5525 Supplementary Exam
-  // 	Supp Exam MMAN4410 and GSOE9830
-  //
-  EXAMS: {
-    pattern:
-      /((<\*Block(?<name2>Exams|SuppExams))(?<term>T[0-3]{1})|(?<name>[A-Z]{4}[0-9]{4})?.*?(?<reason>Final\s+Exams?|Supp\w*\s+Exams?|Exams)(\s(?<name3>.*))?)/i,
-    parser: (matchGroups) => ({
-      bookingType: "MISC",
-      name: matchGroups.name
-        ? matchGroups.name + (matchGroups.reason ?? "")
-        : matchGroups.name3
-        ? matchGroups.name3 + (matchGroups.reasons ?? "")
-        : matchGroups.name2 + matchGroups.term,
-    }),
-  },
-
-  // Matches blocker bookings that restrict bookings being made at certain times
-  // - Starts with 'Block'
-  // - Possibly also contains a reason e.g. weekend, fri night
-  // Examples:
-  //  <*BlockHospitalityClancyFri
-  BLOCK: {
-    pattern: /.*(?<reason>Block|Weekend|Weekday|FriNight|Fri)/i,
-    parser: (matchGroups) => ({
-      bookingType: "BLOCK",
-      name: matchGroups["reason"],
-    }),
-  },
-
   // Other Misc bookings
   // - Starts with Misc then separator
   // - Two chars, then hyphen, then the name
@@ -148,7 +181,7 @@ const PARSERS: Record<string, NameParser> = {
   //   C1-EstateManagement-001
   //   WY-ANGLICAN-016a
   MISC: {
-    pattern: /.{2}-(?<name>[^-]*)|(?<name2>.*)/,
+    pattern: /^.{2}-(?<name>[^-]+)|^(?<name2>.+)$/,
     parser: (matchGroups) => ({
       bookingType: "MISC",
       name: (matchGroups["name"] || matchGroups["name2"]).trim(),

@@ -1,7 +1,7 @@
 import PARSERS from "./nameParsers";
 import { ParsedName, RawRoomBooking, RoomBooking } from "./types";
 import { toSydneyTime, createDate, numWeeksInYear } from "./dateUtils";
-import { YEAR } from './config';
+import { YEAR } from "./config";
 
 /**
  * Takes a raw room booking and:
@@ -27,7 +27,7 @@ function parseBooking(booking: RawRoomBooking): RoomBooking[] {
         name,
         roomId: booking.roomId,
         start,
-        end
+        end,
       });
     }
     weekMask >>= 1n;
@@ -36,16 +36,22 @@ function parseBooking(booking: RawRoomBooking): RoomBooking[] {
 }
 
 const parseName = (rawName: string): ParsedName => {
-  // Try all the parsers
-  for (const parser of Object.values(PARSERS)) {
+  for (const [key, parser] of Object.entries(PARSERS)) {
     const match = rawName.match(parser.pattern);
     if (match && match.groups) {
-      return parser.parser(match.groups);
+      const hasValidGroup = Object.values(match.groups).some(
+        (group) => group !== undefined && group !== "",
+      );
+
+      if (hasValidGroup) {
+        console.log(`${key} MATCHED!`);
+        return parser.parser(match.groups);
+      }
     }
   }
 
   console.warn(`Warning: No pattern found to parse booking name "${rawName}"`);
-  return { bookingType: 'MISC',  name: 'Misc.' }
-}
+  return { bookingType: "MISC", name: rawName };
+};
 
 export default parseBooking;
