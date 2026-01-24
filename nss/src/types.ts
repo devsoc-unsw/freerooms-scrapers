@@ -100,21 +100,11 @@ export type BookingsExcelRow = {
   module_code: string;
   module_description: string;
   name: string;
-  class_size: number;
-  day:
-    | "Monday"
-    | "Tuesday"
-    | "Wednesday"
-    | "Thursday"
-    | "Friday"
-    | "Saturday"
-    | "Sunday";
-  duration: string;
+  booking_type: string;
   start_time: string;
   end_time: string;
   dates: string;
   allocated_location_name: string;
-  weeks: string;
 };
 
 export type RoomSessionIdentity = {
