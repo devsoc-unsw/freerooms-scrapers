@@ -2,6 +2,7 @@ import fs from "fs";
 import { SESSION_IDENTITIES_PATH } from "./constants";
 import scrapeRooms from "./scrapeRooms";
 import { collectSessionIdentities } from "./sessionCollector";
+import { RoomSessionIdentity } from "./types";
 
 const PUBLISH_URL =
   "https://publish.unsw.edu.au/timetables?date=2025-12-22&view=week&timetableTypeSelected=1e042cb1-547d-41d4-ae93-a1f2c3d34538&searchText=K-";
@@ -11,13 +12,13 @@ const PUBLISH_URL =
  * Collects or loads the session identities, and stores them in a json file,
  * it also filters the rooms for what exists in the database
  */
-const collectAllSessions = async () => {
+const collectAllSessions = async (): Promise<RoomSessionIdentity[]> => {
   // TODO: In case new rooms are added maybe periodically expire this?
   if (fs.existsSync(SESSION_IDENTITIES_PATH)) {
     console.log(
       "Session identities already exists in disk so fetching from disk"
     );
-    return JSON.parse(fs.readFileSync(SESSION_IDENTITIES_PATH, "utf8"));
+    return Promise.resolve(JSON.parse(fs.readFileSync(SESSION_IDENTITIES_PATH, "utf8")));
   }
   console.log(
     "Session identities does not exist in disk so fetching from publish"
@@ -51,7 +52,7 @@ const collectAllSessions = async () => {
     `Saved ${updates.length} session identities to sessionIdentities.json`
   );
 
-  return updates;
+  return Promise.resolve(updates);
 };
 
 export default collectAllSessions;
