@@ -25,12 +25,11 @@ export function parseBookingRow(booking: BookingsExcelRow): RoomBooking[] {
   const bookings: RoomBooking[] = [];
   const { bookingType, name } = parseName(booking.name);
   const roomIds: string[] = parseRoomIds(booking.allocated_location_name);
+  const day = new Date(booking.start_time).toLocaleDateString("en-US", {
+    weekday: "long",
+  });
 
-  const bookingDates = parseDateRanges(
-    booking.dates,
-    booking.day,
-    booking.start_time,
-  );
+  const bookingDates = parseDateRanges(booking.dates, day, booking.start_time);
 
   // Create a booking for each parsed date
   for (const date of bookingDates) {
