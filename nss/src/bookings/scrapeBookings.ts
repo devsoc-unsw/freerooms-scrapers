@@ -1,23 +1,6 @@
 import axios from "axios";
-import { RemoteBooking, RoomBooking } from "../types";
+import { EventData, RemoteBooking, RoomBooking, ViewOptions } from "../types";
 import { parseRemoteBooking } from "./parseRemoteBooking";
-
-type ExtraProperty = {
-  Name: string;
-  Value: string;
-};
-
-type EventData = {
-  StartDateTime: string;
-  EndDateTime: string;
-  Location: string;
-  Description: string;
-  Name: string;
-  EventType: string;
-  ExtraProperties: ExtraProperty[];
-  WeekRanges: string;
-  WeekLabels: string;
-};
 
 const mapToRemoteBooking = (data: EventData): RemoteBooking => {
   return {
@@ -78,13 +61,8 @@ const getAllCategories = async (
 };
 
 const getViewOptions = async (
-  year: number | string,
-): Promise<{
-  DatePeriods: any[];
-  Days: any[];
-  TimePeriods: any[];
-  Weeks: any[];
-}> => {
+  year: number,
+): Promise<ViewOptions> => {
   const response = await axios.get(
     `${API_BASE_URL}/ViewOptions/${UNSW_INSTITUTION_ID}`,
   );
@@ -92,14 +70,14 @@ const getViewOptions = async (
 
   return {
     DatePeriods: data.DatePeriods.filter(
-      (dp: any) => dp.Description === String(year),
+      (dp: any) => dp.Description === year,
     ),
     Days: data.Days,
     TimePeriods: data.TimePeriods.filter(
       (tp: any) => tp.Description === "All Day",
     ),
     Weeks: data.Weeks.filter((wk: any) =>
-      wk.FirstDayInWeek.startsWith(String(year)),
+      wk.FirstDayInWeek.startsWith(year),
     ),
   };
 };
@@ -107,9 +85,9 @@ const getViewOptions = async (
 const getEvents = async (
   categoryType: CategoryType,
   categoryIds: string[],
-  viewOptions: any,
+  viewOptions: ViewOptions,
 ) => {
-  const eventsByCategoryId: Record<string, any[]> = {};
+  const eventsByCategoryId: Record<string, EventData[]> = {};
   const batchSize = 20;
 
   for (let i = 0; i < categoryIds.length; i += batchSize) {

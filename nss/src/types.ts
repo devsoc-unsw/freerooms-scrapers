@@ -95,3 +95,26 @@ export type RemoteBooking = {
   allocatedLocationName: string;
 };
 
+export type ExtraProperty = {
+  Name: string;
+  Value: string;
+};
+
+export type EventData = {
+  StartDateTime: string;
+  EndDateTime: string;
+  Location: string;
+  Description: string;
+  Name: string;
+  EventType: string;
+  ExtraProperties: ExtraProperty[];
+  WeekRanges: string;
+  WeekLabels: string;
+};
+
+export type ViewOptions = {
+  DatePeriods: any[];
+  Days: any[];
+  TimePeriods: any[];
+  Weeks: any[];
+}
