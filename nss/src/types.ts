@@ -1,15 +1,3 @@
-export type UngroupedRoomBooking = {
-  name: string;
-  day: string;
-  start: string;
-  weekPattern: number;
-};
-
-export type RawRoomBooking = UngroupedRoomBooking & {
-  roomId: string;
-  end: string;
-};
-
 export type RoomBooking = {
   bookingType: string;
   name: string;
@@ -96,18 +84,14 @@ export type RoomMarkers = {
   long: number;
 };
 
-export type BookingsExcelRow = {
-  module_code: string;
-  module_description: string;
+export type RemoteBooking = {
+  moduleCode: string;
+  moduleDescription: string;
   name: string;
-  booking_type: string;
-  start_time: string;
-  end_time: string;
+  bookingType: string;
+  startTime: string;
+  endTime: string;
   dates: string;
-  allocated_location_name: string;
+  allocatedLocationName: string;
 };
 
-export type RoomSessionIdentity = {
-  id: string;
-  sessionIdentity: string;
-};
