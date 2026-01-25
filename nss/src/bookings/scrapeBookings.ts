@@ -1,65 +1,158 @@
-import collectAllSessions from "../collectSessionIdentities";
-import { YEAR } from "../config";
-import { RoomBooking, RoomSessionIdentity } from "../types";
-import decodeXlsx from "./decodeXlsx";
-import fetchXlsx from "./fetchXlsx";
-import { parseBookingRow } from "./parseBookingRow";
+import axios from "axios";
+import { RemoteBooking, RoomBooking } from "../types";
+import { parseRemoteBooking } from "./parseRemoteBooking";
 
-const TT_URL =
-  "https://publish.unsw.edu.au/timetables?date=2025-11-10&view=week&timetableTypeSelected=1e042cb1-547d-41d4-ae93-a1f2c3d34538&selections=1e042cb1-547d-41d4-ae93-a1f2c3d34538__";
-// Specifies bookings for Mon - Sun and 06:00 - 23:30
-const OPTIONS = "&view=week&days=0,1,2,3,4,5,6&timePeriod=all%20day";
-// ! Can only select at most 20 at a time ! do not set higher than 20
-const BATCH_SIZE = 20;
-// Specify weeks and year
-const TIME_PERIOD = `&datePeriod=${YEAR}&all_weeks=true`;
+type ExtraProperty = {
+  Name: string;
+  Value: string;
+};
 
-// Generates URLs for every batch of rooms
-// - Gets the ids of each session in batches of 20
-// - Constructs the urls
-const generateURLs = async (): Promise<string[]> => {
-  // Either read from file or fetch and save to disk
-  const sessionIdentities: RoomSessionIdentity[] = await collectAllSessions();
+type EventData = {
+  StartDateTime: string;
+  EndDateTime: string;
+  Location: string;
+  Description: string;
+  Name: string;
+  EventType: string;
+  ExtraProperties: ExtraProperty[];
+  WeekRanges: string;
+  WeekLabels: string;
+};
 
-  // Get number of urls
-  const urlCount = Math.ceil(sessionIdentities.length / 20);
+const mapToRemoteBooking = (data: EventData): RemoteBooking => {
+  return {
+    moduleCode:
+      data.ExtraProperties.find((property) => property.Name === "Module Name")
+        ?.Value || "",
+    moduleDescription:
+      data.ExtraProperties.find(
+        (property) => property.Name === "Module Description",
+      )?.Value || "",
+    name: data.Name,
+    startTime: data.StartDateTime,
+    endTime: data.EndDateTime,
+    dates: data.WeekRanges,
+    bookingType: data.EventType,
+    allocatedLocationName:
+      data.ExtraProperties.find((property) => property.Name === "Location Name")
+        ?.Value || "",
+  };
+};
 
-  // Generate all batches of session ids for each rooms in groups of 20
-  let batches: string[] = [];
-  for (let i = 0; i < urlCount; i++) {
-    const batch = sessionIdentities
-      .slice(i * BATCH_SIZE, (i + 1) * BATCH_SIZE)
-      .map(({ sessionIdentity }) => sessionIdentity)
-      .join("_");
-    batches.push(batch);
+const API_BASE_URL =
+  "https://t1-apac-v4-api-d4-03.azurewebsites.net/api/Public";
+const UNSW_INSTITUTION_ID = "98c1cede-2447-4c14-92a3-7816107cd42b";
+type CategoryType = "Location" | "Zone" | "Department";
+const CATEGORY_TYPE_IDS = {
+  Location: "1e042cb1-547d-41d4-ae93-a1f2c3d34538",
+  Zone: "1f3782b4-a328-44cd-9062-e7313650ba55",
+  Department: "d334dcdb-6362-408b-b3e2-4dcd061d5654",
+};
+
+const getAllCategories = async (
+  categoryType: CategoryType,
+): Promise<Record<string, any>> => {
+  const url = `${API_BASE_URL}/CategoryTypes/${CATEGORY_TYPE_IDS[categoryType]}/Categories/FilterWithCache/${UNSW_INSTITUTION_ID}`;
+
+  const results: any[] = [];
+  let totalPages = 1;
+  let currentPage = 1;
+
+  while (true) {
+    const response = await axios.post(`${url}?pageNumber=${currentPage}`);
+    const data = response.data;
+
+    totalPages = data.TotalPages;
+    results.push(...data.Results);
+
+    if (currentPage === totalPages) {
+      break;
+    }
+    currentPage++;
   }
 
-  // Combine into urls
-  return Promise.resolve(
-    batches.map((batch) => TT_URL + batch + OPTIONS + TIME_PERIOD)
+  return results.reduce((acc, category) => {
+    acc[category.Identity] = category;
+    return acc;
+  }, {});
+};
+
+const getViewOptions = async (
+  year: number | string,
+): Promise<{
+  DatePeriods: any[];
+  Days: any[];
+  TimePeriods: any[];
+  Weeks: any[];
+}> => {
+  const response = await axios.get(
+    `${API_BASE_URL}/ViewOptions/${UNSW_INSTITUTION_ID}`,
   );
+  const data = response.data;
+
+  return {
+    DatePeriods: data.DatePeriods.filter(
+      (dp: any) => dp.Description === String(year),
+    ),
+    Days: data.Days,
+    TimePeriods: data.TimePeriods.filter(
+      (tp: any) => tp.Description === "All Day",
+    ),
+    Weeks: data.Weeks.filter((wk: any) =>
+      wk.FirstDayInWeek.startsWith(String(year)),
+    ),
+  };
 };
 
-// Scrapes the bookings
-// - Orchestrates the main booking scraping pipeline
+const getEvents = async (
+  categoryType: CategoryType,
+  categoryIds: string[],
+  viewOptions: any,
+) => {
+  const eventsByCategoryId: Record<string, any[]> = {};
+  const batchSize = 20;
+
+  for (let i = 0; i < categoryIds.length; i += batchSize) {
+    const batch = categoryIds.slice(i, i + batchSize);
+
+    const payload = {
+      CategoryTypesWithIdentities: [
+        {
+          CategoryTypeIdentity: CATEGORY_TYPE_IDS[categoryType],
+          CategoryIdentities: batch,
+        },
+      ],
+      ViewOptions: viewOptions,
+      FetchBookings: false,
+      FetchPersonalEvents: false,
+      PersonalIdentities: [],
+    };
+
+    const response = await axios.post(
+      `${API_BASE_URL}/CategoryTypes/Categories/Events/Filter/${UNSW_INSTITUTION_ID}`,
+      payload,
+    );
+
+    for (const categoryEvents of response.data.CategoryEvents) {
+      eventsByCategoryId[categoryEvents.Identity] = categoryEvents.Results;
+    }
+  }
+
+  return eventsByCategoryId;
+};
+
 const scrapeBookings = async (): Promise<RoomBooking[]> => {
-  return generateURLs()
-    .then((urls) => urls.map(getBookings))
-    .then((promisedBookings) => Promise.all(promisedBookings))
-    .then((bookings) => bookings.flat());
-};
-
-// Scrapes the bookings of a particular url
-// - Orchestrates booking parsing
-const getBookings = async (url: string): Promise<RoomBooking[]> => {
-  return fetchXlsx(url)
-    .then(decodeXlsx)
-    .then((bookingExcelRows) => bookingExcelRows.map(parseBookingRow))
-    .then((nestedBookings) => nestedBookings.flat())
-    .catch((error) => {
-      console.log(error);
-      return [];
-    })
+  const categories = await getAllCategories("Location");
+  const kensingtonRoomIds = Object.keys(categories).filter((id) =>
+    categories[id].Name.startsWith("K-"),
+  );
+  const viewOptions = await getViewOptions(2026);
+  const events = await getEvents("Location", kensingtonRoomIds, viewOptions);
+  return Object.values(events)
+    .flat()
+    .map(mapToRemoteBooking)
+    .map((remoteBooking) => parseRemoteBooking(remoteBooking))
+    .flat();
 };
 
 export default scrapeBookings;
