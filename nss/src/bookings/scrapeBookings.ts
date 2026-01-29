@@ -2,6 +2,16 @@ import axios from "axios";
 import { EventData, RemoteBooking, RoomBooking, ViewOptions } from "../types";
 import { parseRemoteBooking } from "./parseRemoteBooking";
 
+const API_BASE_URL =
+  "https://t1-apac-v4-api-d4-03.azurewebsites.net/api/Public";
+const UNSW_INSTITUTION_ID = "98c1cede-2447-4c14-92a3-7816107cd42b";
+type CategoryType = "Location" | "Zone" | "Department";
+const CATEGORY_TYPE_IDS = {
+  Location: "1e042cb1-547d-41d4-ae93-a1f2c3d34538",
+  Zone: "1f3782b4-a328-44cd-9062-e7313650ba55",
+  Department: "d334dcdb-6362-408b-b3e2-4dcd061d5654",
+};
+
 const mapToRemoteBooking = (data: EventData): RemoteBooking => {
   return {
     moduleCode:
@@ -22,22 +32,12 @@ const mapToRemoteBooking = (data: EventData): RemoteBooking => {
   };
 };
 
-const API_BASE_URL =
-  "https://t1-apac-v4-api-d4-03.azurewebsites.net/api/Public";
-const UNSW_INSTITUTION_ID = "98c1cede-2447-4c14-92a3-7816107cd42b";
-type CategoryType = "Location" | "Zone" | "Department";
-const CATEGORY_TYPE_IDS = {
-  Location: "1e042cb1-547d-41d4-ae93-a1f2c3d34538",
-  Zone: "1f3782b4-a328-44cd-9062-e7313650ba55",
-  Department: "d334dcdb-6362-408b-b3e2-4dcd061d5654",
-};
-
 const getAllCategories = async (
   categoryType: CategoryType,
 ): Promise<Record<string, any>> => {
   const url = `${API_BASE_URL}/CategoryTypes/${CATEGORY_TYPE_IDS[categoryType]}/Categories/FilterWithCache/${UNSW_INSTITUTION_ID}`;
 
-  const results: any[] = [];
+  const results = [];
   let totalPages = 1;
   let currentPage = 1;
 
@@ -60,25 +60,19 @@ const getAllCategories = async (
   }, {});
 };
 
-const getViewOptions = async (
-  year: number,
-): Promise<ViewOptions> => {
+const getViewOptions = async (year: number): Promise<ViewOptions> => {
   const response = await axios.get(
     `${API_BASE_URL}/ViewOptions/${UNSW_INSTITUTION_ID}`,
   );
   const data = response.data;
 
   return {
-    DatePeriods: data.DatePeriods.filter(
-      (dp: any) => dp.Description === year,
-    ),
+    DatePeriods: data.DatePeriods.filter((dp: any) => dp.Description === year),
     Days: data.Days,
     TimePeriods: data.TimePeriods.filter(
       (tp: any) => tp.Description === "All Day",
     ),
-    Weeks: data.Weeks.filter((wk: any) =>
-      wk.FirstDayInWeek.startsWith(year),
-    ),
+    Weeks: data.Weeks.filter((wk: any) => wk.FirstDayInWeek.startsWith(year)),
   };
 };
 
