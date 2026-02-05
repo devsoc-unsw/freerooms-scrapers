@@ -3,7 +3,7 @@ import PARSERS from "./nameParsers";
 
 /***
  * Takes in a RemoteBooking and returns a list of RoomBooking(s).
- * A single BookingExcelRow has a string of room ids in allocated_location_name
+ * A single RemoteBooking has a string of room ids in allocated_location_name
  * (ex. "K-E12-205 - UNSW Business School  205, K-F23-307 - Mathews 307, K-F23-301 - Mathews 301"),
  * so multiple RoomBooking(s) are created.
  */

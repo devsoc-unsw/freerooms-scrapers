@@ -23,6 +23,10 @@ const CATEGORY_TYPE_IDS = {
   Department: "d334dcdb-6362-408b-b3e2-4dcd061d5654",
 };
 
+
+/***
+ * Mapping raw response data to the relevent booking data
+ */
 const mapToRemoteBooking = (data: EventData): RemoteBooking => {
   return {
     moduleCode:
@@ -43,6 +47,9 @@ const mapToRemoteBooking = (data: EventData): RemoteBooking => {
   };
 };
 
+/***
+ * Given a category type (Location, Zone, Department) fetches all categories from publish.
+ */
 const getAllCategories = async (
   categoryType: CategoryType,
 ): Promise<Record<string, Category>> => {
@@ -73,6 +80,9 @@ const getAllCategories = async (
   }, {});
 };
 
+/***
+ * Gets the view options for a specific year. 
+ */
 const getViewOptions = async (year: number): Promise<ViewOptions> => {
   const response = await publishAPIClient.rateLimitedGet(
     `/ViewOptions/${UNSW_INSTITUTION_ID}`,
@@ -89,7 +99,10 @@ const getViewOptions = async (year: number): Promise<ViewOptions> => {
   };
 };
 
-const generatePayload = (
+/***
+ * Helper to generate all payloads for every request. 
+ */
+const generatePayloads = (
   categoryType: CategoryType,
   categoryIds: string[],
   viewOptions: ViewOptions,
@@ -110,12 +123,15 @@ const generatePayload = (
   }));
 };
 
+/***
+ * Fetches all raw events from publish. 
+ */
 const getEvents = async (
   categoryType: CategoryType,
   categoryIds: string[],
   viewOptions: ViewOptions,
 ): Promise<Record<string, EventData[]>> => {
-  const requests = generatePayload(categoryType, categoryIds, viewOptions).map(
+  const requests = generatePayloads(categoryType, categoryIds, viewOptions).map(
     (payload) => {
       fs.writeFileSync("payload.json", JSON.stringify(payload, null, 2));
       return publishAPIClient.rateLimitedPost(
@@ -139,6 +155,9 @@ const getEvents = async (
   return eventsByCategoryId;
 };
 
+/***
+ * Fetches all bookings from publish and maps it to the RoomBooking type.
+ */
 const scrapeBookings = async (): Promise<RoomBooking[]> => {
   const categories = await getAllCategories("Location");
   const kensingtonRoomIds = Object.keys(categories).filter((id) =>
