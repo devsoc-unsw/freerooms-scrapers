@@ -1,3 +1,5 @@
+import { AxiosInstance, AxiosResponse } from "axios";
+
 export type RoomBooking = {
   bookingType: string;
   name: string;
@@ -117,4 +119,39 @@ export type ViewOptions = {
   Days: any[];
   TimePeriods: any[];
   Weeks: any[];
-}
+};
+
+export type Category = {
+  Identity: string;
+  Name: string;
+};
+
+export type CategoriesFilterResponse = {
+  TotalPages: number;
+  Results: Category[];
+};
+
+export type ViewOptionsResponse = {
+  DatePeriods: { Description: number | string }[];
+  Days: unknown[];
+  TimePeriods: { Description: string }[];
+  Weeks: { FirstDayInWeek: string }[];
+};
+
+export type EventsFilterPayload = {
+  CategoryTypesWithIdentities: {
+    CategoryTypeIdentity: string;
+    CategoryIdentities: string[];
+  }[];
+  ViewOptions: ViewOptions;
+  FetchBookings: boolean;
+  FetchPersonalEvents: boolean;
+  PersonalIdentities: string[];
+};
+
+export type CategoryType = "Location" | "Zone" | "Department";
+
+export type RateLimitedAxiosInstance = AxiosInstance & {
+  rateLimitedPost(url: string, data?: any): Promise<AxiosResponse>;
+  rateLimitedGet(url: string): Promise<AxiosResponse>;
+};
