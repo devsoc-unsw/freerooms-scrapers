@@ -1,6 +1,6 @@
 import axios from "axios";
 import Bottleneck from "bottleneck";
-import { MAX_CONCURRENT_REQUESTS, MIN_TIME_BETWEEN_REQUESTS } from "../config";
+import { MAX_CONCURRENT_REQUESTS, MIN_TIME_MS_BETWEEN_REQUESTS } from "../config";
 import { RateLimitedAxiosInstance } from "../types";
 
 const API_BASE_URL =
@@ -8,7 +8,7 @@ const API_BASE_URL =
 
 const rateLimiter = new Bottleneck({
   maxConcurrent: MAX_CONCURRENT_REQUESTS,
-  minTime: MIN_TIME_BETWEEN_REQUESTS,
+  minTime: MIN_TIME_MS_BETWEEN_REQUESTS,
 });
 
 const publishAPIClient = axios.create({
