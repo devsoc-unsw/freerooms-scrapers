@@ -19,7 +19,7 @@ console.log("Maximum Concurrent Requests: " + MAX_CONCURRENT_REQUESTS);
 export const MIN_TIME_MS_BETWEEN_REQUESTS = process.env
   .MIN_TIME_MS_BETWEEN_REQUESTS
   ? parseInt(process.env.MIN_TIME_MS_BETWEEN_REQUESTS)
-  : 5000;
+  : 1000;
 console.log("Minimum Time (ms) Between Requests: " + MIN_TIME_MS_BETWEEN_REQUESTS);
 
 export const DRYRUN = !!process.env.DRYRUN;
