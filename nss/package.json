@@ -8,7 +8,8 @@
     "build": "tsc --project ./",
     "start": "node ./dist/runScraper.js",
     "scrape": "ts-node src/runScraper.ts",
-    "collect": "ts-node src/collectSessionIdentities.ts"
+    "collect": "ts-node src/collectSessionIdentities.ts",
+    "poc:course-bookings": "ts-node src/bookings/scrapeCourseBookingsPoc.ts"
   },
   "repository": {
     "type": "git",
@@ -29,9 +30,7 @@
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
     "dotenv": "^16.3.1",
-    "lodash": "^4.17.23",
-    "playwright": "^1.57.0",
-    "xlsx": "^0.18.5"
+    "lodash": "^4.17.23"
   },
   "devDependencies": {
     "@types/node": "^20.1.7",
