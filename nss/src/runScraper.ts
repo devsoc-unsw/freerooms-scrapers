@@ -19,14 +19,17 @@ const runScrapeJob = async () => {
 
   // we're sending about 1000 requests here
   const facilities = await Promise.all(facilitiesPromises);
+
   const bookings = await scrapeBookings();
   bookings.sort((a, b) => a.start.getTime() - b.start.getTime());
+  // Ensures any bookings are only for rooms we have fetched
+  const filteredBookings = bookings.filter(booking => rooms.map(room => room.id).includes(booking.roomId))
 
   return {
     buildings: filteredBuildings,
     rooms,
     facilities,
-    bookings,
+    bookings: filteredBookings,
   };
 };
 
@@ -34,6 +37,7 @@ const runScraper = async () => {
   console.time("Scraping");
   const { buildings, rooms, facilities, bookings } = await runScrapeJob();
   console.timeEnd("Scraping");
+
 
   const requestConfig = {
     headers: {
