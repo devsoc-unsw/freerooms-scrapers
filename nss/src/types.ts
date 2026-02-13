@@ -1,14 +1,4 @@
-export type UngroupedRoomBooking = {
-  name: string;
-  day: string;
-  start: string;
-  weekPattern: number;
-};
-
-export type RawRoomBooking = UngroupedRoomBooking & {
-  roomId: string;
-  end: string;
-};
+import { AxiosInstance, AxiosResponse } from "axios";
 
 export type RoomBooking = {
   bookingType: string;
@@ -96,28 +86,72 @@ export type RoomMarkers = {
   long: number;
 };
 
-export type BookingsExcelRow = {
-  module_code: string;
-  module_description: string;
+export type RemoteBooking = {
+  moduleCode: string;
+  moduleDescription: string;
   name: string;
-  class_size: number;
-  day:
-    | "Monday"
-    | "Tuesday"
-    | "Wednesday"
-    | "Thursday"
-    | "Friday"
-    | "Saturday"
-    | "Sunday";
-  duration: string;
-  start_time: string;
-  end_time: string;
+  bookingType: string;
+  startTime: string;
+  endTime: string;
   dates: string;
-  allocated_location_name: string;
-  weeks: string;
+  allocatedLocationName: string;
 };
 
-export type RoomSessionIdentity = {
-  id: string;
-  sessionIdentity: string;
+export type ExtraProperty = {
+  Name: string;
+  Value: string;
+};
+
+export type EventData = {
+  StartDateTime: string;
+  EndDateTime: string;
+  Location: string;
+  Description: string;
+  Name: string;
+  EventType: string;
+  ExtraProperties: ExtraProperty[];
+  WeekRanges: string;
+  WeekLabels: string;
+};
+
+export type ViewOptions = {
+  DatePeriods: any[];
+  Days: any[];
+  TimePeriods: any[];
+  Weeks: any[];
+};
+
+export type Category = {
+  Identity: string;
+  Name: string;
+};
+
+export type CategoriesFilterResponse = {
+  TotalPages: number;
+  Results: Category[];
+};
+
+export type ViewOptionsResponse = {
+  DatePeriods: { Description: number | string }[];
+  Days: unknown[];
+  TimePeriods: { Description: string }[];
+  Weeks: { FirstDayInWeek: string }[];
+};
+
+export type EventsFilterPayload = {
+  CategoryTypesWithIdentities: {
+    CategoryTypeIdentity: string;
+    CategoryIdentities: string[];
+  }[];
+  ViewOptions: ViewOptions;
+  FetchBookings: boolean;
+  FetchPersonalEvents: boolean;
+  PersonalIdentities: string[];
+};
+
+export type CategoryType = "Location" | "Zone" | "Department";
+
+export type RateLimitedAxiosInstance = AxiosInstance & {
+  rateLimitedPost(url: string, data?: any): Promise<AxiosResponse>;
+  rateLimitedGet(url: string): Promise<AxiosResponse>;
 };

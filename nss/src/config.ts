@@ -11,8 +11,15 @@ console.log("Url to hit: " + HASURAGRES_URL);
 
 export const HASURAGRES_API_KEY = process.env.HASURAGRES_API_KEY;
 
-export const DRYRUN = !!process.env.DRYRUN;
+export const MAX_CONCURRENT_REQUESTS = process.env.MAX_CONCURRENT_REQUESTS
+  ? parseInt(process.env.MAX_CONCURRENT_REQUESTS)
+  : 1;
+console.log("Maximum Concurrent Requests: " + MAX_CONCURRENT_REQUESTS);
 
-export const BOOKING_LOADING_TIMEOUT = process.env.BOOKING_LOADING_TIMEOUT
-  ? parseInt(process.env.BOOKING_LOADING_TIMEOUT)
-  : 100000;
+export const MIN_TIME_MS_BETWEEN_REQUESTS = process.env
+  .MIN_TIME_MS_BETWEEN_REQUESTS
+  ? parseInt(process.env.MIN_TIME_MS_BETWEEN_REQUESTS)
+  : 1000;
+console.log("Minimum Time (ms) Between Requests: " + MIN_TIME_MS_BETWEEN_REQUESTS);
+
+export const DRYRUN = !!process.env.DRYRUN;

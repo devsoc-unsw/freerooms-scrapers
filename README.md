@@ -54,7 +54,7 @@ Mapping of school codes can be found [here](https://github.com/devsoc-unsw/freer
 | `start`       | Start time of the booking.                           | "2024-01-27T04:00:00+00:00" |
 | `end`         | End time of the booking.                             | "2024-01-27T08:00:00+00:00" |
 
-Full list of current booking types is: "CLASS", "SOCIETY", "INTERNAL", "LIB", "BLOCK", "MISC".
+Full list of current booking types is: "CLASS", "SOCIETY", "INTERNAL", "LIB", "BLOCK", "MISC", "EXAM".
 
 ### Relationships
 
