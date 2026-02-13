@@ -96,7 +96,7 @@ const PARSERS: Record<string, NameParser> = {
   MISC_CLASS: {
     pattern: /^\*(?<name>[A-Z]{4}[0-9]{4})-|^FS-(?<name2>[^-].+)/,
     parser: (matchGroups) => ({
-      bookingType: "MISCLLL",
+      bookingType: "MISC",
       name: matchGroups.name ? matchGroups.name : "FS-" + matchGroups.name2,
     }),
   },
