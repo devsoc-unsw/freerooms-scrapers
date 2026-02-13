@@ -40,7 +40,7 @@ const parseName = (rawName: string): ParsedName => {
   return { bookingType: "MISC", name: "Misc." };
 };
 
-const REGEX_ROOM_IDS = /K-[A-Z][0-9]{2}-[^ ]*/g;
+const REGEX_ROOM_IDS = /K-[A-Z][0-9]+-[^ ]+/g;
 // Parses the column allocated_location_name for all room ids
 // Examples:
 //  K-F23-226 - Mathews 226, K-F23-227 - Mathews 227, K-F23-228 - Mathews 228
