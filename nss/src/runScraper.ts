@@ -1,37 +1,32 @@
-import fs from "fs";
-import scrapeRooms from "./scrapeRooms";
-import scrapeBookings from "./scrapeBookings";
-import parseBooking from "./parseBooking";
-import scrapeBuildings from "./scrapeBuildings";
-import { DRYRUN, HASURAGRES_API_KEY, HASURAGRES_URL, YEAR } from "./config";
 import axios from "axios";
+import fs from "fs";
+import scrapeBookings from "./bookings/scrapeBookings";
+import { DRYRUN, HASURAGRES_API_KEY, HASURAGRES_URL, YEAR } from "./config";
 import { formatString } from "./stringUtils";
-import { scrapeRoomFacilities } from "./scrapeRoomFacilities";
+import { NSS_DATA_PATH } from "./constants";
+import path from "path";
+import { Building, MappedFacilities, Room } from "./types";
 
 const runScrapeJob = async () => {
-  const buildings = await scrapeBuildings();
-  const rooms = await scrapeRooms();
-  const facilitiesPromises = rooms.map((room) => scrapeRoomFacilities(room.id));
+  const buildings = JSON.parse(fs.readFileSync(path.join(NSS_DATA_PATH, "buildings.json"), 'utf8')) as Building[];
+  const rooms = JSON.parse(fs.readFileSync(path.join(NSS_DATA_PATH, "rooms.json"), 'utf8')) as Room[];
+  const facilities = JSON.parse(fs.readFileSync(path.join(NSS_DATA_PATH, "facilities.json"), 'utf8')) as MappedFacilities[];
 
   // Filter buildings with no rooms
   const filteredBuildings = buildings.filter(
     (building) => !!rooms.find((room) => room.id.startsWith(building.id))
   );
 
-  const bookingPromises = rooms.map((room) => scrapeBookings(room.id));
-  // we're sending about 1000 requests here
-  const [facilities, bookings] = await Promise.all([
-    Promise.all(facilitiesPromises),
-    Promise.all(bookingPromises),
-  ]);
-  const parsedBookings = bookings.flat().map(parseBooking).flat();
-  parsedBookings.sort((a, b) => a.start.getTime() - b.start.getTime());
+  const bookings = await scrapeBookings();
+  bookings.sort((a, b) => a.start.getTime() - b.start.getTime());
+  // Ensures any bookings are only for rooms we have fetched
+  const filteredBookings = bookings.filter(booking => rooms.map(room => room.id).includes(booking.roomId))
 
   return {
     buildings: filteredBuildings,
     rooms,
     facilities,
-    bookings: parsedBookings,
+    bookings: filteredBookings,
   };
 };
 
@@ -81,8 +76,8 @@ const runScraper = async () => {
             "infotechnology",
             "writingMedia",
             "service",
-            "lat", 
-            "long"
+            "lat",
+            "long",
           ],
           sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
           sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),
