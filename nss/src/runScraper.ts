@@ -6,19 +6,19 @@ import scrapeBuildings from "./scrapeBuildings";
 import { scrapeRoomFacilities } from "./scrapeRoomFacilities";
 import scrapeRooms from "./scrapeRooms";
 import { formatString } from "./stringUtils";
+import { NSS_DATA_PATH } from "./constants";
+import path from "path";
+import { Building, MappedFacilities, Room } from "./types";
 
 const runScrapeJob = async () => {
-  const buildings = await scrapeBuildings();
-  const rooms = await scrapeRooms();
-  const facilitiesPromises = rooms.map((room) => scrapeRoomFacilities(room.id));
+  const buildings = JSON.parse(fs.readFileSync(path.join(NSS_DATA_PATH, "buildings.json"), 'utf8')) as Building[];
+  const rooms = JSON.parse(fs.readFileSync(path.join(NSS_DATA_PATH, "rooms.json"), 'utf8')) as Room[];
+  const facilities = JSON.parse(fs.readFileSync(path.join(NSS_DATA_PATH, "facilities.json"), 'utf8')) as MappedFacilities[];
 
   // Filter buildings with no rooms
   const filteredBuildings = buildings.filter(
     (building) => !!rooms.find((room) => room.id.startsWith(building.id))
   );
-
-  // we're sending about 1000 requests here
-  const facilities = await Promise.all(facilitiesPromises);
 
   const bookings = await scrapeBookings();
   bookings.sort((a, b) => a.start.getTime() - b.start.getTime());
@@ -37,7 +37,6 @@ const runScraper = async () => {
   console.time("Scraping");
   const { buildings, rooms, facilities, bookings } = await runScrapeJob();
   console.timeEnd("Scraping");
-
 
   const requestConfig = {
     headers: {
