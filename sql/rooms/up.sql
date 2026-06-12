@@ -1,3 +1,6 @@
+CREATE EXTENSION IF NOT EXISTS vector;
+
+
 CREATE TYPE FloorTypeEnum AS ENUM (
     'Flat', 
     'Tiered', 
@@ -8,6 +11,8 @@ CREATE TYPE SeatingTypeEnum AS ENUM (
     'Movable', 
     'Fixed'
 );
+
+
 
 CREATE TABLE Rooms (
     "id"                 TEXT PRIMARY KEY,
@@ -27,5 +32,9 @@ CREATE TABLE Rooms (
     "service"            TEXT[] NOT NULL,
     "lat"                DOUBLE PRECISION NOT NULL,
     "long"               DOUBLE PRECISION NOT NULL,
+    "embedding"          vector(1536),
     FOREIGN KEY ("buildingId") REFERENCES Buildings("id") ON DELETE CASCADE
 );
+
+
+CREATE INDEX ON Rooms USING hnsw ("embedding" vector_cosine_ops);

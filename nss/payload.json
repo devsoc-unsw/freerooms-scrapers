@@ -1,0 +1,332 @@
+{
+  "CategoryTypesWithIdentities": [
+    {
+      "CategoryTypeIdentity": "1e042cb1-547d-41d4-ae93-a1f2c3d34538",
+      "CategoryIdentities": [
+        "670aeed8-ed36-2404-17f3-95828e5877ac",
+        "bd09d4e3-94ff-99a0-84f0-8e25b219a151",
+        "a77c3d6c-c104-f4a1-761c-d7c4d2996ec2",
+        "2253132f-2be3-5f03-3cb6-70d61cea2fd9",
+        "7ae94aa6-94e9-b6b6-9168-7e0d1f27f409",
+        "149b42f9-a864-c61a-bb2d-6d576c97158b",
+        "db9bbfa1-f784-7ffc-b390-150ada740418",
+        "f3b53ee1-c2b7-1248-0e54-52829e0684bf",
+        "13d0d24a-9595-b939-d571-1ac2d9d7384b",
+        "835269ea-5b5b-4de3-47a4-9602224ef6c9"
+      ]
+    }
+  ],
+  "ViewOptions": {
+    "DatePeriods": [],
+    "Days": [
+      {
+        "Name": "Sunday",
+        "DayOfWeek": 0,
+        "IsDefault": false
+      },
+      {
+        "Name": "Monday",
+        "DayOfWeek": 1,
+        "IsDefault": true
+      },
+      {
+        "Name": "Tuesday",
+        "DayOfWeek": 2,
+        "IsDefault": true
+      },
+      {
+        "Name": "Wednesday",
+        "DayOfWeek": 3,
+        "IsDefault": true
+      },
+      {
+        "Name": "Thursday",
+        "DayOfWeek": 4,
+        "IsDefault": true
+      },
+      {
+        "Name": "Friday",
+        "DayOfWeek": 5,
+        "IsDefault": true
+      },
+      {
+        "Name": "Saturday",
+        "DayOfWeek": 6,
+        "IsDefault": false
+      }
+    ],
+    "TimePeriods": [
+      {
+        "Description": "All Day",
+        "StartTime": "06:00",
+        "EndTime": "23:30",
+        "IsDefault": false
+      }
+    ],
+    "Weeks": [
+      {
+        "WeekNumber": 53,
+        "WeekLabel": "Summer Wk 1",
+        "FirstDayInWeek": "2026-01-05T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 54,
+        "WeekLabel": "Summer Wk 2",
+        "FirstDayInWeek": "2026-01-12T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 55,
+        "WeekLabel": "Summer Wk 3",
+        "FirstDayInWeek": "2026-01-19T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 56,
+        "WeekLabel": "Summer Wk 4",
+        "FirstDayInWeek": "2026-01-26T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 57,
+        "WeekLabel": "Summer Wk 5",
+        "FirstDayInWeek": "2026-02-02T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 58,
+        "WeekLabel": "Oweek",
+        "FirstDayInWeek": "2026-02-09T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 59,
+        "WeekLabel": "T1 Wk1",
+        "FirstDayInWeek": "2026-02-16T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 60,
+        "WeekLabel": "T1 Wk2 (Z1 Wk1)",
+        "FirstDayInWeek": "2026-02-23T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 61,
+        "WeekLabel": "T1 Wk3 (Z1 Wk2)",
+        "FirstDayInWeek": "2026-03-02T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 62,
+        "WeekLabel": "T1 Wk4 (Z1 Wk3)",
+        "FirstDayInWeek": "2026-03-09T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 63,
+        "WeekLabel": "T1 Wk5 (Z1 Wk4)",
+        "FirstDayInWeek": "2026-03-16T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 64,
+        "WeekLabel": "T1 Wk6 (Z1 Wk5)",
+        "FirstDayInWeek": "2026-03-23T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 65,
+        "WeekLabel": "T1 Wk7 (Z1 Break) ",
+        "FirstDayInWeek": "2026-03-30T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 66,
+        "WeekLabel": "T1 Wk8 (Z1 Break)",
+        "FirstDayInWeek": "2026-04-06T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 67,
+        "WeekLabel": "T1 Wk9 (Z1 Wk6)",
+        "FirstDayInWeek": "2026-04-13T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 68,
+        "WeekLabel": "T1 Wk10 (Z1 Wk7)",
+        "FirstDayInWeek": "2026-04-20T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 69,
+        "WeekLabel": "T1 Wk11 (Z1 Wk8)",
+        "FirstDayInWeek": "2026-04-27T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 70,
+        "WeekLabel": "T1 Wk12 (Z1 Wk9)",
+        "FirstDayInWeek": "2026-05-04T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 71,
+        "WeekLabel": "T1 Wk13 (Z1 Wk10)",
+        "FirstDayInWeek": "2026-05-11T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 72,
+        "WeekLabel": "Z1 Wk11",
+        "FirstDayInWeek": "2026-05-18T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 73,
+        "WeekLabel": "Z1 Wk12",
+        "FirstDayInWeek": "2026-05-25T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 74,
+        "WeekLabel": "T2 WK1 (Z1 Wk13)",
+        "FirstDayInWeek": "2026-06-01T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 75,
+        "WeekLabel": "T2 WK2",
+        "FirstDayInWeek": "2026-06-08T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 76,
+        "WeekLabel": "T2 WK3",
+        "FirstDayInWeek": "2026-06-15T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 77,
+        "WeekLabel": "T2 WK4",
+        "FirstDayInWeek": "2026-06-22T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 78,
+        "WeekLabel": "T2 WK5",
+        "FirstDayInWeek": "2026-06-29T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 79,
+        "WeekLabel": "T2 WK6",
+        "FirstDayInWeek": "2026-07-06T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 80,
+        "WeekLabel": "T2 WK7 (Z2 Wk1)",
+        "FirstDayInWeek": "2026-07-13T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 81,
+        "WeekLabel": "T2 WK8 (Z2 Wk2)",
+        "FirstDayInWeek": "2026-07-20T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 82,
+        "WeekLabel": "T2 WK9 (Z2 Wk3)",
+        "FirstDayInWeek": "2026-07-27T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 83,
+        "WeekLabel": "T2 WK10 (Z2 Wk4)",
+        "FirstDayInWeek": "2026-08-03T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 84,
+        "WeekLabel": "T2 WK11 (Z2 Wk5)",
+        "FirstDayInWeek": "2026-08-10T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 85,
+        "WeekLabel": "T2 WK12 (Z2 Break)",
+        "FirstDayInWeek": "2026-08-17T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 86,
+        "WeekLabel": "T2 WK13 (Z2 Break)",
+        "FirstDayInWeek": "2026-08-24T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 87,
+        "WeekLabel": "Z2 Wk6",
+        "FirstDayInWeek": "2026-08-31T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 88,
+        "WeekLabel": "Z2 Wk7",
+        "FirstDayInWeek": "2026-09-07T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 89,
+        "WeekLabel": "T3 Wk1 (Z2 Wk8)",
+        "FirstDayInWeek": "2026-09-14T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 90,
+        "WeekLabel": "T3 Wk2 (Z2 Wk9)",
+        "FirstDayInWeek": "2026-09-21T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 91,
+        "WeekLabel": "T3 Wk3 (Z2 Wk10)",
+        "FirstDayInWeek": "2026-09-28T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 92,
+        "WeekLabel": "T3 Wk4 (Z2 Wk11)",
+        "FirstDayInWeek": "2026-10-05T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 93,
+        "WeekLabel": "T3 Wk5 (Z2 Wk12)",
+        "FirstDayInWeek": "2026-10-12T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 94,
+        "WeekLabel": "T3 Wk6 (Z2 Wk13)",
+        "FirstDayInWeek": "2026-10-19T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 95,
+        "WeekLabel": "T3 Wk7",
+        "FirstDayInWeek": "2026-10-26T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 96,
+        "WeekLabel": "T3 Wk8",
+        "FirstDayInWeek": "2026-11-02T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 97,
+        "WeekLabel": "T3 Wk9",
+        "FirstDayInWeek": "2026-11-09T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 98,
+        "WeekLabel": "T3 Wk10",
+        "FirstDayInWeek": "2026-11-16T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 99,
+        "WeekLabel": "T3 Wk11",
+        "FirstDayInWeek": "2026-11-23T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 100,
+        "WeekLabel": "T3 Wk12",
+        "FirstDayInWeek": "2026-11-30T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 101,
+        "WeekLabel": "T3 Wk13",
+        "FirstDayInWeek": "2026-12-07T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 102,
+        "WeekLabel": "102",
+        "FirstDayInWeek": "2026-12-14T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 103,
+        "WeekLabel": "103",
+        "FirstDayInWeek": "2026-12-21T00:00:00+00:00"
+      },
+      {
+        "WeekNumber": 104,
+        "WeekLabel": "104",
+        "FirstDayInWeek": "2026-12-28T00:00:00+00:00"
+      }
+    ]
+  },
+  "FetchBookings": false,
+  "FetchPersonalEvents": false,
+  "PersonalIdentities": []
+}
