@@ -32,7 +32,7 @@ CREATE TABLE Rooms (
     "service"            TEXT[] NOT NULL,
     "lat"                DOUBLE PRECISION NOT NULL,
     "long"               DOUBLE PRECISION NOT NULL,
-    "embedding"          vector(1536),
+    "embedding"          vector(768),
     FOREIGN KEY ("buildingId") REFERENCES Buildings("id") ON DELETE CASCADE
 );
 

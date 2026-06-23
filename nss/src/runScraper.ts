@@ -8,31 +8,48 @@ import path from "path";
 import { Building, MappedFacilities, Room } from "./types";
 
 const runScrapeJob = async () => {
-  const buildings = JSON.parse(fs.readFileSync(path.join(NSS_DATA_PATH, "buildings.json"), 'utf8')) as Building[];
-  const rooms = JSON.parse(fs.readFileSync(path.join(NSS_DATA_PATH, "rooms.json"), 'utf8')) as Room[];
-  const facilities = JSON.parse(fs.readFileSync(path.join(NSS_DATA_PATH, "facilities.json"), 'utf8')) as MappedFacilities[];
+  const buildings = JSON.parse(
+    fs.readFileSync(path.join(NSS_DATA_PATH, "buildings.json"), "utf8"),
+  ) as Building[];
+  const rooms = JSON.parse(
+    fs.readFileSync(path.join(NSS_DATA_PATH, "rooms.json"), "utf8"),
+  ) as Room[];
+  const facilities = JSON.parse(
+    fs.readFileSync(path.join(NSS_DATA_PATH, "facilities.json"), "utf8"),
+  ) as MappedFacilities[];
+
+  const roomEmbeddings = JSON.parse(
+    fs.readFileSync(path.join(NSS_DATA_PATH, "room_embeddings.json"), "utf8"),
+  ) as { id: string; embedding: number[] }[];
+  const roomEmbeddingsMap = new Map(
+    roomEmbeddings.map((e) => [e.id, e.embedding]),
+  );
 
   // Filter buildings with no rooms
   const filteredBuildings = buildings.filter(
-    (building) => !!rooms.find((room) => room.id.startsWith(building.id))
+    (building) => !!rooms.find((room) => room.id.startsWith(building.id)),
   );
 
   const bookings = await scrapeBookings();
   bookings.sort((a, b) => a.start.getTime() - b.start.getTime());
   // Ensures any bookings are only for rooms we have fetched
-  const filteredBookings = bookings.filter(booking => rooms.map(room => room.id).includes(booking.roomId))
+  const filteredBookings = bookings.filter((booking) =>
+    rooms.map((room) => room.id).includes(booking.roomId),
+  );
 
   return {
     buildings: filteredBuildings,
     rooms,
     facilities,
     bookings: filteredBookings,
+    roomEmbeddingsMap,
   };
 };
 
 const runScraper = async () => {
   console.time("Scraping");
-  const { buildings, rooms, facilities, bookings } = await runScrapeJob();
+  const { buildings, rooms, facilities, bookings, roomEmbeddingsMap } =
+    await runScrapeJob();
   console.timeEnd("Scraping");
 
   const requestConfig = {
@@ -78,12 +95,13 @@ const runScraper = async () => {
             "service",
             "lat",
             "long",
+            "embedding",
           ],
           sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
           sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),
           sql_before: formatString(
             fs.readFileSync("./sql/rooms/before.sql", "utf8"),
-            rooms.map((room) => `'${room.id}'`).join(",")
+            rooms.map((room) => `'${room.id}'`).join(","),
           ),
           write_mode: "append",
           dryrun: DRYRUN,
@@ -91,6 +109,7 @@ const runScraper = async () => {
         payload: rooms.map((room, i) => ({
           ...room,
           ...facilities[i],
+          embedding: roomEmbeddingsMap.get(room.id) ?? null,
         })),
       },
       {
@@ -102,7 +121,7 @@ const runScraper = async () => {
           sql_before: formatString(
             fs.readFileSync("./sql/bookings/before.sql", "utf8"),
             new Date(YEAR, 0, 1).toISOString(),
-            new Date(YEAR + 1, 0, 1).toISOString()
+            new Date(YEAR + 1, 0, 1).toISOString(),
           ),
           write_mode: "append",
           dryrun: DRYRUN,
@@ -110,7 +129,7 @@ const runScraper = async () => {
         payload: bookings,
       },
     ],
-    requestConfig
+    requestConfig,
   );
   console.timeEnd("Inserting");
 };
