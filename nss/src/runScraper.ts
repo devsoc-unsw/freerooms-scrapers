@@ -7,6 +7,18 @@ import { NSS_DATA_PATH } from "./constants";
 import path from "path";
 import { Building, MappedFacilities, Room } from "./types";
 
+const readSql = (sqlPath: string): string => {
+  const filePath = path.join(__dirname, "..", sqlPath);
+  let content = fs.readFileSync(filePath, "utf8").trim();
+  if (/^(\.\.\/)+sql\//.test(content)) {
+    content = fs.readFileSync(
+      path.resolve(path.dirname(filePath), content),
+      "utf8",
+    );
+  }
+  return content;
+};
+
 const runScrapeJob = async () => {
   const buildings = JSON.parse(
     fs.readFileSync(path.join(NSS_DATA_PATH, "buildings.json"), "utf8"),
@@ -66,8 +78,8 @@ const runScraper = async () => {
       {
         metadata: {
           table_name: "Buildings",
-          sql_up: fs.readFileSync("./sql/buildings/up.sql", "utf8"),
-          sql_down: fs.readFileSync("./sql/buildings/down.sql", "utf8"),
+          sql_up: readSql("sql/buildings/up.sql"),
+          sql_down: readSql("sql/buildings/down.sql"),
           columns: ["id", "name", "lat", "long", "aliases"],
           write_mode: "overwrite",
           dryrun: DRYRUN,
@@ -97,10 +109,10 @@ const runScraper = async () => {
             "long",
             "embedding",
           ],
-          sql_up: fs.readFileSync("./sql/rooms/up.sql", "utf8"),
-          sql_down: fs.readFileSync("./sql/rooms/down.sql", "utf8"),
+          sql_up: readSql("sql/rooms/up.sql"),
+          sql_down: readSql("sql/rooms/down.sql"),
           sql_before: formatString(
-            fs.readFileSync("./sql/rooms/before.sql", "utf8"),
+            readSql("sql/rooms/before.sql"),
             rooms.map((room) => `'${room.id}'`).join(","),
           ),
           write_mode: "append",
@@ -116,10 +128,10 @@ const runScraper = async () => {
         metadata: {
           table_name: "Bookings",
           columns: ["bookingType", "name", "roomId", "start", "end"],
-          sql_up: fs.readFileSync("./sql/bookings/up.sql", "utf8"),
-          sql_down: fs.readFileSync("./sql/bookings/down.sql", "utf8"),
+          sql_up: readSql("sql/bookings/up.sql"),
+          sql_down: readSql("sql/bookings/down.sql"),
           sql_before: formatString(
-            fs.readFileSync("./sql/bookings/before.sql", "utf8"),
+            readSql("sql/bookings/before.sql"),
             new Date(YEAR, 0, 1).toISOString(),
             new Date(YEAR + 1, 0, 1).toISOString(),
           ),
