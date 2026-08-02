@@ -14,6 +14,13 @@ type RoomEmbedding = { id: string; embedding: number[] };
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+// gemini-embedding-001 only auto-normalizes 3072-dim output; truncated
+// dimensions (e.g. 768) must be normalized manually for cosine similarity.
+const normalize = (values: number[]): number[] => {
+  const norm = Math.sqrt(values.reduce((sum, v) => sum + v * v, 0));
+  return norm === 0 ? values : values.map((v) => v / norm);
+};
+
 const buildRoomBody = (room: Room, facilities: MappedFacilities): string => {
   const parts = [
     `${room.name} (${room.abbr}) — ${room.usage}, capacity ${room.capacity}.`,
@@ -97,6 +104,21 @@ const embedRooms = async () => {
     }
   }
 
+  // Fix up embeddings saved before normalization was added.
+  if (existing.length > 0) {
+    const firstNorm = Math.sqrt(
+      existing[0].embedding.reduce((sum, v) => sum + v * v, 0),
+    );
+    if (Math.abs(firstNorm - 1) > 1e-6) {
+      console.log(`Normalizing ${existing.length} existing embeddings...`);
+      existing = existing.map((e) => ({
+        ...e,
+        embedding: normalize(e.embedding),
+      }));
+      saveEmbeddings(embeddingsPath, existing);
+    }
+  }
+
   const rooms = JSON.parse(
     fs.readFileSync(path.join(NSS_DATA_PATH, "rooms.json"), "utf8"),
   ) as Room[];
@@ -160,7 +182,10 @@ const embedRooms = async () => {
 
       response.embeddings!.forEach((embedding, j) => {
         const roomIdx = chunkIndexes[j];
-        results.push({ id: rooms[roomIdx].id, embedding: embedding.values! });
+        results.push({
+          id: rooms[roomIdx].id,
+          embedding: normalize(embedding.values!),
+        });
       });
 
       saveEmbeddings(embeddingsPath, results);
