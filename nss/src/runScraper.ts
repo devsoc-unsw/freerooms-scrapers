@@ -8,16 +8,25 @@ import path from "path";
 import { Building, MappedFacilities, Room } from "./types";
 
 const readSql = (sqlPath: string): string => {
-  const filePath = path.join(__dirname, "..", sqlPath);
-  let content = fs.readFileSync(filePath, "utf8").trim();
+  const candidatePaths = [
+    path.resolve(__dirname, "..", sqlPath),
+    path.resolve(__dirname, "..", "..", sqlPath),
+  ];
+
+  const resolvedPath = candidatePaths.find((p) => fs.existsSync(p));
+  if (!resolvedPath) {
+    throw new Error(`SQL file not found: ${sqlPath} (tried ${candidatePaths.join(", ")})`);
+  }
+
+  let content = fs.readFileSync(resolvedPath, "utf8").trim();
   if (/^(\.\.\/)+sql\//.test(content)) {
     content = fs.readFileSync(
-      path.resolve(path.dirname(filePath), content),
+      path.resolve(path.dirname(resolvedPath), content),
       "utf8",
     );
   }
   return content;
-};
+}
 
 const runScrapeJob = async () => {
   const buildings = JSON.parse(
