@@ -1,0 +1,6 @@
+libal/ @devsoc-unsw/freerooms-leads
+nss/ @devsoc-unsw/freerooms-leads
+sql/ @devsoc-unsw/freerooms-leads
+
+.github/ @devsoc-unsw/platform
+renovate.json @devsoc-unsw/platform
