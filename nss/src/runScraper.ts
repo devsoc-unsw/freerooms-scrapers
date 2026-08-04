@@ -30,12 +30,15 @@ const runScrapeJob = async () => {
     fs.readFileSync(path.join(NSS_DATA_PATH, "facilities.json"), "utf8"),
   ) as MappedFacilities[];
 
-  const roomEmbeddings = JSON.parse(
-    fs.readFileSync(path.join(NSS_DATA_PATH, "room_embeddings.json"), "utf8"),
-  ) as { id: string; embedding: number[] }[];
-  const roomEmbeddingsMap = new Map(
-    roomEmbeddings.map((e) => [e.id, e.embedding]),
-  );
+  let roomEmbeddings: { id: string; embedding: number[] }[] = [];
+  try {
+    roomEmbeddings = JSON.parse(
+      fs.readFileSync(path.join(NSS_DATA_PATH, "room_embeddings.json"), "utf8"),
+    ) as { id: string; embedding: number[] }[];
+  } catch {
+    // room_embeddings.json doesn't exist yet; that's fine (embeddings will be NULL)
+  }
+  const roomEmbeddingsMap = new Map(roomEmbeddings.map((e) => [e.id, e.embedding]));
 
   // Filter buildings with no rooms
   const filteredBuildings = buildings.filter(
