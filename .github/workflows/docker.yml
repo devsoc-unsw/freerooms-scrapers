@@ -23,39 +23,7 @@ jobs:
         working-directory: graphql-api
         env:
           API_KEYS: ci_key
-        run: |
-          docker compose up --detach postgres
-          for _ in $(seq 1 30); do
-            if docker compose exec --no-TTY postgres pg_isready > /dev/null; then
-              sleep 2
-              if docker compose exec --no-TTY postgres pg_isready > /dev/null; then
-                docker compose up --build --detach graphql-engine hasuragres
-                exit 0
-              fi
-            fi
-            sleep 1
-          done
-
-          docker compose logs postgres
-          exit 1
-      - name: Wait for local GraphQL API
-        working-directory: graphql-api
-        run: |
-          for _ in $(seq 1 60); do
-            if curl --fail --silent http://localhost:8000/docs > /dev/null \
-              && curl --fail --silent --max-time 2 \
-                --header "Content-Type: application/json" \
-                --header "X-Hasura-Admin-Secret: hasurasecret" \
-                --data '{"type":"export_metadata","args":{}}' \
-                http://localhost:8080/v1/metadata > /dev/null; then
-              exit 0
-            fi
-            sleep 2
-          done
-
-          docker compose ps
-          docker compose logs
-          exit 1
+        run: docker compose up --build --detach --wait --wait-timeout 120
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
