@@ -16,7 +16,6 @@ jobs:
       max-parallel: 1
       matrix:
         scraper:
-          - libcal
           - nss
     steps:
       - uses: actions/checkout@v4
@@ -39,7 +38,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        scraper: [ nss, libcal ]
+        scraper: [ nss ]
     permissions:
       contents: read
       packages: write
@@ -82,4 +81,3 @@ jobs:
           deployment-dispatcher-app-private-key: ${{ secrets.DEPLOYMENT_DISPATCHER_APP_PRIVATE_KEY }}
           updates: |
             ghcr.io/devsoc-unsw/freerooms-nss-scraper=${{ github.sha }}
-            ghcr.io/devsoc-unsw/freerooms-libcal-scraper=${{ github.sha }}

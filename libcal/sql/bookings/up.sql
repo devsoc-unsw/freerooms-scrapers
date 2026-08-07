@@ -1,1 +1,0 @@
-../../../sql/bookings/up.sql
