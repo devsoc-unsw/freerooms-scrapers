@@ -9,36 +9,45 @@ on:
 
 jobs:
   test:
-    name: "Test (${{ matrix.scraper }})"
+    name: Test
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      max-parallel: 1
-      matrix:
-        scraper:
-          - nss
     steps:
       - uses: actions/checkout@v4
+      - name: Checkout GraphQL API
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: devsoc-unsw/graphql-api
+          path: graphql-api
+          persist-credentials: false
+      - name: Start local GraphQL API
+        working-directory: graphql-api
+        env:
+          API_KEYS: ci_key
+        run: docker compose up --build --detach --wait --wait-timeout 120
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
       - name: Install dependencies
         run: npm install
-        working-directory: ${{ matrix.scraper }}
+        working-directory: nss
       - name: Run scraper
         run: npm run scrape
-        working-directory: ${{ matrix.scraper }}
+        working-directory: nss
         env:
-          HASURAGRES_URL: https://graphql.devsoc.app
-          HASURAGRES_API_KEY: ${{ secrets.HASURAGRES_API_KEY }}
+          HASURAGRES_URL: http://localhost:8000
+          HASURAGRES_API_KEY: ci_key
+      - name: Show local GraphQL API logs
+        if: ${{ failure() }}
+        working-directory: graphql-api
+        run: docker compose logs
+      - name: Stop local GraphQL API
+        if: ${{ always() }}
+        working-directory: graphql-api
+        run: docker compose down --volumes
   build:
-    name: "Build image (${{ matrix.scraper }})"
+    name: Build image
     needs: [ test ]
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        scraper: [ nss ]
     permissions:
       contents: read
       packages: write
@@ -61,10 +70,10 @@ jobs:
         with:
           push: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
           platforms: linux/amd64
-          file: ${{ matrix.scraper }}.dockerfile
+          file: nss.dockerfile
           tags: |
-            ghcr.io/devsoc-unsw/freerooms-${{ matrix.scraper }}-scraper:${{ github.sha }}
-            ghcr.io/devsoc-unsw/freerooms-${{ matrix.scraper }}-scraper:latest
+            ghcr.io/devsoc-unsw/freerooms-nss-scraper:${{ github.sha }}
+            ghcr.io/devsoc-unsw/freerooms-nss-scraper:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
