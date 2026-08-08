@@ -4,22 +4,22 @@
   "description": "nss scraping",
   "main": "src/scraper.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc --project ./",
     "start": "node ./dist/runScraper.js",
+    "test": "TS_NODE_PROJECT=tests/tsconfig.json node --test -r ts-node/register tests/*.test.ts",
     "scrape": "ts-node src/runScraper.ts",
     "collect": "ts-node src/collectSessionIdentities.ts"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/csesoc/nss-scraper.git"
+    "url": "git+https://github.com/devsoc-unsw/freerooms-scrapers"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/csesoc/nss-scraper/issues"
+    "url": "https://github.com/devsoc-unsw/freerooms-scrapers/issues"
   },
-  "homepage": "https://github.com/csesoc/nss-scraper#readme",
+  "homepage": "https://github.com/devsoc-unsw/freerooms-scrapers#readme",
   "dependencies": {
     "@types/lodash": "^4.17.23",
     "axios": "^1.4.0",
