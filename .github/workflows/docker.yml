@@ -36,6 +36,11 @@ jobs:
         env:
           HASURAGRES_URL: http://localhost:8000
           HASURAGRES_API_KEY: ci_key
+      - name: Run Freerooms query tests
+        run: npm run test
+        working-directory: nss
+        env:
+          GRAPHQL_URL: http://localhost:8080/v1/graphql
       - name: Show local GraphQL API logs
         if: ${{ failure() }}
         working-directory: graphql-api
