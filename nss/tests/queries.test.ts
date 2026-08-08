@@ -5,8 +5,6 @@ import test from "node:test";
 
 const GRAPHQL_URL =
   process.env.GRAPHQL_URL ?? "http://localhost:8080/v1/graphql";
-const HASURA_GRAPHQL_ADMIN_SECRET =
-  process.env.HASURA_GRAPHQL_ADMIN_SECRET ?? "hasurasecret";
 
 const YEAR = process.env.YEAR
   ? Number.parseInt(process.env.YEAR, 10)
@@ -146,7 +144,6 @@ const graphqlRequest = async <T>(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-hasura-admin-secret": HASURA_GRAPHQL_ADMIN_SECRET,
     },
     body: JSON.stringify({ query, variables }),
   });
