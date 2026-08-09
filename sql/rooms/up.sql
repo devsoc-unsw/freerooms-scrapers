@@ -37,4 +37,4 @@ CREATE TABLE Rooms (
 );
 
 
-CREATE INDEX ON Rooms USING hnsw ("embedding" vector_cosine_ops);
+ CREATE INDEX IF NOT EXISTS rooms_embedding_hnsw_idx ON Rooms USING hnsw ("embedding" vector_cosine_ops);
