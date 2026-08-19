@@ -2,6 +2,7 @@
 #include "bookings/json.hpp"
 #include "bookings/transform.hpp"
 #include "data/static_data.hpp"
+#include "database/client.hpp"
 #include "database/request.hpp"
 #include "database/static_json.hpp"
 #include "http/client.hpp"
@@ -13,6 +14,23 @@
 #include <string>
 #include <utility>
 #include <vector>
+
+namespace {
+
+bool is_local_hasuragres(
+    const std::string& base_url
+) {
+    return (
+        base_url
+        == "http://localhost:8000"
+    )
+    || (
+        base_url
+        == "http://127.0.0.1:8000"
+    );
+}
+
+}
 
 int main() {
     try {
@@ -46,15 +64,6 @@ int main() {
             database::serialize_rooms(
                 static_data.rooms
             );
-
-        std::cout
-            << "Static database serialization:\n"
-            << "  Buildings: "
-            << building_payload.size()
-            << '\n'
-            << "  Rooms: "
-            << room_payload.size()
-            << "\n\n";
 
         http::Client http_client;
 
@@ -186,198 +195,75 @@ int main() {
             };
         }
 
-        const std::vector<std::string>
-            expected_tables{
-                "Buildings",
-                "Rooms",
-                "Bookings",
-                "BookingModules"
-            };
-
-        const std::vector<std::size_t>
-            expected_counts{
-                building_count,
-                room_count,
-                booking_count,
-                module_count
-            };
-
-        for (
-            std::size_t index = 0;
-            index < expected_tables.size();
-            ++index
-        ) {
-            const auto& request =
-                batch_request.at(index);
-
-            const auto table_name =
-                request
-                    .at("metadata")
-                    .at("table_name")
-                    .get<std::string>();
-
-            if (
-                table_name
-                != expected_tables[index]
-            ) {
-                throw std::runtime_error{
-                    "Unexpected table at batch index "
-                    + std::to_string(index)
-                    + ": "
-                    + table_name
-                };
-            }
-
-            const auto payload_count =
-                request
-                    .at("payload")
-                    .size();
-
-            if (
-                payload_count
-                != expected_counts[index]
-            ) {
-                throw std::runtime_error{
-                    "Payload count changed for table "
-                    + table_name
-                };
-            }
-        }
-
-        if (
-            batch_request
-                .at(0)
-                .at("metadata")
-                .at("write_mode")
-            != "overwrite"
-        ) {
-            throw std::runtime_error{
-                "Buildings should use overwrite"
-            };
-        }
-
-        if (
-            batch_request
-                .at(1)
-                .at("metadata")
-                .at("write_mode")
-            != "overwrite"
-        ) {
-            throw std::runtime_error{
-                "Rooms should use overwrite"
-            };
-        }
-
-        if (
-            batch_request
-                .at(2)
-                .at("metadata")
-                .at("write_mode")
-            != "append"
-        ) {
-            throw std::runtime_error{
-                "Bookings should use append"
-            };
-        }
-
-        if (
-            batch_request
-                .at(3)
-                .at("metadata")
-                .at("write_mode")
-            != "append"
-        ) {
-            throw std::runtime_error{
-                "BookingModules should use append"
-            };
-        }
-
-        const auto& bookings_before =
-            batch_request
-                .at(2)
-                .at("metadata")
-                .at("sql_before")
-                .get_ref<
-                    const std::string&
-                >();
-
-        if (
-            bookings_before.find("{0}")
-                != std::string::npos
-            || bookings_before.find("{1}")
-                != std::string::npos
-        ) {
-            throw std::runtime_error{
-                "Bookings sql_before still "
-                "contains placeholders"
-            };
-        }
-
         std::cout
-            << "\nFinal batch request:\n"
-            << "  1. Buildings: "
-            << batch_request
-                .at(0)
-                .at("payload")
-                .size()
+            << "\nPrepared local database transaction:\n"
+            << "  Buildings: "
+            << building_count
             << '\n'
-            << "  2. Rooms: "
-            << batch_request
-                .at(1)
-                .at("payload")
-                .size()
+            << "  Rooms: "
+            << room_count
             << '\n'
-            << "  3. Bookings: "
-            << batch_request
-                .at(2)
-                .at("payload")
-                .size()
+            << "  Bookings: "
+            << booking_count
             << '\n'
-            << "  4. BookingModules: "
-            << batch_request
-                .at(3)
-                .at("payload")
-                .size()
+            << "  BookingModules: "
+            << module_count
             << '\n';
 
-        const auto serialized =
-            batch_request.dump();
+        const auto database_config =
+            database::load_config_from_environment();
+
+        std::cout
+            << "\nHasuragres target:\n"
+            << "  "
+            << database_config.base_url
+            << '\n';
+
+        if (
+            !is_local_hasuragres(
+                database_config.base_url
+            )
+        ) {
+            throw std::runtime_error{
+                "Stage 7C local test refuses "
+                "to write to non-local Hasuragres"
+            };
+        }
+
+        database::Client database_client{
+            http_client,
+            database_config
+        };
+
+        std::cout
+            << "\nSending local /batch_insert...\n";
+
+        const auto insert_result =
+            database_client.batch_insert(
+                batch_request
+            );
 
         const auto request_mebibytes =
             static_cast<double>(
-                serialized.size()
+                insert_result.request_bytes
             )
             / 1024.0
             / 1024.0;
 
         std::cout
-            << "\nComplete /batch_insert body:\n"
-            << "  Size: "
+            << "\nLocal Hasuragres insert successful.\n"
+            << "  HTTP status: "
+            << insert_result.status_code
+            << '\n'
+            << "  Request size: "
             << request_mebibytes
-            << " MiB\n";
+            << " MiB\n"
+            << "  Response: "
+            << insert_result.response_body
+            << '\n';
 
         std::cout
-            << "\nBatch order:\n";
-
-        for (
-            std::size_t index = 0;
-            index < batch_request.size();
-            ++index
-        ) {
-            std::cout
-                << "  "
-                << index + 1
-                << ". "
-                << batch_request
-                    .at(index)
-                    .at("metadata")
-                    .at("table_name")
-                    .get<std::string>()
-                << '\n';
-        }
-
-        std::cout
-            << "\nStage 7B2 validation successful.\n";
+            << "\nStage 7C2 database write successful.\n";
     }
     catch (
         const std::exception& error

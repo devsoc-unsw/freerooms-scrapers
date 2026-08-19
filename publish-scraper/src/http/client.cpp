@@ -10,7 +10,9 @@ class CurlGlobal {
 public:
     CurlGlobal() {
         const auto result =
-            curl_global_init(CURL_GLOBAL_DEFAULT);
+            curl_global_init(
+                CURL_GLOBAL_DEFAULT
+            );
 
         if (result != CURLE_OK) {
             throw std::runtime_error{
@@ -35,14 +37,45 @@ std::size_t write_callback(
     const std::size_t count,
     void* user_data
 ) {
-    const auto total_size = size * count;
+    const auto total_size =
+        size * count;
 
     auto& body =
-        *static_cast<std::string*>(user_data);
+        *static_cast<std::string*>(
+            user_data
+        );
 
-    body.append(data, total_size);
+    body.append(
+        data,
+        total_size
+    );
 
     return total_size;
+}
+
+void append_header(
+    curl_slist*& headers,
+    const std::string& header
+) {
+    auto* updated =
+        curl_slist_append(
+            headers,
+            header.c_str()
+        );
+
+    if (updated == nullptr) {
+        curl_slist_free_all(
+            headers
+        );
+
+        headers = nullptr;
+
+        throw std::runtime_error{
+            "Failed to create HTTP headers"
+        };
+    }
+
+    headers = updated;
 }
 
 }
@@ -52,7 +85,8 @@ namespace http {
 Client::Client() {
     ensure_curl_initialised();
 
-    handle_ = curl_easy_init();
+    handle_ =
+        curl_easy_init();
 
     if (handle_ == nullptr) {
         throw std::runtime_error{
@@ -63,25 +97,41 @@ Client::Client() {
 
 Client::~Client() {
     if (handle_ != nullptr) {
-        curl_easy_cleanup(handle_);
+        curl_easy_cleanup(
+            handle_
+        );
     }
 }
 
-Client::Client(Client&& other) noexcept
-    : handle_{std::exchange(other.handle_, nullptr)} {
+Client::Client(
+    Client&& other
+) noexcept
+    : handle_{
+        std::exchange(
+            other.handle_,
+            nullptr
+        )
+    } {
 }
 
-Client& Client::operator=(Client&& other) noexcept {
+Client& Client::operator=(
+    Client&& other
+) noexcept {
     if (this == &other) {
         return *this;
     }
 
     if (handle_ != nullptr) {
-        curl_easy_cleanup(handle_);
+        curl_easy_cleanup(
+            handle_
+        );
     }
 
     handle_ =
-        std::exchange(other.handle_, nullptr);
+        std::exchange(
+            other.handle_,
+            nullptr
+        );
 
     return *this;
 }
@@ -95,11 +145,16 @@ Response Client::get(
         };
     }
 
-    curl_easy_reset(handle_);
+    curl_easy_reset(
+        handle_
+    );
 
     Response response;
 
-    std::array<char, CURL_ERROR_SIZE> error_buffer{};
+    std::array<
+        char,
+        CURL_ERROR_SIZE
+    > error_buffer{};
 
     curl_easy_setopt(
         handle_,
@@ -150,16 +205,21 @@ Response Client::get(
     );
 
     const auto result =
-        curl_easy_perform(handle_);
+        curl_easy_perform(
+            handle_
+        );
 
     if (result != CURLE_OK) {
         const std::string message =
             error_buffer[0] != '\0'
                 ? error_buffer.data()
-                : curl_easy_strerror(result);
+                : curl_easy_strerror(
+                    result
+                );
 
         throw std::runtime_error{
-            "HTTP request failed: " + message
+            "HTTP request failed: "
+            + message
         };
     }
 
@@ -181,11 +241,16 @@ Response Client::post(
         };
     }
 
-    curl_easy_reset(handle_);
+    curl_easy_reset(
+        handle_
+    );
 
     Response response;
 
-    std::array<char, CURL_ERROR_SIZE> error_buffer{};
+    std::array<
+        char,
+        CURL_ERROR_SIZE
+    > error_buffer{};
 
     curl_easy_setopt(
         handle_,
@@ -248,16 +313,21 @@ Response Client::post(
     );
 
     const auto result =
-        curl_easy_perform(handle_);
+        curl_easy_perform(
+            handle_
+        );
 
     if (result != CURLE_OK) {
         const std::string message =
             error_buffer[0] != '\0'
                 ? error_buffer.data()
-                : curl_easy_strerror(result);
+                : curl_easy_strerror(
+                    result
+                );
 
         throw std::runtime_error{
-            "HTTP request failed: " + message
+            "HTTP request failed: "
+            + message
         };
     }
 
@@ -274,30 +344,57 @@ Response Client::post_json(
     const std::string& url,
     const std::string& body
 ) {
+    return post_json(
+        url,
+        body,
+        {}
+    );
+}
+
+Response Client::post_json(
+    const std::string& url,
+    const std::string& body,
+    const std::vector<std::string>&
+        additional_headers
+) {
     if (handle_ == nullptr) {
         throw std::runtime_error{
             "HTTP client has no curl handle"
         };
     }
 
-    curl_easy_reset(handle_);
+    curl_easy_reset(
+        handle_
+    );
 
     Response response;
 
-    std::array<char, CURL_ERROR_SIZE>
-        error_buffer{};
+    std::array<
+        char,
+        CURL_ERROR_SIZE
+    > error_buffer{};
 
-    curl_slist* headers = nullptr;
+    curl_slist* headers =
+        nullptr;
 
-    headers = curl_slist_append(
+    append_header(
         headers,
         "Content-Type: application/json"
     );
 
-    if (headers == nullptr) {
-        throw std::runtime_error{
-            "Failed to create HTTP headers"
-        };
+    append_header(
+        headers,
+        "Expect:"
+    );
+
+    for (
+        const auto& header :
+        additional_headers
+    ) {
+        append_header(
+            headers,
+            header
+        );
     }
 
     curl_easy_setopt(
@@ -315,13 +412,15 @@ Response Client::post_json(
     curl_easy_setopt(
         handle_,
         CURLOPT_POSTFIELDS,
-        body.c_str()
+        body.data()
     );
 
     curl_easy_setopt(
         handle_,
-        CURLOPT_POSTFIELDSIZE,
-        static_cast<long>(body.size())
+        CURLOPT_POSTFIELDSIZE_LARGE,
+        static_cast<curl_off_t>(
+            body.size()
+        )
     );
 
     curl_easy_setopt(
@@ -357,7 +456,7 @@ Response Client::post_json(
     curl_easy_setopt(
         handle_,
         CURLOPT_TIMEOUT,
-        30L
+        600L
     );
 
     curl_easy_setopt(
@@ -367,15 +466,21 @@ Response Client::post_json(
     );
 
     const auto result =
-        curl_easy_perform(handle_);
+        curl_easy_perform(
+            handle_
+        );
 
-    curl_slist_free_all(headers);
+    curl_slist_free_all(
+        headers
+    );
 
     if (result != CURLE_OK) {
         const std::string message =
             error_buffer[0] != '\0'
                 ? error_buffer.data()
-                : curl_easy_strerror(result);
+                : curl_easy_strerror(
+                    result
+                );
 
         throw std::runtime_error{
             "HTTP request failed: "

@@ -3,6 +3,7 @@
 #include <curl/curl.h>
 
 #include <string>
+#include <vector>
 
 namespace http {
 
@@ -22,13 +23,23 @@ public:
     Client(Client&& other) noexcept;
     Client& operator=(Client&& other) noexcept;
 
-    Response get(const std::string& url);
+    Response get(
+        const std::string& url
+    );
 
-    Response post(const std::string& url);
+    Response post(
+        const std::string& url
+    );
 
     Response post_json(
         const std::string& url,
         const std::string& body
+    );
+
+    Response post_json(
+        const std::string& url,
+        const std::string& body,
+        const std::vector<std::string>& additional_headers
     );
 
 private:
