@@ -6,10 +6,10 @@
 #include <iostream>
 
 int main() {
-    const freerooms::Building building{};
-    const freerooms::Room room{};
-    const freerooms::Booking booking{};
-    const freerooms::PublishEvent publish_event{};
+    const model::Building building{};
+    const model::Room room{};
+    const model::Booking booking{};
+    const publish::Event publish_event{};
 
     std::cout
         << "FreeRooms Publish scraper skeleton compiled successfully.\n";
