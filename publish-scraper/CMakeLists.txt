@@ -14,6 +14,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 include(FetchContent)
 
 find_package(nlohmann_json 3.11.3 QUIET)
+find_package(CURL REQUIRED)
 
 if(NOT nlohmann_json_FOUND)
     FetchContent_Declare(
@@ -29,6 +30,9 @@ endif()
 add_library(
     scraper_core
     src/data/static_data.cpp
+    src/http/client.cpp
+    src/publish/client.cpp
+    src/publish/json.cpp
 )
 
 target_include_directories(
@@ -41,6 +45,7 @@ target_link_libraries(
     scraper_core
     PRIVATE
         nlohmann_json::nlohmann_json
+        CURL::libcurl
 )
 
 add_executable(
