@@ -189,9 +189,6 @@ std::string_view booking_type_name(
         case model::BookingType::Block:
             return "Block";
 
-        case model::BookingType::Library:
-            return "Library";
-
         case model::BookingType::Miscellaneous:
             return "Miscellaneous";
 

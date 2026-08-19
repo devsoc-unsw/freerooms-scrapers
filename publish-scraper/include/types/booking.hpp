@@ -19,7 +19,6 @@ enum class BookingType {
     Society,
     Internal,
     Block,
-    Library,
     Miscellaneous,
     Other,
     Unknown,
