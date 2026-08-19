@@ -71,14 +71,14 @@ struct DatePeriod {
     std::string start_date_time;
     std::string end_date_time;
 
+    std::optional<std::string> type;
+
     bool is_default = false;
 };
 
 struct Day {
     std::string name;
-
     int day_of_week = 0;
-
     bool is_default = false;
 };
 
@@ -86,22 +86,27 @@ struct TimePeriod {
     std::string description;
     std::string start_time;
     std::string end_time;
-
     bool is_default = false;
 };
 
 struct Week {
     int week_number = 0;
-
     std::string week_label;
     std::string first_day_in_week;
 };
 
+struct LegendItem {
+    std::string name;
+    std::string display_name;
+    std::string icon;
+};
+
 struct ViewOptionsResponse {
-    std::vector<DatePeriod> date_periods;
-    std::vector<Day> days;
     std::vector<TimePeriod> time_periods;
+    std::vector<DatePeriod> date_periods;
     std::vector<Week> weeks;
+    std::vector<LegendItem> legend_items;
+    std::vector<Day> days;
 };
 
 struct CategorySelection {
