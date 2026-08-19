@@ -76,6 +76,104 @@ std::string build_bookings_before_sql(
     return sql;
 }
 
+nlohmann::json build_buildings_request(
+    nlohmann::json payload
+) {
+    auto metadata =
+        nlohmann::json::object();
+
+    metadata["table_name"] =
+        "Buildings";
+
+    metadata["columns"] =
+        nlohmann::json::array({
+            "id",
+            "name",
+            "lat",
+            "long",
+            "aliases"
+        });
+
+    metadata["sql_up"] =
+        read_file(
+            "sql/buildings/up.sql"
+        );
+
+    metadata["sql_down"] =
+        read_file(
+            "sql/buildings/down.sql"
+        );
+
+    metadata["write_mode"] =
+        "overwrite";
+
+    auto request =
+        nlohmann::json::object();
+
+    request["metadata"] =
+        std::move(metadata);
+
+    request["payload"] =
+        std::move(payload);
+
+    return request;
+}
+
+nlohmann::json build_rooms_request(
+    nlohmann::json payload
+) {
+    auto metadata =
+        nlohmann::json::object();
+
+    metadata["table_name"] =
+        "Rooms";
+
+    metadata["columns"] =
+        nlohmann::json::array({
+            "abbr",
+            "name",
+            "id",
+            "usage",
+            "capacity",
+            "school",
+            "buildingId",
+            "floor",
+            "seating",
+            "microphone",
+            "accessibility",
+            "audiovisual",
+            "infotechnology",
+            "writingMedia",
+            "service",
+            "lat",
+            "long"
+        });
+
+    metadata["sql_up"] =
+        read_file(
+            "sql/rooms/up.sql"
+        );
+
+    metadata["sql_down"] =
+        read_file(
+            "sql/rooms/down.sql"
+        );
+
+    metadata["write_mode"] =
+        "overwrite";
+
+    auto request =
+        nlohmann::json::object();
+
+    request["metadata"] =
+        std::move(metadata);
+
+    request["payload"] =
+        std::move(payload);
+
+    return request;
+}
+
 nlohmann::json build_bookings_request(
     nlohmann::json payload,
     const int year
@@ -87,22 +185,20 @@ nlohmann::json build_bookings_request(
         "Bookings";
 
     metadata["columns"] =
-        nlohmann::json::array(
-            {
-                "roomId",
-                "occurrenceId",
-                "eventId",
-                "bookingType",
-                "name",
-                "rawName",
-                "eventType",
-                "start",
-                "end",
-                "plannedSize",
-                "source",
-                "lastModified"
-            }
-        );
+        nlohmann::json::array({
+            "roomId",
+            "occurrenceId",
+            "eventId",
+            "bookingType",
+            "name",
+            "rawName",
+            "eventType",
+            "start",
+            "end",
+            "plannedSize",
+            "source",
+            "lastModified"
+        });
 
     metadata["sql_up"] =
         read_file(
@@ -144,17 +240,15 @@ nlohmann::json build_modules_request(
         "BookingModules";
 
     metadata["columns"] =
-        nlohmann::json::array(
-            {
-                "roomId",
-                "occurrenceId",
-                "moduleIndex",
-                "code",
-                "name",
-                "term",
-                "career"
-            }
-        );
+        nlohmann::json::array({
+            "roomId",
+            "occurrenceId",
+            "moduleIndex",
+            "code",
+            "name",
+            "term",
+            "career"
+        });
 
     metadata["sql_up"] =
         read_file(
@@ -186,10 +280,24 @@ nlohmann::json build_modules_request(
 namespace database {
 
 nlohmann::json build_batch_request(
+    nlohmann::json building_payload,
+    nlohmann::json room_payload,
     nlohmann::json booking_payload,
     nlohmann::json module_payload,
     const int year
 ) {
+    if (!building_payload.is_array()) {
+        throw std::invalid_argument{
+            "Building payload must be an array"
+        };
+    }
+
+    if (!room_payload.is_array()) {
+        throw std::invalid_argument{
+            "Room payload must be an array"
+        };
+    }
+
     if (!booking_payload.is_array()) {
         throw std::invalid_argument{
             "Booking payload must be an array"
@@ -204,6 +312,22 @@ nlohmann::json build_batch_request(
 
     auto result =
         nlohmann::json::array();
+
+    result.push_back(
+        build_buildings_request(
+            std::move(
+                building_payload
+            )
+        )
+    );
+
+    result.push_back(
+        build_rooms_request(
+            std::move(
+                room_payload
+            )
+        )
+    );
 
     result.push_back(
         build_bookings_request(

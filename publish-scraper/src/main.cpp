@@ -3,6 +3,7 @@
 #include "bookings/transform.hpp"
 #include "data/static_data.hpp"
 #include "database/request.hpp"
+#include "database/static_json.hpp"
 #include "http/client.hpp"
 #include "publish/client.hpp"
 
@@ -33,6 +34,26 @@ int main() {
             << '\n'
             << "Rooms: "
             << static_data.rooms.size()
+            << "\n\n";
+
+        auto building_payload =
+            database::serialize_buildings(
+                static_data.buildings,
+                static_data.rooms
+            );
+
+        auto room_payload =
+            database::serialize_rooms(
+                static_data.rooms
+            );
+
+        std::cout
+            << "Static database serialization:\n"
+            << "  Buildings: "
+            << building_payload.size()
+            << '\n'
+            << "  Rooms: "
+            << room_payload.size()
             << "\n\n";
 
         http::Client http_client;
@@ -126,23 +147,26 @@ int main() {
                 bookings
             );
 
+        const auto building_count =
+            building_payload.size();
+
+        const auto room_count =
+            room_payload.size();
+
         const auto booking_count =
             booking_payload.size();
 
         const auto module_count =
             module_payload.size();
 
-        std::cout
-            << "\nSerialization complete.\n"
-            << "  Booking rows: "
-            << booking_count
-            << '\n'
-            << "  Module rows: "
-            << module_count
-            << '\n';
-
         auto batch_request =
             database::build_batch_request(
+                std::move(
+                    building_payload
+                ),
+                std::move(
+                    room_payload
+                ),
                 std::move(
                     booking_payload
                 ),
@@ -152,117 +176,125 @@ int main() {
                 year
             );
 
-        if (!batch_request.is_array()) {
-            throw std::runtime_error{
-                "Batch request is not an array"
-            };
-        }
-
-        if (batch_request.size() != 2) {
-            throw std::runtime_error{
-                "Batch request should contain "
-                "exactly two table inserts"
-            };
-        }
-
-        const auto& bookings_request =
-            batch_request.at(0);
-
-        const auto& modules_request =
-            batch_request.at(1);
-
         if (
-            bookings_request
-                .at("metadata")
-                .at("table_name")
-                != "Bookings"
+            !batch_request.is_array()
+            || batch_request.size() != 4
         ) {
             throw std::runtime_error{
-                "First batch table is not Bookings"
+                "Batch request must contain "
+                "four table inserts"
             };
         }
 
-        if (
-            modules_request
-                .at("metadata")
-                .at("table_name")
-                != "BookingModules"
+        const std::vector<std::string>
+            expected_tables{
+                "Buildings",
+                "Rooms",
+                "Bookings",
+                "BookingModules"
+            };
+
+        const std::vector<std::size_t>
+            expected_counts{
+                building_count,
+                room_count,
+                booking_count,
+                module_count
+            };
+
+        for (
+            std::size_t index = 0;
+            index < expected_tables.size();
+            ++index
         ) {
-            throw std::runtime_error{
-                "Second batch table is not BookingModules"
-            };
+            const auto& request =
+                batch_request.at(index);
+
+            const auto table_name =
+                request
+                    .at("metadata")
+                    .at("table_name")
+                    .get<std::string>();
+
+            if (
+                table_name
+                != expected_tables[index]
+            ) {
+                throw std::runtime_error{
+                    "Unexpected table at batch index "
+                    + std::to_string(index)
+                    + ": "
+                    + table_name
+                };
+            }
+
+            const auto payload_count =
+                request
+                    .at("payload")
+                    .size();
+
+            if (
+                payload_count
+                != expected_counts[index]
+            ) {
+                throw std::runtime_error{
+                    "Payload count changed for table "
+                    + table_name
+                };
+            }
         }
 
         if (
-            bookings_request
+            batch_request
+                .at(0)
                 .at("metadata")
                 .at("write_mode")
-                != "append"
+            != "overwrite"
         ) {
             throw std::runtime_error{
-                "Bookings write mode is not append"
+                "Buildings should use overwrite"
             };
         }
 
         if (
-            modules_request
+            batch_request
+                .at(1)
                 .at("metadata")
                 .at("write_mode")
-                != "append"
+            != "overwrite"
         ) {
             throw std::runtime_error{
-                "BookingModules write mode "
-                "is not append"
+                "Rooms should use overwrite"
             };
         }
 
         if (
-            !bookings_request
+            batch_request
+                .at(2)
                 .at("metadata")
-                .contains("sql_before")
+                .at("write_mode")
+            != "append"
         ) {
             throw std::runtime_error{
-                "Bookings request has no sql_before"
+                "Bookings should use append"
             };
         }
 
         if (
-            modules_request
+            batch_request
+                .at(3)
                 .at("metadata")
-                .contains("sql_before")
+                .at("write_mode")
+            != "append"
         ) {
             throw std::runtime_error{
-                "BookingModules should not "
-                "have sql_before"
+                "BookingModules should use append"
             };
         }
 
-        if (
-            bookings_request
-                .at("payload")
-                .size()
-            != booking_count
-        ) {
-            throw std::runtime_error{
-                "Bookings were lost while "
-                "building batch request"
-            };
-        }
-
-        if (
-            modules_request
-                .at("payload")
-                .size()
-            != module_count
-        ) {
-            throw std::runtime_error{
-                "Modules were lost while "
-                "building batch request"
-            };
-        }
-
-        const auto& cleanup_sql =
-            bookings_request
+        const auto& bookings_before =
+            batch_request
+                .at(2)
                 .at("metadata")
                 .at("sql_before")
                 .get_ref<
@@ -270,68 +302,50 @@ int main() {
                 >();
 
         if (
-            cleanup_sql.find("{0}")
+            bookings_before.find("{0}")
                 != std::string::npos
-            || cleanup_sql.find("{1}")
+            || bookings_before.find("{1}")
                 != std::string::npos
         ) {
             throw std::runtime_error{
-                "Year placeholders remain "
-                "in Bookings sql_before"
-            };
-        }
-
-        if (
-            cleanup_sql.find("2026")
-                == std::string::npos
-            || cleanup_sql.find("2027")
-                == std::string::npos
-        ) {
-            throw std::runtime_error{
-                "Bookings sql_before does "
-                "not contain expected years"
+                "Bookings sql_before still "
+                "contains placeholders"
             };
         }
 
         std::cout
-            << "\nBatch request validation:\n"
-            << "  Tables: "
-            << batch_request.size()
-            << '\n'
-            << "  First table: "
-            << bookings_request
-                .at("metadata")
-                .at("table_name")
-                .get<std::string>()
-            << '\n'
-            << "  Second table: "
-            << modules_request
-                .at("metadata")
-                .at("table_name")
-                .get<std::string>()
-            << '\n'
-            << "  Booking rows: "
-            << bookings_request
+            << "\nFinal batch request:\n"
+            << "  1. Buildings: "
+            << batch_request
+                .at(0)
                 .at("payload")
                 .size()
             << '\n'
-            << "  Module rows: "
-            << modules_request
+            << "  2. Rooms: "
+            << batch_request
+                .at(1)
+                .at("payload")
+                .size()
+            << '\n'
+            << "  3. Bookings: "
+            << batch_request
+                .at(2)
+                .at("payload")
+                .size()
+            << '\n'
+            << "  4. BookingModules: "
+            << batch_request
+                .at(3)
                 .at("payload")
                 .size()
             << '\n';
 
-        std::cout
-            << "\nBookings sql_before:\n"
-            << cleanup_sql
-            << '\n';
-
-        const auto serialized_request =
+        const auto serialized =
             batch_request.dump();
 
         const auto request_mebibytes =
             static_cast<double>(
-                serialized_request.size()
+                serialized.size()
             )
             / 1024.0
             / 1024.0;
@@ -343,7 +357,27 @@ int main() {
             << " MiB\n";
 
         std::cout
-            << "\nStage 7B1 validation successful.\n";
+            << "\nBatch order:\n";
+
+        for (
+            std::size_t index = 0;
+            index < batch_request.size();
+            ++index
+        ) {
+            std::cout
+                << "  "
+                << index + 1
+                << ". "
+                << batch_request
+                    .at(index)
+                    .at("metadata")
+                    .at("table_name")
+                    .get<std::string>()
+                << '\n';
+        }
+
+        std::cout
+            << "\nStage 7B2 validation successful.\n";
     }
     catch (
         const std::exception& error

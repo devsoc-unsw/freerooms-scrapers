@@ -46,6 +46,7 @@ add_library(
     src/bookings/filter.cpp
     src/bookings/json.cpp
     src/database/request.cpp
+    src/database/static_json.cpp
 )
 
 target_include_directories(
