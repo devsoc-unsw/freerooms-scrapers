@@ -23,7 +23,13 @@ public:
     Client& operator=(Client&& other) noexcept;
 
     Response get(const std::string& url);
+
     Response post(const std::string& url);
+
+    Response post_json(
+        const std::string& url,
+        const std::string& body
+    );
 
 private:
     CURL* handle_ = nullptr;

@@ -8,6 +8,8 @@
 
 #include <exception>
 #include <iostream>
+#include <stdexcept>
+#include <string>
 #include <vector>
 
 int main() {
@@ -56,9 +58,7 @@ int main() {
             publish_client.get_view_options();
 
         std::cout
-            << "Publish API connection successful.\n\n";
-
-        std::cout
+            << "Publish API connection successful.\n\n"
             << "Time periods: "
             << view_options.time_periods.size()
             << '\n'
@@ -85,6 +85,88 @@ int main() {
             }
 
             std::cout << '\n';
+        }
+
+        std::vector<std::string> test_location_ids;
+
+        for (const auto& room : static_data.rooms) {
+            if (!room.publish_id.has_value()) {
+                continue;
+            }
+
+            test_location_ids.push_back(
+                *room.publish_id
+            );
+
+            if (test_location_ids.size() == 2) {
+                break;
+            }
+        }
+
+        if (test_location_ids.size() != 2) {
+            throw std::runtime_error{
+                "Could not find two rooms with publishId"
+            };
+        }
+
+        const auto events =
+            publish_client.get_events(
+                test_location_ids,
+                view_options,
+                2026
+            );
+
+        std::cout
+            << "\nPublish event test successful.\n"
+            << "Returned room categories: "
+            << events.category_events.size()
+            << '\n';
+
+        for (
+            const auto& category :
+            events.category_events
+        ) {
+            std::cout
+                << "\n"
+                << category.name
+                << '\n'
+                << "  Publish ID: "
+                << category.identity
+                << '\n'
+                << "  Events: "
+                << category.results.size()
+                << '\n';
+
+            if (category.results.empty()) {
+                continue;
+            }
+
+            const auto& event =
+                category.results.front();
+
+            std::cout
+                << "  First event:\n"
+                << "    Name: "
+                << event.name
+                << '\n'
+                << "    Event type: "
+                << event.event_type
+                << '\n'
+                << "    Start: "
+                << event.start_date_time
+                << '\n'
+                << "    End: "
+                << event.end_date_time
+                << '\n'
+                << "    EventIdentity: "
+                << event.event_identity
+                << '\n'
+                << "    Identity: "
+                << event.identity
+                << '\n'
+                << "    Extra properties: "
+                << event.extra_properties.size()
+                << '\n';
         }
 
         const auto locations =
@@ -173,7 +255,6 @@ int main() {
                     location.name
                 );
 
-
             if (!room_id.has_value()) {
                 continue;
             }
@@ -183,7 +264,6 @@ int main() {
                     *room_id,
                     exclusions
                 );
-
 
             if (!exclusion.has_value()) {
                 candidate_new_rooms.push_back(
@@ -225,7 +305,6 @@ int main() {
             << "  Candidate new rooms: "
             << candidate_new_rooms.size()
             << '\n';
-
 
         if (!candidate_new_rooms.empty()) {
             std::cout

@@ -19,6 +19,12 @@ public:
 
     std::vector<Category> get_locations();
 
+    EventsResponse get_events(
+        const std::vector<std::string>& location_ids,
+        const ViewOptionsResponse& view_options,
+        int year
+    );
+
 private:
     http::Client& http_client_;
 };

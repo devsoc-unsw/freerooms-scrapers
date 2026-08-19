@@ -2,6 +2,7 @@
 
 #include "publish/config.hpp"
 #include "publish/json.hpp"
+#include "publish/request.hpp"
 
 #include <stdexcept>
 #include <string>
@@ -109,6 +110,54 @@ std::vector<Category> Client::get_locations() {
     }
 
     return locations;
+}
+
+EventsResponse Client::get_events(
+    const std::vector<std::string>& location_ids,
+    const ViewOptionsResponse& view_options,
+    const int year
+) {
+    const auto request =
+        build_events_request(
+            view_options,
+            location_ids,
+            year
+        );
+
+    const auto body =
+        serialize_events_request(
+            request
+        );
+
+    const auto url =
+        std::string{config::base_url}
+        + "/CategoryTypes/Categories/"
+          "Events/Filter/"
+        + std::string{
+            config::institution_id
+        };
+
+    const auto response =
+        http_client_.post_json(
+            url,
+            body
+        );
+
+    if (
+        response.status_code < 200
+        || response.status_code >= 300
+    ) {
+        throw std::runtime_error{
+            "Publish events request returned HTTP "
+            + std::to_string(
+                response.status_code
+            )
+        };
+    }
+
+    return parse_events(
+        response.body
+    );
 }
 
 }

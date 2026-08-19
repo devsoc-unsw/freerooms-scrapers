@@ -14,4 +14,12 @@ CategoriesResponse parse_categories(
     const std::string& body
 );
 
+std::string serialize_events_request(
+    const EventsRequest& request
+);
+
+EventsResponse parse_events(
+    const std::string& body
+);
+
 }

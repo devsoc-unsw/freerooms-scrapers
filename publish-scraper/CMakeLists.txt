@@ -33,6 +33,7 @@ add_library(
     src/http/client.cpp
     src/publish/client.cpp
     src/publish/json.cpp
+    src/publish/request.cpp
     src/rooms/publish_mapping.cpp
     src/data/room_metadata.cpp
     src/config/exclusions.cpp
