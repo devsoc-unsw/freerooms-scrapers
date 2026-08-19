@@ -16,6 +16,38 @@
 #include <unordered_set>
 #include <vector>
 
+namespace {
+
+std::string booking_description(
+    const model::Booking& booking
+) {
+    return booking.room_id
+        + " | "
+        + booking.event_type
+        + " | "
+        + booking.raw_name
+        + " -> "
+        + booking.name;
+}
+
+void add_example(
+    std::vector<std::string>& examples,
+    const model::Booking& booking,
+    const std::size_t limit = 8
+) {
+    if (examples.size() >= limit) {
+        return;
+    }
+
+    examples.push_back(
+        booking_description(
+            booking
+        )
+    );
+}
+
+} // namespace
+
 int main() {
     try {
         const auto exclusions =
@@ -44,7 +76,9 @@ int main() {
         const auto static_data =
             data::load_static_data("data");
 
-        data::validate_static_data(static_data);
+        data::validate_static_data(
+            static_data
+        );
 
         std::cout
             << "Static data loaded successfully.\n"
@@ -56,7 +90,10 @@ int main() {
             << "\n\n";
 
         http::Client http_client;
-        publish::Client publish_client{http_client};
+
+        publish::Client publish_client{
+            http_client
+        };
 
         const auto view_options =
             publish_client.get_view_options();
@@ -64,9 +101,13 @@ int main() {
         std::cout
             << "Publish API connection successful.\n";
 
-        std::vector<std::string> location_ids;
+        std::vector<std::string>
+            location_ids;
 
-        for (const auto& room : static_data.rooms) {
+        for (
+            const auto& room :
+            static_data.rooms
+        ) {
             if (!room.publish_id.has_value()) {
                 continue;
             }
@@ -88,6 +129,8 @@ int main() {
                 2026
             );
 
+        std::size_t total_event_rows = 0;
+
         const std::unordered_set<std::string>
             requested_location_ids{
                 location_ids.begin(),
@@ -99,8 +142,6 @@ int main() {
 
         std::unordered_set<std::string>
             unique_occurrence_ids;
-
-        std::size_t total_event_rows = 0;
 
         for (
             const auto& category :
@@ -197,99 +238,121 @@ int main() {
             booking_keys;
 
         std::size_t duplicate_booking_keys = 0;
-        std::size_t missing_planned_size = 0;
-
-        std::size_t bookings_with_raw_modules = 0;
-        std::size_t bookings_with_parsed_modules = 0;
-        std::size_t module_parse_failures = 0;
-        std::size_t parsed_module_objects = 0;
-        std::size_t modules_without_names = 0;
-
-        std::size_t cancelled_rows = 0;
-        std::size_t requested_rows = 0;
-        std::size_t confirmed_rows = 0;
+        std::size_t empty_names = 0;
+        std::size_t unknown_bookings = 0;
 
         std::map<std::string, std::size_t>
             booking_type_counts;
 
         std::map<std::string, std::size_t>
-            unknown_event_types;
+            event_type_counts;
 
-        for (const auto& booking : bookings) {
-            const auto key =
+        std::vector<std::string>
+            society_examples;
+
+        std::vector<std::string>
+            block_examples;
+
+        std::vector<std::string>
+            oweek_examples;
+
+        std::vector<std::string>
+            requested_examples;
+
+        std::vector<std::string>
+            cancelled_examples;
+
+        std::vector<std::string>
+            not_used_examples;
+
+        std::size_t society_rows = 0;
+        std::size_t block_rows = 0;
+        std::size_t oweek_rows = 0;
+
+        std::size_t requested_rows = 0;
+        std::size_t cancelled_rows = 0;
+        std::size_t not_used_rows = 0;
+
+        for (
+            const auto& booking :
+            bookings
+        ) {
+            const auto booking_key =
                 booking.room_id
                 + ":"
                 + booking.occurrence_id;
 
             if (
                 !booking_keys
-                    .insert(key)
+                    .insert(
+                        booking_key
+                    )
                     .second
             ) {
                 ++duplicate_booking_keys;
             }
 
-            if (
-                !booking
-                    .planned_size
-                    .has_value()
-            ) {
-                ++missing_planned_size;
+            if (booking.name.empty()) {
+                ++empty_names;
             }
-
-            const auto has_raw_modules =
-                booking.module_name_raw.has_value();
-
-            if (has_raw_modules) {
-                ++bookings_with_raw_modules;
-            }
-
-            if (!booking.modules.empty()) {
-                ++bookings_with_parsed_modules;
-            }
-
-            if (
-                has_raw_modules
-                && booking.modules.empty()
-            ) {
-                ++module_parse_failures;
-            }
-
-            parsed_module_objects +=
-                booking.modules.size();
-
-            for (
-                const auto& module :
-                booking.modules
-            ) {
-                if (module.name.empty()) {
-                    ++modules_without_names;
-                }
-            }
-
-            const auto booking_type =
-                bookings::booking_type_name(
-                    booking.booking_type
-                );
-
-            ++booking_type_counts[
-                std::string{booking_type}
-            ];
 
             if (
                 booking.booking_type
                 == model::BookingType::Unknown
             ) {
-                ++unknown_event_types[
-                    booking.event_type
-                ];
+                ++unknown_bookings;
+            }
+
+            const auto booking_type =
+                std::string{
+                    bookings::booking_type_name(
+                        booking.booking_type
+                    )
+                };
+
+            ++booking_type_counts[
+                booking_type
+            ];
+
+            ++event_type_counts[
+                booking.event_type
+            ];
+
+            if (
+                booking.booking_type
+                == model::BookingType::Society
+            ) {
+                ++society_rows;
+
+                add_example(
+                    society_examples,
+                    booking
+                );
             }
 
             if (
-                booking.event_type
-                == "BOOK.CANCELLED"
+                booking.booking_type
+                == model::BookingType::Block
             ) {
-                ++cancelled_rows;
+                ++block_rows;
+
+                add_example(
+                    block_examples,
+                    booking
+                );
+            }
+
+            if (
+                booking.name.starts_with(
+                    "OWeek"
+                )
+            ) {
+                ++oweek_rows;
+
+                add_example(
+                    oweek_examples,
+                    booking
+                );
             }
 
             if (
@@ -297,92 +360,181 @@ int main() {
                 == "BOOK.REQUESTED"
             ) {
                 ++requested_rows;
+
+                add_example(
+                    requested_examples,
+                    booking
+                );
             }
 
             if (
                 booking.event_type
-                == "BOOK.CONFIRMED"
+                == "BOOK.CANCELLED"
             ) {
-                ++confirmed_rows;
+                ++cancelled_rows;
+
+                add_example(
+                    cancelled_examples,
+                    booking
+                );
+            }
+
+            if (
+                booking.event_type
+                == "*Not Used"
+            ) {
+                ++not_used_rows;
+
+                add_example(
+                    not_used_examples,
+                    booking
+                );
             }
         }
 
         std::cout
-            << "\nBooking transformation complete.\n"
-            << "  Raw room-event rows: "
-            << total_event_rows
-            << '\n'
+            << "\nBooking transformation validation:\n"
             << "  Booking objects: "
             << bookings.size()
             << '\n'
             << "  Duplicate booking keys: "
             << duplicate_booking_keys
             << '\n'
-            << "  Missing planned size: "
-            << missing_planned_size
-            << '\n';
-
-        std::cout
-            << "\nModule parsing:\n"
-            << "  Bookings with raw module data: "
-            << bookings_with_raw_modules
+            << "  Empty cleaned names: "
+            << empty_names
             << '\n'
-            << "  Bookings with parsed modules: "
-            << bookings_with_parsed_modules
-            << '\n'
-            << "  Module parse failures: "
-            << module_parse_failures
-            << '\n'
-            << "  Parsed Module objects: "
-            << parsed_module_objects
-            << '\n'
-            << "  Modules without names: "
-            << modules_without_names
+            << "  Unknown classifications: "
+            << unknown_bookings
             << '\n';
 
         std::cout
             << "\nBooking classification:\n";
 
         for (
-            const auto& [booking_type, count] :
+            const auto& [type, count] :
             booking_type_counts
         ) {
             std::cout
                 << "  "
-                << booking_type
+                << type
                 << ": "
                 << count
                 << '\n';
         }
 
-        if (!unknown_event_types.empty()) {
+        std::cout
+            << "\nClassification regression checks:\n"
+            << "  Society rows: "
+            << society_rows
+            << '\n'
+            << "  Block rows: "
+            << block_rows
+            << '\n'
+            << "  OWeek rows: "
+            << oweek_rows
+            << '\n';
+
+        if (!society_examples.empty()) {
             std::cout
-                << "\nUnknown event types:\n";
+                << "\nSociety examples:\n";
 
             for (
-                const auto& [event_type, count] :
-                unknown_event_types
+                const auto& example :
+                society_examples
             ) {
                 std::cout
                     << "  "
-                    << event_type
-                    << ": "
-                    << count
+                    << example
+                    << '\n';
+            }
+        }
+
+        if (!block_examples.empty()) {
+            std::cout
+                << "\nBlock examples:\n";
+
+            for (
+                const auto& example :
+                block_examples
+            ) {
+                std::cout
+                    << "  "
+                    << example
+                    << '\n';
+            }
+        }
+
+        if (!oweek_examples.empty()) {
+            std::cout
+                << "\nOWeek examples:\n";
+
+            for (
+                const auto& example :
+                oweek_examples
+            ) {
+                std::cout
+                    << "  "
+                    << example
                     << '\n';
             }
         }
 
         std::cout
-            << "\nRoom-booking statuses:\n"
-            << "  BOOK.CONFIRMED: "
-            << confirmed_rows
-            << '\n'
+            << "\nPotential occupancy statuses:\n"
             << "  BOOK.REQUESTED: "
             << requested_rows
             << '\n'
             << "  BOOK.CANCELLED: "
             << cancelled_rows
+            << '\n'
+            << "  *Not Used: "
+            << not_used_rows
             << '\n';
+
+        if (!requested_examples.empty()) {
+            std::cout
+                << "\nBOOK.REQUESTED examples:\n";
+
+            for (
+                const auto& example :
+                requested_examples
+            ) {
+                std::cout
+                    << "  "
+                    << example
+                    << '\n';
+            }
+        }
+
+        if (!cancelled_examples.empty()) {
+            std::cout
+                << "\nBOOK.CANCELLED examples:\n";
+
+            for (
+                const auto& example :
+                cancelled_examples
+            ) {
+                std::cout
+                    << "  "
+                    << example
+                    << '\n';
+            }
+        }
+
+        if (!not_used_examples.empty()) {
+            std::cout
+                << "\n*Not Used examples:\n";
+
+            for (
+                const auto& example :
+                not_used_examples
+            ) {
+                std::cout
+                    << "  "
+                    << example
+                    << '\n';
+            }
+        }
 
         const auto locations =
             publish_client.get_locations();

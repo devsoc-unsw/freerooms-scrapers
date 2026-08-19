@@ -85,6 +85,70 @@ model::BookingType classify_booking(
     return model::BookingType::Unknown;
 }
 
+model::BookingType classify_booking(
+    const std::string_view event_type,
+    const ParsedBookingName& parsed_name
+) {
+    const auto publish_type =
+        classify_booking(event_type);
+
+    switch (parsed_name.pattern) {
+        case NamePattern::OWeek:
+            return model::BookingType::Miscellaneous;
+
+        case NamePattern::Block:
+            return model::BookingType::Block;
+
+        case NamePattern::Exam:
+            return model::BookingType::Exam;
+
+        case NamePattern::InternalSociety:
+        case NamePattern::Society:
+            return model::BookingType::Society;
+
+        case NamePattern::Internal:
+            return model::BookingType::Internal;
+
+        default:
+            break;
+    }
+
+    const auto publish_is_specific =
+        publish_type
+            != model::BookingType::Miscellaneous
+        && publish_type
+            != model::BookingType::Other
+        && publish_type
+            != model::BookingType::Unknown;
+
+    if (publish_is_specific) {
+        return publish_type;
+    }
+
+    if (
+        parsed_name.pattern
+        == NamePattern::Class
+    ) {
+        return model::BookingType::Class;
+    }
+
+    if (
+        parsed_name.pattern
+        == NamePattern::MiscClass
+    ) {
+        return model::BookingType::Miscellaneous;
+    }
+
+    if (
+        publish_type
+        == model::BookingType::Unknown
+    ) {
+        return parsed_name.booking_type;
+    }
+
+    return publish_type;
+}
+
 std::string_view booking_type_name(
     const model::BookingType booking_type
 ) {

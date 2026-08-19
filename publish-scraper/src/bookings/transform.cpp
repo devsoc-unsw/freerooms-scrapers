@@ -2,6 +2,7 @@
 
 #include "bookings/classification.hpp"
 #include "bookings/modules.hpp"
+#include "bookings/name_parser.hpp"
 
 #include <charconv>
 #include <stdexcept>
@@ -167,6 +168,17 @@ transform_publish_events(
                     module_description_raw
                 );
 
+            const auto parsed_name =
+                parse_booking_name(
+                    event.name
+                );
+
+            const auto booking_type =
+                classify_booking(
+                    event.event_type,
+                    parsed_name
+                );
+
             bookings.push_back(
                 model::Booking{
                     .room_id =
@@ -185,15 +197,13 @@ transform_publish_events(
                         event.end_date_time,
 
                     .name =
-                        event.name,
+                        parsed_name.name,
 
                     .raw_name =
                         event.name,
 
                     .booking_type =
-                        classify_booking(
-                            event.event_type
-                        ),
+                        booking_type,
 
                     .event_type =
                         event.event_type,
