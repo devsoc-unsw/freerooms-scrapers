@@ -30,3 +30,6 @@ CREATE INDEX booking_modules_code
 
 CREATE INDEX booking_modules_name
     ON BookingModules ("name");
+
+CREATE INDEX booking_modules_occurrence
+    ON BookingModules ("occurrenceId");

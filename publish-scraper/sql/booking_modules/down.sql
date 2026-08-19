@@ -1,1 +1,1 @@
-DROP TABLE BookingModules;
+DROP TABLE BookingModules CASCADE;
