@@ -95,17 +95,10 @@ struct Week {
     std::string first_day_in_week;
 };
 
-struct LegendItem {
-    std::string name;
-    std::string display_name;
-    std::string icon;
-};
-
 struct ViewOptionsResponse {
     std::vector<TimePeriod> time_periods;
     std::vector<DatePeriod> date_periods;
     std::vector<Week> weeks;
-    std::vector<LegendItem> legend_items;
     std::vector<Day> days;
 };
 

@@ -73,22 +73,6 @@ publish::Week parse_week(
     };
 }
 
-publish::LegendItem parse_legend_item(
-    const json& value
-) {
-    return publish::LegendItem{
-        .name =
-            value.at("Name").get<std::string>(),
-
-        .display_name =
-            value.at("DisplayName")
-                .get<std::string>(),
-
-        .icon =
-            value.at("Icon").get<std::string>(),
-    };
-}
-
 publish::Day parse_day(
     const json& value
 ) {
@@ -131,12 +115,6 @@ ViewOptionsResponse parse_view_options(
         for (const auto& value : root.at("Weeks")) {
             result.weeks.push_back(
                 parse_week(value)
-            );
-        }
-
-        for (const auto& value : root.at("LegendItems")) {
-            result.legend_items.push_back(
-                parse_legend_item(value)
             );
         }
 

@@ -1,80 +1,69 @@
 #include "data/static_data.hpp"
+#include "http/client.hpp"
+#include "publish/client.hpp"
 
-#include <algorithm>
 #include <exception>
 #include <filesystem>
 #include <iostream>
 
-int main(int argc, char* argv[]) {
-    const std::filesystem::path data_directory =
-        argc >= 2
-            ? std::filesystem::path{argv[1]}
-            : std::filesystem::path{"data"};
-
+int main() {
     try {
         const auto static_data =
-            data::load_static_data(data_directory);
+            data::load_static_data("data");
 
         data::validate_static_data(static_data);
 
-        const auto missing_floor_count =
-            std::count_if(
-                static_data.rooms.begin(),
-                static_data.rooms.end(),
-                [](const model::Room& room) {
-                    return !room.facilities.floor.has_value();
-                }
-            );
-
-        const auto missing_seating_count =
-            std::count_if(
-                static_data.rooms.begin(),
-                static_data.rooms.end(),
-                [](const model::Room& room) {
-                    return !room.facilities.seating.has_value();
-                }
-            );
-
         std::cout
-            << "Static data loaded successfully.\n\n";
-
-        std::cout
+            << "Static data loaded successfully.\n"
             << "Buildings: "
             << static_data.buildings.size()
-            << '\n';
-
-        std::cout
+            << '\n'
             << "Rooms: "
             << static_data.rooms.size()
+            << "\n\n";
+
+        http::Client http_client;
+        publish::Client publish_client{http_client};
+
+        const auto view_options =
+            publish_client.get_view_options();
+
+        std::cout
+            << "Publish API connection successful.\n\n";
+
+        std::cout
+            << "Time periods: "
+            << view_options.time_periods.size()
             << '\n';
 
         std::cout
-            << "Rooms without floor data: "
-            << missing_floor_count
+            << "Date periods: "
+            << view_options.date_periods.size()
             << '\n';
 
         std::cout
-            << "Rooms without seating data: "
-            << missing_seating_count
+            << "Weeks: "
+            << view_options.weeks.size()
             << '\n';
 
-        if (!static_data.rooms.empty()) {
-            const auto& room = static_data.rooms.front();
+        std::cout
+            << "Days: "
+            << view_options.days.size()
+            << '\n';
 
+        std::cout
+            << "\nDate periods:\n";
+
+        for (const auto& period : view_options.date_periods) {
             std::cout
-                << "\nFirst room:\n"
-                << "  ID: "
-                << room.id
-                << '\n'
-                << "  Name: "
-                << room.name
-                << '\n'
-                << "  Capacity: "
-                << room.capacity
-                << '\n'
-                << "  Building: "
-                << room.building_id
-                << '\n';
+                << "  "
+                << period.description;
+
+            if (period.is_default) {
+                std::cout << " [default]";
+            }
+
+            std::cout << '\n';
         }
     }
     catch (const std::exception& error) {
