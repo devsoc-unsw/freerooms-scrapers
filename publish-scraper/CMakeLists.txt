@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(
-    freerooms_publish_scraper
+    publish_scraper
     VERSION 0.1.0
     LANGUAGES CXX
 )
@@ -11,12 +11,36 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_library(freerooms_types INTERFACE)
+include(FetchContent)
+
+find_package(nlohmann_json 3.11.3 QUIET)
+
+if(NOT nlohmann_json_FOUND)
+    FetchContent_Declare(
+        nlohmann_json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG v3.11.3
+        GIT_SHALLOW TRUE
+    )
+
+    FetchContent_MakeAvailable(nlohmann_json)
+endif()
+
+add_library(
+    scraper_core
+    src/data/static_data.cpp
+)
 
 target_include_directories(
-    freerooms_types
-    INTERFACE
+    scraper_core
+    PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(
+    scraper_core
+    PRIVATE
+        nlohmann_json::nlohmann_json
 )
 
 add_executable(
@@ -27,7 +51,7 @@ add_executable(
 target_link_libraries(
     publish_scraper
     PRIVATE
-        freerooms_types
+        scraper_core
 )
 
 set_target_properties(
@@ -38,11 +62,24 @@ set_target_properties(
 
 if(MSVC)
     target_compile_options(
+        scraper_core
+        PRIVATE /W4
+    )
+
+    target_compile_options(
         publish_scraper
-        PRIVATE
-            /W4
+        PRIVATE /W4
     )
 else()
+    target_compile_options(
+        scraper_core
+        PRIVATE
+            -Wall
+            -Wextra
+            -Wpedantic
+            -Wshadow
+    )
+
     target_compile_options(
         publish_scraper
         PRIVATE
