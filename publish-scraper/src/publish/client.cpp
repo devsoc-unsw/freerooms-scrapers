@@ -5,6 +5,8 @@
 
 #include <stdexcept>
 #include <string>
+#include <utility>
+#include <vector>
 
 namespace publish {
 
@@ -70,6 +72,43 @@ CategoriesResponse Client::get_location_page(
     }
 
     return parse_categories(response.body);
+}
+
+std::vector<Category> Client::get_locations() {
+    auto first_page =
+        get_location_page(1);
+
+    std::vector<Category> locations;
+
+    locations.reserve(
+        first_page.results.size()
+        * static_cast<std::size_t>(
+            first_page.total_pages
+        )
+    );
+
+    for (auto& location : first_page.results) {
+        locations.push_back(
+            std::move(location)
+        );
+    }
+
+    for (
+        int page = 2;
+        page <= first_page.total_pages;
+        ++page
+    ) {
+        auto response =
+            get_location_page(page);
+
+        for (auto& location : response.results) {
+            locations.push_back(
+                std::move(location)
+            );
+        }
+    }
+
+    return locations;
 }
 
 }
