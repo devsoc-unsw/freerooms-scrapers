@@ -1,6 +1,7 @@
 #include "data/static_data.hpp"
 #include "http/client.hpp"
 #include "publish/client.hpp"
+#include "rooms/publish_mapping.hpp"
 
 #include <exception>
 #include <filesystem>
@@ -67,38 +68,89 @@ int main() {
         }
 
         const auto locations =
-            publish_client.get_location_page(1);
+            publish_client.get_locations();
 
         std::cout
-            << "\nPublish location page 1 loaded.\n"
-            << "Total pages: "
-            << locations.total_pages
-            << '\n'
-            << "Locations on page 1: "
-            << locations.results.size()
+            << "\nAll Publish locations loaded.\n"
+            << "Publish locations: "
+            << locations.size()
             << '\n';
 
+        const auto mapping =
+            rooms::match_publish_locations(
+                static_data.rooms,
+                locations
+            );
+
         std::cout
-            << "\nFirst 10 Kensington locations:\n";
+            << "\nRoom mapping results:\n"
+            << "  Static rooms: "
+            << static_data.rooms.size()
+            << '\n'
+            << "  Matched: "
+            << mapping.matches.size()
+            << '\n'
+            << "  Missing from Publish: "
+            << mapping.missing_from_publish.size()
+            << '\n'
+            << "  New/unrecognised Publish rooms: "
+            << mapping.missing_from_static.size()
+            << '\n'
+            << "  Duplicate Publish room IDs: "
+            << mapping
+                .duplicate_publish_room_ids
+                .size()
+            << '\n';
 
-        int printed = 0;
-
-        for (const auto& location : locations.results) {
-            if (!location.name.starts_with("K-")) {
-                continue;
-            }
-
+        if (!mapping.missing_from_publish.empty()) {
             std::cout
-                << "  "
-                << location.name
-                << " -> "
-                << location.identity
-                << '\n';
+                << "\nStatic rooms missing from Publish:\n";
 
-            ++printed;
+            for (
+                const auto& room_id :
+                mapping.missing_from_publish
+            ) {
+                std::cout
+                    << "  "
+                    << room_id
+                    << '\n';
+            }
+        }
 
-            if (printed == 10) {
-                break;
+        if (!mapping.missing_from_static.empty()) {
+            std::cout
+                << "\nPublish rooms missing from static data:\n";
+
+            for (
+                const auto& location :
+                mapping.missing_from_static
+            ) {
+                std::cout
+                    << "  "
+                    << location.name
+                    << " -> "
+                    << location.identity
+                    << '\n';
+            }
+        }
+
+        if (
+            !mapping
+                .duplicate_publish_room_ids
+                .empty()
+        ) {
+            std::cout
+                << "\nDuplicate Publish room IDs:\n";
+
+            for (
+                const auto& room_id :
+                mapping
+                    .duplicate_publish_room_ids
+            ) {
+                std::cout
+                    << "  "
+                    << room_id
+                    << '\n';
             }
         }
     }

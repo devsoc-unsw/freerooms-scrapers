@@ -218,6 +218,15 @@ std::vector<model::Room> load_rooms(
                 room_json.at("id")
                     .get<std::string>();
 
+            if (
+                room_json.contains("publishId")
+                && !room_json.at("publishId").is_null()
+            ) {
+                room.publish_id =
+                    room_json.at("publishId")
+                        .get<std::string>();
+            }
+
             room.name =
                 room_json.at("name")
                     .get<std::string>();

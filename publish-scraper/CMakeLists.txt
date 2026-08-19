@@ -33,6 +33,7 @@ add_library(
     src/http/client.cpp
     src/publish/client.cpp
     src/publish/json.cpp
+    src/rooms/publish_mapping.cpp
 )
 
 target_include_directories(
