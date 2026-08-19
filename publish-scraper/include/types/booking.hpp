@@ -14,11 +14,7 @@ enum class BookingType {
     Workshop,
     Seminar,
     Studio,
-
-    // Fallback for a teaching activity that we know is a class,
-    // but cannot classify more specifically.
     Class,
-
     Exam,
     Society,
     Internal,
@@ -48,8 +44,8 @@ struct Booking {
     // shared by occurrences of the recurring activity.
     std::string event_id;
 
-    std::string start_time;
-    std::string end_time;
+    std::string start;
+    std::string end;
 
     // Friendly name
     std::string name;
@@ -67,8 +63,11 @@ struct Booking {
     std::vector<Module> modules;
 
     // Preserve the original API values even after parsing modules.
-    std::string module_name_raw;
-    std::string module_description_raw;
+    std::optional<std::string>
+        module_name_raw;
+
+    std::optional<std::string>
+        module_description_raw;
 
     // How many people they planned for
     std::optional<int> planned_size;
@@ -81,9 +80,6 @@ struct Booking {
 
     bool is_booking = false;
     bool is_published = false;
-
-    // All rooms occupied by the same occurrence.
-    std::vector<std::string> allocated_room_ids;
 };
 
 }

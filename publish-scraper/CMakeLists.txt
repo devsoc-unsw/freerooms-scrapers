@@ -39,6 +39,7 @@ add_library(
     src/config/exclusions.cpp
     src/rooms/exclusions.cpp
     src/rooms/room_id.cpp
+    src/bookings/transform.cpp
 )
 
 target_include_directories(

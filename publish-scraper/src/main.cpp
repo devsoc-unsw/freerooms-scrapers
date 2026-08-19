@@ -14,6 +14,7 @@
 #include <string>
 #include <unordered_set>
 #include <vector>
+#include "bookings/transform.hpp"
 
 int main() {
     try {
@@ -114,7 +115,69 @@ int main() {
                 2026
             );
 
+        const auto bookings =
+            bookings::transform_publish_events(
+                events,
+                static_data.rooms
+            );
+
         std::size_t total_event_rows = 0;
+
+        std::cout
+            << "\nBooking transformation complete.\n"
+            << "  Raw room-event rows: "
+            << total_event_rows
+            << '\n'
+            << "  Booking objects: "
+            << bookings.size()
+            << '\n';
+
+
+        std::unordered_set<std::string>
+            booking_keys;
+
+        std::size_t duplicate_booking_keys = 0;
+        std::size_t missing_planned_size = 0;
+        std::size_t bookings_with_modules = 0;
+
+        for (const auto& booking : bookings) {
+            const auto key =
+                booking.room_id
+                + ":"
+                + booking.occurrence_id;
+
+            if (
+                !booking_keys
+                    .insert(key)
+                    .second
+            ) {
+                ++duplicate_booking_keys;
+            }
+
+            if (!booking.planned_size.has_value()) {
+                ++missing_planned_size;
+            }
+
+            if (
+                booking.module_name_raw.has_value()
+                || booking
+                    .module_description_raw
+                    .has_value()
+            ) {
+                ++bookings_with_modules;
+            }
+        }
+
+        std::cout
+            << "  Duplicate booking keys: "
+            << duplicate_booking_keys
+            << '\n'
+            << "  Missing planned size: "
+            << missing_planned_size
+            << '\n'
+            << "  With module metadata: "
+            << bookings_with_modules
+            << '\n';
 
         const std::unordered_set<std::string>
             requested_location_ids{
