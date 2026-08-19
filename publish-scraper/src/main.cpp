@@ -2,6 +2,7 @@
 #include "http/client.hpp"
 #include "publish/client.hpp"
 #include "rooms/publish_mapping.hpp"
+#include "data/room_metadata.hpp"
 
 #include <exception>
 #include <filesystem>
@@ -153,6 +154,27 @@ int main() {
                     << '\n';
             }
         }
+
+        if (
+            !mapping
+                .duplicate_publish_room_ids
+                .empty()
+        ) {
+            throw std::runtime_error{
+                "Refusing to update rooms.json because "
+                "duplicate Publish room IDs were found"
+            };
+        }
+
+        data::write_publish_ids(
+            "data/rooms.json",
+            mapping.matches
+        );
+
+        std::cout
+            << "\nUpdated publishId for "
+            << mapping.matches.size()
+            << " rooms.\n";
     }
     catch (const std::exception& error) {
         std::cerr

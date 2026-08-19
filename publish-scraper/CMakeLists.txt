@@ -34,6 +34,7 @@ add_library(
     src/publish/client.cpp
     src/publish/json.cpp
     src/rooms/publish_mapping.cpp
+    src/data/room_metadata.cpp
 )
 
 target_include_directories(
