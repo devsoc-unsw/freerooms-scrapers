@@ -36,6 +36,7 @@ add_library(
     src/rooms/publish_mapping.cpp
     src/data/room_metadata.cpp
     src/config/exclusions.cpp
+    src/rooms/exclusions.cpp
 )
 
 target_include_directories(

@@ -1,33 +1,10 @@
 #include "rooms/publish_mapping.hpp"
+#include "rooms/room_id.hpp"
 
 #include <optional>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
-
-namespace {
-
-std::optional<std::string> extract_room_id(
-    const std::string& publish_name
-) {
-    if (!publish_name.starts_with("K-")) {
-        return std::nullopt;
-    }
-
-    const auto separator =
-        publish_name.find(" - ");
-
-    if (separator == std::string::npos) {
-        return std::nullopt;
-    }
-
-    return publish_name.substr(
-        0,
-        separator
-    );
-}
-
-}
 
 namespace rooms {
 
