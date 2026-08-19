@@ -1,7 +1,7 @@
-#include "freerooms/types/booking.hpp"
-#include "freerooms/types/building.hpp"
-#include "freerooms/types/publish.hpp"
-#include "freerooms/types/room.hpp"
+#include "types/booking.hpp"
+#include "types/building.hpp"
+#include "types/publish.hpp"
+#include "types/room.hpp"
 
 #include <iostream>
 

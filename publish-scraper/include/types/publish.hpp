@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 
-namespace freerooms {
+namespace publish {
 
-struct PublishExtraProperty {
+struct ExtraProperty {
     std::string name;
     std::string display_name;
     std::string value;
@@ -14,7 +14,7 @@ struct PublishExtraProperty {
     int rank = 0;
 };
 
-struct PublishEvent {
+struct Event {
     bool is_booking = false;
     bool is_currently_active = false;
     bool is_edited = false;
@@ -41,32 +41,32 @@ struct PublishEvent {
     std::optional<std::string> week_ranges;
     std::optional<std::string> week_labels;
 
-    std::vector<PublishExtraProperty> extra_properties;
+    std::vector<ExtraProperty> extra_properties;
 };
 
-struct PublishCategory {
+struct Category {
     std::string identity;
     std::string name;
 };
 
-struct PublishCategoriesResponse {
+struct CategoriesResponse {
     int total_pages = 0;
 
-    std::vector<PublishCategory> results;
+    std::vector<Category> results;
 };
 
-struct PublishCategoryEvents {
+struct CategoryEvents {
     std::string identity;
     std::string name;
 
-    std::vector<PublishEvent> results;
+    std::vector<Event> results;
 };
 
-struct PublishEventsResponse {
-    std::vector<PublishCategoryEvents> category_events;
+struct EventsResponse {
+    std::vector<CategoryEvents> category_events;
 };
 
-struct PublishDatePeriod {
+struct DatePeriod {
     std::string description;
     std::string start_date_time;
     std::string end_date_time;
@@ -74,7 +74,7 @@ struct PublishDatePeriod {
     bool is_default = false;
 };
 
-struct PublishDay {
+struct Day {
     std::string name;
 
     int day_of_week = 0;
@@ -82,7 +82,7 @@ struct PublishDay {
     bool is_default = false;
 };
 
-struct PublishTimePeriod {
+struct TimePeriod {
     std::string description;
     std::string start_time;
     std::string end_time;
@@ -90,37 +90,37 @@ struct PublishTimePeriod {
     bool is_default = false;
 };
 
-struct PublishWeek {
+struct Week {
     int week_number = 0;
 
     std::string week_label;
     std::string first_day_in_week;
 };
 
-struct PublishViewOptionsResponse {
-    std::vector<PublishDatePeriod> date_periods;
-    std::vector<PublishDay> days;
-    std::vector<PublishTimePeriod> time_periods;
-    std::vector<PublishWeek> weeks;
+struct ViewOptionsResponse {
+    std::vector<DatePeriod> date_periods;
+    std::vector<Day> days;
+    std::vector<TimePeriod> time_periods;
+    std::vector<Week> weeks;
 };
 
-struct PublishCategorySelection {
+struct CategorySelection {
     std::string category_type_identity;
 
     std::vector<std::string> category_identities;
 };
 
-struct PublishViewOptionsSelection {
-    std::vector<PublishDatePeriod> date_periods;
-    std::vector<PublishDay> days;
-    std::vector<PublishTimePeriod> time_periods;
-    std::vector<PublishWeek> weeks;
+struct ViewOptionsSelection {
+    std::vector<DatePeriod> date_periods;
+    std::vector<Day> days;
+    std::vector<TimePeriod> time_periods;
+    std::vector<Week> weeks;
 };
 
-struct PublishEventsRequest {
-    std::vector<PublishCategorySelection> category_types_with_identities;
+struct EventsRequest {
+    std::vector<CategorySelection> category_types_with_identities;
 
-    PublishViewOptionsSelection view_options;
+    ViewOptionsSelection view_options;
 
     bool fetch_bookings = false;
     bool fetch_personal_events = false;

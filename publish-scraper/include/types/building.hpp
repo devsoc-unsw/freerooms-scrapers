@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-namespace freerooms {
+namespace model {
 
 struct Building {
     std::string id;

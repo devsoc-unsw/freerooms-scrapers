@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace freerooms {
+namespace model {
 
 enum class BookingType {
     Lecture,
