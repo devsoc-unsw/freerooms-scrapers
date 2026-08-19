@@ -44,6 +44,7 @@ add_library(
     src/bookings/modules.cpp
     src/bookings/name_parser.cpp
     src/bookings/filter.cpp
+    src/bookings/json.cpp
 )
 
 target_include_directories(
@@ -55,8 +56,9 @@ target_include_directories(
 target_link_libraries(
     scraper_core
     PRIVATE
-        nlohmann_json::nlohmann_json
         CURL::libcurl
+    PUBLIC
+        nlohmann_json::nlohmann_json
 )
 
 add_executable(

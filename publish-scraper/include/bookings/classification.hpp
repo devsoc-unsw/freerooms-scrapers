@@ -20,4 +20,8 @@ std::string_view booking_type_name(
     model::BookingType booking_type
 );
 
+std::string_view booking_type_database_value(
+    model::BookingType booking_type
+);
+
 }

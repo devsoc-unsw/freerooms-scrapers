@@ -1,5 +1,7 @@
 #include "bookings/classification.hpp"
 
+#include <stdexcept>
+
 namespace bookings {
 
 model::BookingType classify_booking(
@@ -200,6 +202,63 @@ std::string_view booking_type_name(
     }
 
     return "Unknown";
+}
+
+std::string_view booking_type_database_value(
+    const model::BookingType booking_type
+) {
+    switch (booking_type) {
+        case model::BookingType::Lecture:
+            return "LECTURE";
+
+        case model::BookingType::Tutorial:
+            return "TUTORIAL";
+
+        case model::BookingType::Laboratory:
+            return "LABORATORY";
+
+        case model::BookingType::TutorialLaboratory:
+            return "TUTORIAL_LABORATORY";
+
+        case model::BookingType::Workshop:
+            return "WORKSHOP";
+
+        case model::BookingType::Seminar:
+            return "SEMINAR";
+
+        case model::BookingType::Studio:
+            return "STUDIO";
+
+        case model::BookingType::Class:
+            return "CLASS";
+
+        case model::BookingType::Exam:
+            return "EXAMS";
+
+        case model::BookingType::Society:
+            return "SOCIETY";
+
+        case model::BookingType::Internal:
+            return "INTERNAL";
+
+        case model::BookingType::Block:
+            return "BLOCK";
+
+        case model::BookingType::Miscellaneous:
+            return "MISC";
+
+        case model::BookingType::Other:
+            return "OTHER";
+
+        case model::BookingType::Unknown:
+            throw std::runtime_error{
+                "Cannot serialize Unknown booking type"
+            };
+    }
+
+    throw std::runtime_error{
+        "Invalid booking type"
+    };
 }
 
 }
