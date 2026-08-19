@@ -1,5 +1,8 @@
 #include "bookings/transform.hpp"
 
+#include "bookings/classification.hpp"
+#include "bookings/modules.hpp"
+
 #include <charconv>
 #include <stdexcept>
 #include <string>
@@ -79,11 +82,13 @@ transform_publish_events(
             continue;
         }
 
-        const auto [iterator, inserted] =
-            room_ids_by_publish_id.emplace(
-                *room.publish_id,
-                room.id
-            );
+        const auto inserted =
+            room_ids_by_publish_id
+                .emplace(
+                    *room.publish_id,
+                    room.id
+                )
+                .second;
 
         if (!inserted) {
             throw std::runtime_error{
@@ -156,6 +161,12 @@ transform_publish_events(
                     "Module Description"
                 );
 
+            const auto modules =
+                parse_modules(
+                    module_name_raw,
+                    module_description_raw
+                );
+
             bookings.push_back(
                 model::Booking{
                     .room_id =
@@ -180,12 +191,15 @@ transform_publish_events(
                         event.name,
 
                     .booking_type =
-                        model::BookingType::Unknown,
+                        classify_booking(
+                            event.event_type
+                        ),
 
                     .event_type =
                         event.event_type,
 
-                    .modules = {},
+                    .modules =
+                        modules,
 
                     .module_name_raw =
                         module_name_raw,

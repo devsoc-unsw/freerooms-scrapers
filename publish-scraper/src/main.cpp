@@ -1,3 +1,5 @@
+#include "bookings/classification.hpp"
+#include "bookings/transform.hpp"
 #include "config/exclusions.hpp"
 #include "data/static_data.hpp"
 #include "http/client.hpp"
@@ -6,7 +8,6 @@
 #include "rooms/publish_mapping.hpp"
 #include "rooms/room_id.hpp"
 
-#include <array>
 #include <exception>
 #include <iostream>
 #include <map>
@@ -14,7 +15,6 @@
 #include <string>
 #include <unordered_set>
 #include <vector>
-#include "bookings/transform.hpp"
 
 int main() {
     try {
@@ -62,34 +62,7 @@ int main() {
             publish_client.get_view_options();
 
         std::cout
-            << "Publish API connection successful.\n\n"
-            << "Time periods: "
-            << view_options.time_periods.size()
-            << '\n'
-            << "Date periods: "
-            << view_options.date_periods.size()
-            << '\n'
-            << "Weeks: "
-            << view_options.weeks.size()
-            << '\n'
-            << "Days: "
-            << view_options.days.size()
-            << '\n';
-
-        std::cout
-            << "\nDate periods:\n";
-
-        for (const auto& period : view_options.date_periods) {
-            std::cout
-                << "  "
-                << period.description;
-
-            if (period.is_default) {
-                std::cout << " [default]";
-            }
-
-            std::cout << '\n';
-        }
+            << "Publish API connection successful.\n";
 
         std::vector<std::string> location_ids;
 
@@ -104,7 +77,7 @@ int main() {
         }
 
         std::cout
-            << "\nRooms with Publish IDs: "
+            << "Rooms with Publish IDs: "
             << location_ids.size()
             << '\n';
 
@@ -114,70 +87,6 @@ int main() {
                 view_options,
                 2026
             );
-
-        const auto bookings =
-            bookings::transform_publish_events(
-                events,
-                static_data.rooms
-            );
-
-        std::size_t total_event_rows = 0;
-
-        std::cout
-            << "\nBooking transformation complete.\n"
-            << "  Raw room-event rows: "
-            << total_event_rows
-            << '\n'
-            << "  Booking objects: "
-            << bookings.size()
-            << '\n';
-
-
-        std::unordered_set<std::string>
-            booking_keys;
-
-        std::size_t duplicate_booking_keys = 0;
-        std::size_t missing_planned_size = 0;
-        std::size_t bookings_with_modules = 0;
-
-        for (const auto& booking : bookings) {
-            const auto key =
-                booking.room_id
-                + ":"
-                + booking.occurrence_id;
-
-            if (
-                !booking_keys
-                    .insert(key)
-                    .second
-            ) {
-                ++duplicate_booking_keys;
-            }
-
-            if (!booking.planned_size.has_value()) {
-                ++missing_planned_size;
-            }
-
-            if (
-                booking.module_name_raw.has_value()
-                || booking
-                    .module_description_raw
-                    .has_value()
-            ) {
-                ++bookings_with_modules;
-            }
-        }
-
-        std::cout
-            << "  Duplicate booking keys: "
-            << duplicate_booking_keys
-            << '\n'
-            << "  Missing planned size: "
-            << missing_planned_size
-            << '\n'
-            << "  With module metadata: "
-            << bookings_with_modules
-            << '\n';
 
         const std::unordered_set<std::string>
             requested_location_ids{
@@ -191,6 +100,8 @@ int main() {
         std::unordered_set<std::string>
             unique_occurrence_ids;
 
+        std::size_t total_event_rows = 0;
+
         for (
             const auto& category :
             events.category_events
@@ -201,19 +112,21 @@ int main() {
                 )
             ) {
                 throw std::runtime_error{
-                    "Publish returned an unrequested location: "
+                    "Publish returned unrequested location: "
                     + category.identity
                 };
             }
 
             const auto inserted =
                 returned_location_ids
-                    .insert(category.identity)
+                    .insert(
+                        category.identity
+                    )
                     .second;
 
             if (!inserted) {
                 throw std::runtime_error{
-                    "Publish returned duplicate room category: "
+                    "Publish returned duplicate location: "
                     + category.identity
                 };
             }
@@ -264,281 +177,221 @@ int main() {
             << unique_occurrence_ids.size()
             << '\n';
 
-        std::size_t deleted_events = 0;
-        std::size_t unpublished_events = 0;
-        std::size_t edited_events = 0;
-        std::size_t manually_added_events = 0;
-        std::size_t booking_events = 0;
+        const auto bookings =
+            bookings::transform_publish_events(
+                events,
+                static_data.rooms
+            );
 
-        std::map<std::string, std::size_t>
-            event_type_counts;
-
-        std::map<std::string, std::size_t>
-            source_counts;
-
-        std::map<std::string, std::size_t>
-            extra_property_counts;
-
-        std::map<
-            std::string,
-            std::array<std::size_t, 2>
-        > booking_flag_counts;
+        if (
+            bookings.size()
+            != total_event_rows
+        ) {
+            throw std::runtime_error{
+                "Booking transformation changed "
+                "the number of event rows"
+            };
+        }
 
         std::unordered_set<std::string>
-            room_occurrence_keys;
+            booking_keys;
 
-        std::size_t duplicate_room_occurrences = 0;
-        std::size_t empty_occurrence_ids = 0;
-        std::size_t empty_event_ids = 0;
+        std::size_t duplicate_booking_keys = 0;
+        std::size_t missing_planned_size = 0;
 
-        for (
-            const auto& category :
-            events.category_events
-        ) {
-            for (
-                const auto& event :
-                category.results
+        std::size_t bookings_with_raw_modules = 0;
+        std::size_t bookings_with_parsed_modules = 0;
+        std::size_t module_parse_failures = 0;
+        std::size_t parsed_module_objects = 0;
+        std::size_t modules_without_names = 0;
+
+        std::size_t cancelled_rows = 0;
+        std::size_t requested_rows = 0;
+        std::size_t confirmed_rows = 0;
+
+        std::map<std::string, std::size_t>
+            booking_type_counts;
+
+        std::map<std::string, std::size_t>
+            unknown_event_types;
+
+        for (const auto& booking : bookings) {
+            const auto key =
+                booking.room_id
+                + ":"
+                + booking.occurrence_id;
+
+            if (
+                !booking_keys
+                    .insert(key)
+                    .second
             ) {
-                if (event.is_deleted) {
-                    ++deleted_events;
-                }
+                ++duplicate_booking_keys;
+            }
 
-                if (!event.is_published) {
-                    ++unpublished_events;
-                }
+            if (
+                !booking
+                    .planned_size
+                    .has_value()
+            ) {
+                ++missing_planned_size;
+            }
 
-                if (event.is_edited) {
-                    ++edited_events;
-                }
+            const auto has_raw_modules =
+                booking.module_name_raw.has_value();
 
-                if (
-                    event.user_manually_added_event
-                ) {
-                    ++manually_added_events;
-                }
+            if (has_raw_modules) {
+                ++bookings_with_raw_modules;
+            }
 
-                if (event.is_booking) {
-                    ++booking_events;
-                }
+            if (!booking.modules.empty()) {
+                ++bookings_with_parsed_modules;
+            }
 
-                ++event_type_counts[
-                    event.event_type
+            if (
+                has_raw_modules
+                && booking.modules.empty()
+            ) {
+                ++module_parse_failures;
+            }
+
+            parsed_module_objects +=
+                booking.modules.size();
+
+            for (
+                const auto& module :
+                booking.modules
+            ) {
+                if (module.name.empty()) {
+                    ++modules_without_names;
+                }
+            }
+
+            const auto booking_type =
+                bookings::booking_type_name(
+                    booking.booking_type
+                );
+
+            ++booking_type_counts[
+                std::string{booking_type}
+            ];
+
+            if (
+                booking.booking_type
+                == model::BookingType::Unknown
+            ) {
+                ++unknown_event_types[
+                    booking.event_type
                 ];
+            }
 
-                ++source_counts[
-                    event.source.value_or("<null>")
-                ];
+            if (
+                booking.event_type
+                == "BOOK.CANCELLED"
+            ) {
+                ++cancelled_rows;
+            }
 
-                ++booking_flag_counts[
-                    event.event_type
-                ][event.is_booking ? 1 : 0];
+            if (
+                booking.event_type
+                == "BOOK.REQUESTED"
+            ) {
+                ++requested_rows;
+            }
 
-                for (
-                    const auto& property :
-                    event.extra_properties
-                ) {
-                    ++extra_property_counts[
-                        property.name
-                    ];
-                }
-
-                if (event.identity.empty()) {
-                    ++empty_occurrence_ids;
-                }
-
-                if (event.event_identity.empty()) {
-                    ++empty_event_ids;
-                }
-
-                const auto room_occurrence_key =
-                    category.identity
-                    + ":"
-                    + event.identity;
-
-                if (
-                    !room_occurrence_keys
-                        .insert(
-                            room_occurrence_key
-                        )
-                        .second
-                ) {
-                    ++duplicate_room_occurrences;
-                }
+            if (
+                booking.event_type
+                == "BOOK.CONFIRMED"
+            ) {
+                ++confirmed_rows;
             }
         }
 
         std::cout
-            << "\nEvent status summary:\n"
-            << "  IsBooking: "
-            << booking_events
+            << "\nBooking transformation complete.\n"
+            << "  Raw room-event rows: "
+            << total_event_rows
             << '\n'
-            << "  Deleted: "
-            << deleted_events
+            << "  Booking objects: "
+            << bookings.size()
             << '\n'
-            << "  Unpublished: "
-            << unpublished_events
+            << "  Duplicate booking keys: "
+            << duplicate_booking_keys
             << '\n'
-            << "  Edited: "
-            << edited_events
-            << '\n'
-            << "  Manually added: "
-            << manually_added_events
+            << "  Missing planned size: "
+            << missing_planned_size
             << '\n';
 
         std::cout
-            << "\nEvent types:\n";
+            << "\nModule parsing:\n"
+            << "  Bookings with raw module data: "
+            << bookings_with_raw_modules
+            << '\n'
+            << "  Bookings with parsed modules: "
+            << bookings_with_parsed_modules
+            << '\n'
+            << "  Module parse failures: "
+            << module_parse_failures
+            << '\n'
+            << "  Parsed Module objects: "
+            << parsed_module_objects
+            << '\n'
+            << "  Modules without names: "
+            << modules_without_names
+            << '\n';
+
+        std::cout
+            << "\nBooking classification:\n";
 
         for (
-            const auto& [event_type, count] :
-            event_type_counts
+            const auto& [booking_type, count] :
+            booking_type_counts
         ) {
             std::cout
                 << "  "
-                << event_type
+                << booking_type
                 << ": "
                 << count
                 << '\n';
         }
 
-        std::cout
-            << "\nEvent sources:\n";
-
-        for (
-            const auto& [source, count] :
-            source_counts
-        ) {
+        if (!unknown_event_types.empty()) {
             std::cout
-                << "  "
-                << source
-                << ": "
-                << count
-                << '\n';
-        }
+                << "\nUnknown event types:\n";
 
-        std::cout
-            << "\nExtra properties:\n";
-
-        for (
-            const auto& [property, count] :
-            extra_property_counts
-        ) {
-            std::cout
-                << "  "
-                << property
-                << ": "
-                << count
-                << '\n';
-        }
-
-        std::cout
-            << "\nBooking flag by relevant event type:\n";
-
-        for (
-            const auto& [event_type, counts] :
-            booking_flag_counts
-        ) {
-            if (
-                event_type != "*Booking"
-                && !event_type.starts_with(
-                    "BOOK."
-                )
+            for (
+                const auto& [event_type, count] :
+                unknown_event_types
             ) {
-                continue;
+                std::cout
+                    << "  "
+                    << event_type
+                    << ": "
+                    << count
+                    << '\n';
             }
-
-            std::cout
-                << "  "
-                << event_type
-                << ":\n"
-                << "    IsBooking=false: "
-                << counts[0]
-                << '\n'
-                << "    IsBooking=true: "
-                << counts[1]
-                << '\n';
         }
 
         std::cout
-            << "\nBooking key validation:\n"
-            << "  Duplicate (room, occurrence) pairs: "
-            << duplicate_room_occurrences
+            << "\nRoom-booking statuses:\n"
+            << "  BOOK.CONFIRMED: "
+            << confirmed_rows
             << '\n'
-            << "  Empty occurrence IDs: "
-            << empty_occurrence_ids
+            << "  BOOK.REQUESTED: "
+            << requested_rows
             << '\n'
-            << "  Empty event IDs: "
-            << empty_event_ids
+            << "  BOOK.CANCELLED: "
+            << cancelled_rows
             << '\n';
 
         const auto locations =
             publish_client.get_locations();
-
-        std::cout
-            << "\nAll Publish locations loaded.\n"
-            << "Publish locations: "
-            << locations.size()
-            << '\n';
 
         const auto mapping =
             rooms::match_publish_locations(
                 static_data.rooms,
                 locations
             );
-
-        std::cout
-            << "\nRoom mapping results:\n"
-            << "  Static rooms: "
-            << static_data.rooms.size()
-            << '\n'
-            << "  Matched: "
-            << mapping.matches.size()
-            << '\n'
-            << "  Missing from Publish: "
-            << mapping.missing_from_publish.size()
-            << '\n'
-            << "  Publish-only locations: "
-            << mapping.missing_from_static.size()
-            << '\n'
-            << "  Duplicate Publish room IDs: "
-            << mapping
-                .duplicate_publish_room_ids
-                .size()
-            << '\n';
-
-        if (!mapping.missing_from_publish.empty()) {
-            std::cout
-                << "\nStatic rooms missing from Publish:\n";
-
-            for (
-                const auto& room_id :
-                mapping.missing_from_publish
-            ) {
-                std::cout
-                    << "  "
-                    << room_id
-                    << '\n';
-            }
-        }
-
-        if (
-            !mapping
-                .duplicate_publish_room_ids
-                .empty()
-        ) {
-            std::cout
-                << "\nDuplicate Publish room IDs:\n";
-
-            for (
-                const auto& room_id :
-                mapping
-                    .duplicate_publish_room_ids
-            ) {
-                std::cout
-                    << "  "
-                    << room_id
-                    << '\n';
-            }
-        }
 
         std::size_t excluded_by_building = 0;
         std::size_t excluded_by_room = 0;
@@ -588,6 +441,26 @@ int main() {
                     break;
             }
         }
+
+        std::cout
+            << "\nRoom mapping results:\n"
+            << "  Static rooms: "
+            << static_data.rooms.size()
+            << '\n'
+            << "  Matched: "
+            << mapping.matches.size()
+            << '\n'
+            << "  Missing from Publish: "
+            << mapping.missing_from_publish.size()
+            << '\n'
+            << "  Publish-only locations: "
+            << mapping.missing_from_static.size()
+            << '\n'
+            << "  Duplicate Publish room IDs: "
+            << mapping
+                .duplicate_publish_room_ids
+                .size()
+            << '\n';
 
         std::cout
             << "\nPublish-only location classification:\n"
