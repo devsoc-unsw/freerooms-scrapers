@@ -88,6 +88,20 @@ publish::Day parse_day(
     };
 }
 
+publish::Category parse_category(
+    const json& value
+) {
+    return publish::Category{
+        .identity =
+            value.at("Identity")
+                .get<std::string>(),
+
+        .name =
+            value.at("Name")
+                .get<std::string>(),
+    };
+}
+
 }
 
 namespace publish {
@@ -129,6 +143,33 @@ ViewOptionsResponse parse_view_options(
     catch (const json::exception& error) {
         throw std::runtime_error{
             "Invalid Publish ViewOptions response: "
+            + std::string{error.what()}
+        };
+    }
+}
+
+CategoriesResponse parse_categories(
+    const std::string& body
+) {
+    try {
+        const auto root = json::parse(body);
+
+        CategoriesResponse result;
+
+        result.total_pages =
+            root.at("TotalPages").get<int>();
+
+        for (const auto& value : root.at("Results")) {
+            result.results.push_back(
+                parse_category(value)
+            );
+        }
+
+        return result;
+    }
+    catch (const json::exception& error) {
+        throw std::runtime_error{
+            "Invalid Publish categories response: "
             + std::string{error.what()}
         };
     }

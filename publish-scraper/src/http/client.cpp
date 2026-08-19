@@ -172,4 +172,102 @@ Response Client::get(
     return response;
 }
 
+Response Client::post(
+    const std::string& url
+) {
+    if (handle_ == nullptr) {
+        throw std::runtime_error{
+            "HTTP client has no curl handle"
+        };
+    }
+
+    curl_easy_reset(handle_);
+
+    Response response;
+
+    std::array<char, CURL_ERROR_SIZE> error_buffer{};
+
+    curl_easy_setopt(
+        handle_,
+        CURLOPT_URL,
+        url.c_str()
+    );
+
+    curl_easy_setopt(
+        handle_,
+        CURLOPT_POST,
+        1L
+    );
+
+    curl_easy_setopt(
+        handle_,
+        CURLOPT_POSTFIELDS,
+        ""
+    );
+
+    curl_easy_setopt(
+        handle_,
+        CURLOPT_POSTFIELDSIZE,
+        0L
+    );
+
+    curl_easy_setopt(
+        handle_,
+        CURLOPT_FOLLOWLOCATION,
+        1L
+    );
+
+    curl_easy_setopt(
+        handle_,
+        CURLOPT_WRITEFUNCTION,
+        write_callback
+    );
+
+    curl_easy_setopt(
+        handle_,
+        CURLOPT_WRITEDATA,
+        &response.body
+    );
+
+    curl_easy_setopt(
+        handle_,
+        CURLOPT_ERRORBUFFER,
+        error_buffer.data()
+    );
+
+    curl_easy_setopt(
+        handle_,
+        CURLOPT_TIMEOUT,
+        30L
+    );
+
+    curl_easy_setopt(
+        handle_,
+        CURLOPT_USERAGENT,
+        "publish-scraper/0.1"
+    );
+
+    const auto result =
+        curl_easy_perform(handle_);
+
+    if (result != CURLE_OK) {
+        const std::string message =
+            error_buffer[0] != '\0'
+                ? error_buffer.data()
+                : curl_easy_strerror(result);
+
+        throw std::runtime_error{
+            "HTTP request failed: " + message
+        };
+    }
+
+    curl_easy_getinfo(
+        handle_,
+        CURLINFO_RESPONSE_CODE,
+        &response.status_code
+    );
+
+    return response;
+}
+
 }

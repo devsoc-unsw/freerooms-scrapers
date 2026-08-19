@@ -11,6 +11,10 @@ public:
 
     ViewOptionsResponse get_view_options();
 
+    CategoriesResponse get_location_page(
+        int page_number
+    );
+
 private:
     http::Client& http_client_;
 };

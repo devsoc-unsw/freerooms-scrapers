@@ -65,6 +65,42 @@ int main() {
 
             std::cout << '\n';
         }
+
+        const auto locations =
+            publish_client.get_location_page(1);
+
+        std::cout
+            << "\nPublish location page 1 loaded.\n"
+            << "Total pages: "
+            << locations.total_pages
+            << '\n'
+            << "Locations on page 1: "
+            << locations.results.size()
+            << '\n';
+
+        std::cout
+            << "\nFirst 10 Kensington locations:\n";
+
+        int printed = 0;
+
+        for (const auto& location : locations.results) {
+            if (!location.name.starts_with("K-")) {
+                continue;
+            }
+
+            std::cout
+                << "  "
+                << location.name
+                << " -> "
+                << location.identity
+                << '\n';
+
+            ++printed;
+
+            if (printed == 10) {
+                break;
+            }
+        }
     }
     catch (const std::exception& error) {
         std::cerr
