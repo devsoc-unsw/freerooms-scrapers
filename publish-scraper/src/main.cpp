@@ -6,8 +6,10 @@
 #include "rooms/publish_mapping.hpp"
 #include "rooms/room_id.hpp"
 
+#include <array>
 #include <exception>
 #include <iostream>
+#include <map>
 #include <stdexcept>
 #include <string>
 #include <unordered_set>
@@ -197,6 +199,212 @@ int main() {
             << '\n'
             << "  Unique occurrence IDs: "
             << unique_occurrence_ids.size()
+            << '\n';
+
+        std::size_t deleted_events = 0;
+        std::size_t unpublished_events = 0;
+        std::size_t edited_events = 0;
+        std::size_t manually_added_events = 0;
+        std::size_t booking_events = 0;
+
+        std::map<std::string, std::size_t>
+            event_type_counts;
+
+        std::map<std::string, std::size_t>
+            source_counts;
+
+        std::map<std::string, std::size_t>
+            extra_property_counts;
+
+        std::map<
+            std::string,
+            std::array<std::size_t, 2>
+        > booking_flag_counts;
+
+        std::unordered_set<std::string>
+            room_occurrence_keys;
+
+        std::size_t duplicate_room_occurrences = 0;
+        std::size_t empty_occurrence_ids = 0;
+        std::size_t empty_event_ids = 0;
+
+        for (
+            const auto& category :
+            events.category_events
+        ) {
+            for (
+                const auto& event :
+                category.results
+            ) {
+                if (event.is_deleted) {
+                    ++deleted_events;
+                }
+
+                if (!event.is_published) {
+                    ++unpublished_events;
+                }
+
+                if (event.is_edited) {
+                    ++edited_events;
+                }
+
+                if (
+                    event.user_manually_added_event
+                ) {
+                    ++manually_added_events;
+                }
+
+                if (event.is_booking) {
+                    ++booking_events;
+                }
+
+                ++event_type_counts[
+                    event.event_type
+                ];
+
+                ++source_counts[
+                    event.source.value_or("<null>")
+                ];
+
+                ++booking_flag_counts[
+                    event.event_type
+                ][event.is_booking ? 1 : 0];
+
+                for (
+                    const auto& property :
+                    event.extra_properties
+                ) {
+                    ++extra_property_counts[
+                        property.name
+                    ];
+                }
+
+                if (event.identity.empty()) {
+                    ++empty_occurrence_ids;
+                }
+
+                if (event.event_identity.empty()) {
+                    ++empty_event_ids;
+                }
+
+                const auto room_occurrence_key =
+                    category.identity
+                    + ":"
+                    + event.identity;
+
+                if (
+                    !room_occurrence_keys
+                        .insert(
+                            room_occurrence_key
+                        )
+                        .second
+                ) {
+                    ++duplicate_room_occurrences;
+                }
+            }
+        }
+
+        std::cout
+            << "\nEvent status summary:\n"
+            << "  IsBooking: "
+            << booking_events
+            << '\n'
+            << "  Deleted: "
+            << deleted_events
+            << '\n'
+            << "  Unpublished: "
+            << unpublished_events
+            << '\n'
+            << "  Edited: "
+            << edited_events
+            << '\n'
+            << "  Manually added: "
+            << manually_added_events
+            << '\n';
+
+        std::cout
+            << "\nEvent types:\n";
+
+        for (
+            const auto& [event_type, count] :
+            event_type_counts
+        ) {
+            std::cout
+                << "  "
+                << event_type
+                << ": "
+                << count
+                << '\n';
+        }
+
+        std::cout
+            << "\nEvent sources:\n";
+
+        for (
+            const auto& [source, count] :
+            source_counts
+        ) {
+            std::cout
+                << "  "
+                << source
+                << ": "
+                << count
+                << '\n';
+        }
+
+        std::cout
+            << "\nExtra properties:\n";
+
+        for (
+            const auto& [property, count] :
+            extra_property_counts
+        ) {
+            std::cout
+                << "  "
+                << property
+                << ": "
+                << count
+                << '\n';
+        }
+
+        std::cout
+            << "\nBooking flag by relevant event type:\n";
+
+        for (
+            const auto& [event_type, counts] :
+            booking_flag_counts
+        ) {
+            if (
+                event_type != "*Booking"
+                && !event_type.starts_with(
+                    "BOOK."
+                )
+            ) {
+                continue;
+            }
+
+            std::cout
+                << "  "
+                << event_type
+                << ":\n"
+                << "    IsBooking=false: "
+                << counts[0]
+                << '\n'
+                << "    IsBooking=true: "
+                << counts[1]
+                << '\n';
+        }
+
+        std::cout
+            << "\nBooking key validation:\n"
+            << "  Duplicate (room, occurrence) pairs: "
+            << duplicate_room_occurrences
+            << '\n'
+            << "  Empty occurrence IDs: "
+            << empty_occurrence_ids
+            << '\n'
+            << "  Empty event IDs: "
+            << empty_event_ids
             << '\n';
 
         const auto locations =
