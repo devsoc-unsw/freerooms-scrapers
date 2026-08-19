@@ -43,6 +43,7 @@ add_library(
     src/bookings/classification.cpp
     src/bookings/modules.cpp
     src/bookings/name_parser.cpp
+    src/bookings/filter.cpp
 )
 
 target_include_directories(

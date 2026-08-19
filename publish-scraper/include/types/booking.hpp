@@ -80,6 +80,7 @@ struct Booking {
 
     bool is_booking = false;
     bool is_published = false;
+    bool is_deleted = false;
 };
 
 }

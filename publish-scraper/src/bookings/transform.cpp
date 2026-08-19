@@ -237,6 +237,9 @@ transform_publish_events(
 
                     .is_published =
                         event.is_published,
+
+                    .is_deleted =
+                        event.is_deleted,
                 }
             );
         }
