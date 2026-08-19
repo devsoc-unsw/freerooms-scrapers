@@ -37,6 +37,7 @@ add_library(
     src/data/room_metadata.cpp
     src/config/exclusions.cpp
     src/rooms/exclusions.cpp
+    src/rooms/room_id.cpp
 )
 
 target_include_directories(

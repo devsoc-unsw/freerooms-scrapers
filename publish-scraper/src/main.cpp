@@ -1,15 +1,40 @@
+#include "config/exclusions.hpp"
 #include "data/static_data.hpp"
 #include "http/client.hpp"
 #include "publish/client.hpp"
+#include "rooms/exclusions.hpp"
 #include "rooms/publish_mapping.hpp"
-#include "data/room_metadata.hpp"
+#include "rooms/room_id.hpp"
 
 #include <exception>
-#include <filesystem>
 #include <iostream>
+#include <vector>
 
 int main() {
     try {
+        const auto exclusions =
+            config::load_exclusions(
+                "config/exclusions.json"
+            );
+
+        std::cout
+            << "Exclusions loaded.\n"
+            << "  Buildings: "
+            << exclusions.building_ids.size()
+            << '\n'
+            << "  Rooms: "
+            << exclusions.room_ids.size()
+            << '\n'
+            << "  Virtual locations: "
+            << exclusions.virtual_location_ids.size()
+            << '\n'
+            << "  Usages: "
+            << exclusions.usages.size()
+            << '\n'
+            << "  Schools: "
+            << exclusions.schools.size()
+            << "\n\n";
+
         const auto static_data =
             data::load_static_data("data");
 
@@ -36,19 +61,13 @@ int main() {
         std::cout
             << "Time periods: "
             << view_options.time_periods.size()
-            << '\n';
-
-        std::cout
+            << '\n'
             << "Date periods: "
             << view_options.date_periods.size()
-            << '\n';
-
-        std::cout
+            << '\n'
             << "Weeks: "
             << view_options.weeks.size()
-            << '\n';
-
-        std::cout
+            << '\n'
             << "Days: "
             << view_options.days.size()
             << '\n';
@@ -94,7 +113,7 @@ int main() {
             << "  Missing from Publish: "
             << mapping.missing_from_publish.size()
             << '\n'
-            << "  New/unrecognised Publish rooms: "
+            << "  Publish-only locations: "
             << mapping.missing_from_static.size()
             << '\n'
             << "  Duplicate Publish room IDs: "
@@ -114,23 +133,6 @@ int main() {
                 std::cout
                     << "  "
                     << room_id
-                    << '\n';
-            }
-        }
-
-        if (!mapping.missing_from_static.empty()) {
-            std::cout
-                << "\nPublish rooms missing from static data:\n";
-
-            for (
-                const auto& location :
-                mapping.missing_from_static
-            ) {
-                std::cout
-                    << "  "
-                    << location.name
-                    << " -> "
-                    << location.identity
                     << '\n';
             }
         }
@@ -155,26 +157,92 @@ int main() {
             }
         }
 
-        if (
-            !mapping
-                .duplicate_publish_room_ids
-                .empty()
+        std::size_t excluded_by_building = 0;
+        std::size_t excluded_by_room = 0;
+        std::size_t excluded_virtual = 0;
+
+        std::vector<publish::Category>
+            candidate_new_rooms;
+
+        for (
+            const auto& location :
+            mapping.missing_from_static
         ) {
-            throw std::runtime_error{
-                "Refusing to update rooms.json because "
-                "duplicate Publish room IDs were found"
-            };
+            const auto room_id =
+                rooms::extract_room_id(
+                    location.name
+                );
+
+
+            if (!room_id.has_value()) {
+                continue;
+            }
+
+            const auto exclusion =
+                rooms::get_publish_location_exclusion(
+                    *room_id,
+                    exclusions
+                );
+
+
+            if (!exclusion.has_value()) {
+                candidate_new_rooms.push_back(
+                    location
+                );
+
+                continue;
+            }
+
+            switch (*exclusion) {
+                case rooms::ExclusionReason::Building:
+                    ++excluded_by_building;
+                    break;
+
+                case rooms::ExclusionReason::Room:
+                    ++excluded_by_room;
+                    break;
+
+                case rooms::ExclusionReason::VirtualLocation:
+                    ++excluded_virtual;
+                    break;
+            }
         }
 
-        data::write_publish_ids(
-            "data/rooms.json",
-            mapping.matches
-        );
-
         std::cout
-            << "\nUpdated publishId for "
-            << mapping.matches.size()
-            << " rooms.\n";
+            << "\nPublish-only location classification:\n"
+            << "  Total: "
+            << mapping.missing_from_static.size()
+            << '\n'
+            << "  Excluded by building: "
+            << excluded_by_building
+            << '\n'
+            << "  Excluded by room: "
+            << excluded_by_room
+            << '\n'
+            << "  Virtual locations: "
+            << excluded_virtual
+            << '\n'
+            << "  Candidate new rooms: "
+            << candidate_new_rooms.size()
+            << '\n';
+
+
+        if (!candidate_new_rooms.empty()) {
+            std::cout
+                << "\nPotential new rooms to investigate:\n";
+
+            for (
+                const auto& location :
+                candidate_new_rooms
+            ) {
+                std::cout
+                    << "  "
+                    << location.name
+                    << " -> "
+                    << location.identity
+                    << '\n';
+            }
+        }
     }
     catch (const std::exception& error) {
         std::cerr
