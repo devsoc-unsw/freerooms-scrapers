@@ -10,6 +10,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 int main() {
@@ -87,87 +88,116 @@ int main() {
             std::cout << '\n';
         }
 
-        std::vector<std::string> test_location_ids;
+        std::vector<std::string> location_ids;
 
         for (const auto& room : static_data.rooms) {
             if (!room.publish_id.has_value()) {
                 continue;
             }
 
-            test_location_ids.push_back(
+            location_ids.push_back(
                 *room.publish_id
             );
-
-            if (test_location_ids.size() == 2) {
-                break;
-            }
         }
 
-        if (test_location_ids.size() != 2) {
-            throw std::runtime_error{
-                "Could not find two rooms with publishId"
-            };
-        }
+        std::cout
+            << "\nRooms with Publish IDs: "
+            << location_ids.size()
+            << '\n';
 
         const auto events =
             publish_client.get_events(
-                test_location_ids,
+                location_ids,
                 view_options,
                 2026
             );
 
-        std::cout
-            << "\nPublish event test successful.\n"
-            << "Returned room categories: "
-            << events.category_events.size()
-            << '\n';
+        std::size_t total_event_rows = 0;
+
+        const std::unordered_set<std::string>
+            requested_location_ids{
+                location_ids.begin(),
+                location_ids.end()
+            };
+
+        std::unordered_set<std::string>
+            returned_location_ids;
+
+        std::unordered_set<std::string>
+            unique_occurrence_ids;
 
         for (
             const auto& category :
             events.category_events
         ) {
-            std::cout
-                << "\n"
-                << category.name
-                << '\n'
-                << "  Publish ID: "
-                << category.identity
-                << '\n'
-                << "  Events: "
-                << category.results.size()
-                << '\n';
-
-            if (category.results.empty()) {
-                continue;
+            if (
+                !requested_location_ids.contains(
+                    category.identity
+                )
+            ) {
+                throw std::runtime_error{
+                    "Publish returned an unrequested location: "
+                    + category.identity
+                };
             }
 
-            const auto& event =
-                category.results.front();
+            const auto inserted =
+                returned_location_ids
+                    .insert(category.identity)
+                    .second;
 
-            std::cout
-                << "  First event:\n"
-                << "    Name: "
-                << event.name
-                << '\n'
-                << "    Event type: "
-                << event.event_type
-                << '\n'
-                << "    Start: "
-                << event.start_date_time
-                << '\n'
-                << "    End: "
-                << event.end_date_time
-                << '\n'
-                << "    EventIdentity: "
-                << event.event_identity
-                << '\n'
-                << "    Identity: "
-                << event.identity
-                << '\n'
-                << "    Extra properties: "
-                << event.extra_properties.size()
-                << '\n';
+            if (!inserted) {
+                throw std::runtime_error{
+                    "Publish returned duplicate room category: "
+                    + category.identity
+                };
+            }
+
+            total_event_rows +=
+                category.results.size();
+
+            for (
+                const auto& event :
+                category.results
+            ) {
+                unique_occurrence_ids.insert(
+                    event.identity
+                );
+            }
         }
+
+        std::size_t missing_location_count = 0;
+
+        for (
+            const auto& location_id :
+            location_ids
+        ) {
+            if (
+                !returned_location_ids.contains(
+                    location_id
+                )
+            ) {
+                ++missing_location_count;
+            }
+        }
+
+        std::cout
+            << "\nPublish event scrape complete.\n"
+            << "  Requested room categories: "
+            << location_ids.size()
+            << '\n'
+            << "  Returned room categories: "
+            << events.category_events.size()
+            << '\n'
+            << "  Missing room categories: "
+            << missing_location_count
+            << '\n'
+            << "  Room-event rows: "
+            << total_event_rows
+            << '\n'
+            << "  Unique occurrence IDs: "
+            << unique_occurrence_ids.size()
+            << '\n';
 
         const auto locations =
             publish_client.get_locations();

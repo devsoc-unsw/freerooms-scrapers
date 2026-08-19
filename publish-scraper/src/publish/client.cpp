@@ -8,6 +8,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <algorithm>
 
 namespace publish {
 
@@ -112,7 +113,7 @@ std::vector<Category> Client::get_locations() {
     return locations;
 }
 
-EventsResponse Client::get_events(
+EventsResponse Client::get_events_batch(
     const std::vector<std::string>& location_ids,
     const ViewOptionsResponse& view_options,
     const int year
@@ -158,6 +159,69 @@ EventsResponse Client::get_events(
     return parse_events(
         response.body
     );
+}
+
+EventsResponse Client::get_events(
+    const std::vector<std::string>& location_ids,
+    const ViewOptionsResponse& view_options,
+    const int year
+) {
+    if (location_ids.empty()) {
+        throw std::invalid_argument{
+            "At least one Publish location is required"
+        };
+    }
+
+    EventsResponse combined_response;
+
+    for (
+        std::size_t start = 0;
+        start < location_ids.size();
+        start += config::category_selection_limit
+    ) {
+        const auto end =
+            std::min(
+                start
+                    + config::category_selection_limit,
+                location_ids.size()
+            );
+
+        std::vector<std::string> batch;
+
+        batch.reserve(
+            end - start
+        );
+
+        for (
+            std::size_t index = start;
+            index < end;
+            ++index
+        ) {
+            batch.push_back(
+                location_ids[index]
+            );
+        }
+
+        auto response =
+            get_events_batch(
+                batch,
+                view_options,
+                year
+            );
+
+        for (
+            auto& category :
+            response.category_events
+        ) {
+            combined_response
+                .category_events
+                .push_back(
+                    std::move(category)
+                );
+        }
+    }
+
+    return combined_response;
 }
 
 }

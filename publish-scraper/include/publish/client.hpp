@@ -3,6 +3,7 @@
 #include "http/client.hpp"
 #include "types/publish.hpp"
 
+#include <string>
 #include <vector>
 
 namespace publish {
@@ -26,6 +27,12 @@ public:
     );
 
 private:
+    EventsResponse get_events_batch(
+        const std::vector<std::string>& location_ids,
+        const ViewOptionsResponse& view_options,
+        int year
+    );
+
     http::Client& http_client_;
 };
 
