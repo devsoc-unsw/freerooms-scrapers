@@ -14,15 +14,26 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 include(FetchContent)
 include(CTest)
 
-find_package(nlohmann_json 3.11.3 QUIET)
-find_package(CURL REQUIRED)
+find_package(
+    nlohmann_json
+    3.11.3
+    QUIET
+)
+
+find_package(
+    CURL
+    REQUIRED
+)
 
 if(NOT nlohmann_json_FOUND)
     FetchContent_Declare(
         nlohmann_json
-        GIT_REPOSITORY https://github.com/nlohmann/json.git
-        GIT_TAG v3.11.3
-        GIT_SHALLOW TRUE
+        GIT_REPOSITORY
+            https://github.com/nlohmann/json.git
+        GIT_TAG
+            v3.11.3
+        GIT_SHALLOW
+            TRUE
     )
 
     FetchContent_MakeAvailable(
@@ -82,93 +93,20 @@ target_link_libraries(
 set_target_properties(
     publish_scraper
     PROPERTIES
-        OUTPUT_NAME "publish-scraper"
+        OUTPUT_NAME
+            "publish-scraper"
 )
 
-if(BUILD_TESTING)
-    find_package(Catch2 3 QUIET)
-
-    if(NOT Catch2_FOUND)
-        FetchContent_Declare(
-            Catch2
-            GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-            GIT_TAG v3.8.1
-            GIT_SHALLOW TRUE
-        )
-
-        FetchContent_MakeAvailable(
-            Catch2
-        )
-    endif()
-
-    add_executable(
-        publish_scraper_tests
-        tests/static_data.test.cpp
-        tests/image_url.test.cpp
-        tests/static_json.test.cpp
-        tests/bookings.test.cpp
-        tests/database_request.test.cpp
-    )
-
-    target_link_libraries(
-        publish_scraper_tests
-        PRIVATE
-            scraper_core
-            Catch2::Catch2WithMain
-    )
-
-    add_test(
-        NAME publish_scraper_tests
-        COMMAND publish_scraper_tests
-    )
-
-    set_tests_properties(
-        publish_scraper_tests
-        PROPERTIES
-            WORKING_DIRECTORY
-                ${CMAKE_CURRENT_SOURCE_DIR}
-    )
-endif()
-
-if(MSVC)
-    target_compile_options(
-        scraper_core
-        PRIVATE /W4
-    )
-
-    target_compile_options(
-        publish_scraper
-        PRIVATE /W4
-    )
-
-    if(BUILD_TESTING)
+function(enable_project_warnings target)
+    if(MSVC)
         target_compile_options(
-            publish_scraper_tests
-            PRIVATE /W4
+            ${target}
+            PRIVATE
+                /W4
         )
-    endif()
-else()
-    target_compile_options(
-        scraper_core
-        PRIVATE
-            -Wall
-            -Wextra
-            -Wpedantic
-            -Wshadow
-    )
-
-    target_compile_options(
-        publish_scraper
-        PRIVATE
-            -Wall
-            -Wextra
-            -Wpedantic
-            -Wshadow
-    )
-
-    if(BUILD_TESTING)
+    else()
         target_compile_options(
-            publish_scraper_tests
+            ${target}
             PRIVATE
                 -Wall
                 -Wextra
@@ -176,4 +114,100 @@ else()
                 -Wshadow
         )
     endif()
+endfunction()
+
+enable_project_warnings(
+    scraper_core
+)
+
+enable_project_warnings(
+    publish_scraper
+)
+
+if(BUILD_TESTING)
+    find_package(
+        Catch2
+        3
+        QUIET
+    )
+
+    if(NOT Catch2_FOUND)
+        FetchContent_Declare(
+            Catch2
+            GIT_REPOSITORY
+                https://github.com/catchorg/Catch2.git
+            GIT_TAG
+                v3.8.1
+            GIT_SHALLOW
+                TRUE
+        )
+
+        FetchContent_MakeAvailable(
+            Catch2
+        )
+
+        list(
+            APPEND
+            CMAKE_MODULE_PATH
+            ${catch2_SOURCE_DIR}/extras
+        )
+    endif()
+
+    include(Catch)
+
+    add_executable(
+        publish_scraper_unit_tests
+        tests/unit/static_data.test.cpp
+        tests/unit/image_url.test.cpp
+        tests/unit/static_json.test.cpp
+        tests/unit/bookings.test.cpp
+        tests/unit/database_request.test.cpp
+    )
+
+    target_link_libraries(
+        publish_scraper_unit_tests
+        PRIVATE
+            scraper_core
+            Catch2::Catch2WithMain
+    )
+
+    enable_project_warnings(
+        publish_scraper_unit_tests
+    )
+
+    catch_discover_tests(
+        publish_scraper_unit_tests
+        TEST_PREFIX
+            "unit: "
+        WORKING_DIRECTORY
+            ${CMAKE_CURRENT_SOURCE_DIR}
+        PROPERTIES
+            LABELS unit
+    )
+
+    add_executable(
+        publish_scraper_integration_tests
+        tests/integration/graphql.test.cpp
+    )
+
+    target_link_libraries(
+        publish_scraper_integration_tests
+        PRIVATE
+            scraper_core
+            Catch2::Catch2WithMain
+    )
+
+    enable_project_warnings(
+        publish_scraper_integration_tests
+    )
+
+    catch_discover_tests(
+        publish_scraper_integration_tests
+        TEST_PREFIX
+            "integration: "
+        WORKING_DIRECTORY
+            ${CMAKE_CURRENT_SOURCE_DIR}
+        PROPERTIES
+            LABELS integration
+    )
 endif()
