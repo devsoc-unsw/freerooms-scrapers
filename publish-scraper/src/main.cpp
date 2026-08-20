@@ -135,6 +135,8 @@ std::size_t count_event_rows(const publish::EventsResponse& events) {
 } // namespace
 
 int main() {
+    std::cout << std::unitbuf;
+
     const auto total_start = Clock::now();
 
     try {
