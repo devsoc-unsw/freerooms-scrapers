@@ -54,10 +54,6 @@ jobs:
             -L unit \
             --output-on-failure
 
-      - name: Set scrape year
-        run: |
-          echo "YEAR=$(TZ=Australia/Sydney date +%Y)" >> "$GITHUB_ENV"
-
       - name: Start local GraphQL API
         working-directory: graphql-api
         env:
@@ -69,23 +65,10 @@ jobs:
             --wait \
             --wait-timeout 120
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: "22"
+      - name: Set test year
+        run: echo "YEAR=$(TZ=Australia/Sydney date +%Y)" >> "$GITHUB_ENV"
 
-      - name: Install NSS dependencies
-        working-directory: nss
-        run: npm ci
-
-      - name: Seed database with old NSS scraper
-        working-directory: nss
-        env:
-          HASURAGRES_URL: http://localhost:8000
-          HASURAGRES_API_KEY: ci_key
-        run: npm run scrape
-
-      - name: Run Publish scraper migration
+      - name: Run Publish scraper
         working-directory: publish-scraper
         env:
           HASURAGRES_URL: http://localhost:8000
@@ -103,12 +86,6 @@ jobs:
             --test-dir build \
             -L integration \
             --output-on-failure
-
-      - name: Run existing FreeRooms compatibility tests
-        working-directory: nss
-        env:
-          GRAPHQL_URL: http://localhost:8080/v1/graphql
-        run: npm run test
 
       - name: Show local GraphQL API logs
         if: ${{ failure() }}
