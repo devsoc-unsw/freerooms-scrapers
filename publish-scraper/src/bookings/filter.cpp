@@ -4,9 +4,7 @@
 
 namespace bookings {
 
-bool should_include_booking(
-    const model::Booking& booking
-) {
+bool should_include_booking(const model::Booking& booking) {
     if (!booking.is_published) {
         return false;
     }
@@ -15,46 +13,28 @@ bool should_include_booking(
         return false;
     }
 
-    if (
-        booking.event_type
-        == "BOOK.CANCELLED"
-    ) {
+    if (booking.event_type == "BOOK.CANCELLED") {
         return false;
     }
 
-    if (
-        booking.event_type
-        == "BOOK.REQUESTED"
-    ) {
+    if (booking.event_type == "BOOK.REQUESTED") {
         return false;
     }
 
-    if (
-        booking.event_type
-        == "*Not Used"
-    ) {
+    if (booking.event_type == "*Not Used") {
         return false;
     }
 
     return true;
 }
 
-std::size_t filter_bookings_for_occupancy(
-    std::vector<model::Booking>& bookings
-) {
-    const auto before =
-        bookings.size();
+std::size_t filter_bookings_for_occupancy(std::vector<model::Booking>& bookings) {
+    const auto before = bookings.size();
 
-    std::erase_if(
-        bookings,
-        [](const model::Booking& booking) {
-            return !should_include_booking(
-                booking
-            );
-        }
-    );
+    std::erase_if(bookings,
+                  [](const model::Booking& booking) { return !should_include_booking(booking); });
 
     return before - bookings.size();
 }
 
-}
+} // namespace bookings

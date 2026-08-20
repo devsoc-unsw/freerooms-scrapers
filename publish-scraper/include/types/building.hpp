@@ -15,4 +15,4 @@ struct Building {
     std::vector<std::string> aliases;
 };
 
-}
+} // namespace model

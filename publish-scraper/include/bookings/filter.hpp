@@ -7,12 +7,8 @@
 
 namespace bookings {
 
-bool should_include_booking(
-    const model::Booking& booking
-);
+bool should_include_booking(const model::Booking& booking);
 
-std::size_t filter_bookings_for_occupancy(
-    std::vector<model::Booking>& bookings
-);
+std::size_t filter_bookings_for_occupancy(std::vector<model::Booking>& bookings);
 
-}
+} // namespace bookings

@@ -25,97 +25,52 @@
 
 namespace {
 
-using Clock =
-    std::chrono::steady_clock;
+using Clock = std::chrono::steady_clock;
 
 struct YearConfig {
     int value = 0;
     bool overridden = false;
 };
 
-double elapsed_seconds(
-    const Clock::time_point start
-) {
-    return std::chrono::duration<double>(
-        Clock::now() - start
-    ).count();
+double elapsed_seconds(const Clock::time_point start) {
+    return std::chrono::duration<double>(Clock::now() - start).count();
 }
 
-void print_elapsed(
-    std::ostream& output,
-    const double seconds
-) {
-    output
-        << std::fixed
-        << std::setprecision(2)
-        << seconds
-        << "s";
+void print_elapsed(std::ostream& output, const double seconds) {
+    output << std::fixed << std::setprecision(2) << seconds << "s";
 }
 
-template <typename Function>
-auto timed_step(
-    const std::string_view name,
-    Function&& function
-) {
-    std::cout
-        << name
-        << "...\n";
+template <typename Function> auto timed_step(const std::string_view name, Function&& function) {
+    std::cout << name << "...\n";
 
-    const auto start =
-        Clock::now();
+    const auto start = Clock::now();
 
     try {
-        if constexpr (
-            std::is_void_v<
-                std::invoke_result_t<Function>
-            >
-        ) {
-            std::forward<Function>(
-                function
-            )();
+        if constexpr (std::is_void_v<std::invoke_result_t<Function>>) {
+            std::forward<Function>(function)();
 
-            std::cout
-                << "  Completed in ";
+            std::cout << "  Completed in ";
 
-            print_elapsed(
-                std::cout,
-                elapsed_seconds(start)
-            );
+            print_elapsed(std::cout, elapsed_seconds(start));
 
-            std::cout
-                << "\n\n";
-        }
-        else {
-            auto result =
-                std::forward<Function>(
-                    function
-                )();
+            std::cout << "\n\n";
+        } else {
+            auto result = std::forward<Function>(function)();
 
-            std::cout
-                << "  Completed in ";
+            std::cout << "  Completed in ";
 
-            print_elapsed(
-                std::cout,
-                elapsed_seconds(start)
-            );
+            print_elapsed(std::cout, elapsed_seconds(start));
 
-            std::cout
-                << "\n\n";
+            std::cout << "\n\n";
 
             return result;
         }
-    }
-    catch (...) {
-        std::cerr
-            << "  Failed after ";
+    } catch (...) {
+        std::cerr << "  Failed after ";
 
-        print_elapsed(
-            std::cerr,
-            elapsed_seconds(start)
-        );
+        print_elapsed(std::cerr, elapsed_seconds(start));
 
-        std::cerr
-            << '\n';
+        std::cerr << '\n';
 
         throw;
     }
@@ -124,490 +79,222 @@ auto timed_step(
 int current_sydney_year() {
     using namespace std::chrono;
 
-    const auto sydney_time =
-        system_clock::now()
-        + hours{11};
+    const auto sydney_time = system_clock::now() + hours{11};
 
-    const auto time =
-        system_clock::to_time_t(
-            sydney_time
-        );
+    const auto time = system_clock::to_time_t(sydney_time);
 
-    const auto* calendar_time =
-        std::gmtime(
-            &time
-        );
+    const auto* calendar_time = std::gmtime(&time);
 
     if (calendar_time == nullptr) {
-        throw std::runtime_error{
-            "Could not determine current year"
-        };
+        throw std::runtime_error{"Could not determine current year"};
     }
 
-    return
-        calendar_time->tm_year
-        + 1900;
+    return calendar_time->tm_year + 1900;
 }
 
 YearConfig load_year() {
-    const auto* value =
-        std::getenv(
-            "YEAR"
-        );
+    const auto* value = std::getenv("YEAR");
 
-    if (
-        value == nullptr
-        || *value == '\0'
-    ) {
+    if (value == nullptr || *value == '\0') {
         return YearConfig{
-            .value =
-                current_sydney_year(),
+            .value = current_sydney_year(),
 
-            .overridden =
-                false,
+            .overridden = false,
         };
     }
 
-    const std::string year_string{
-        value
-    };
+    const std::string year_string{value};
 
     int year = 0;
 
     const auto result =
-        std::from_chars(
-            year_string.data(),
-            year_string.data()
-                + year_string.size(),
-            year
-        );
+        std::from_chars(year_string.data(), year_string.data() + year_string.size(), year);
 
-    if (
-        result.ec != std::errc{}
-        || result.ptr
-            != year_string.data()
-                + year_string.size()
-        || year < 2000
-        || year > 2100
-    ) {
-        throw std::runtime_error{
-            "Invalid YEAR value: "
-            + year_string
-        };
+    if (result.ec != std::errc{} || result.ptr != year_string.data() + year_string.size() ||
+        year < 2000 || year > 2100) {
+        throw std::runtime_error{"Invalid YEAR value: " + year_string};
     }
 
     return YearConfig{
-        .value =
-            year,
+        .value = year,
 
-        .overridden =
-            true,
+        .overridden = true,
     };
 }
 
-std::size_t count_event_rows(
-    const publish::EventsResponse& events
-) {
+std::size_t count_event_rows(const publish::EventsResponse& events) {
     std::size_t count = 0;
 
-    for (
-        const auto& category :
-        events.category_events
-    ) {
-        count +=
-            category.results.size();
+    for (const auto& category : events.category_events) {
+        count += category.results.size();
     }
 
     return count;
 }
 
-}
+} // namespace
 
 int main() {
-    const auto total_start =
-        Clock::now();
+    const auto total_start = Clock::now();
 
     try {
-        std::cout
-            << "Publish Scraper\n\n";
+        std::cout << "Publish Scraper\n\n";
 
         const auto year_config =
-            timed_step(
-                "Loading scrape configuration",
-                [] {
-                    return load_year();
-                }
-            );
+            timed_step("Loading scrape configuration", [] { return load_year(); });
 
-        const auto year =
-            year_config.value;
+        const auto year = year_config.value;
 
-        const auto database_config =
-            timed_step(
-                "Loading database configuration",
-                [] {
-                    return database::
-                        load_config_from_environment();
-                }
-            );
+        const auto database_config = timed_step("Loading database configuration", [] {
+            return database::load_config_from_environment();
+        });
 
-        std::cout
-            << "Scrape year: "
-            << year;
+        std::cout << "Scrape year: " << year;
 
         if (year_config.overridden) {
-            std::cout
-                << " (YEAR override)";
-        }
-        else {
-            std::cout
-                << " (automatic Sydney year)";
+            std::cout << " (YEAR override)";
+        } else {
+            std::cout << " (automatic Sydney year)";
         }
 
-        std::cout
-            << '\n'
-            << "Database target: "
-            << database_config.base_url
-            << "\n\n";
+        std::cout << '\n' << "Database target: " << database_config.base_url << "\n\n";
 
-        auto static_data =
-            timed_step(
-                "Loading and validating static room data",
-                [] {
-                    auto result =
-                        data::load_static_data(
-                            "data"
-                        );
+        auto static_data = timed_step("Loading and validating static room data", [] {
+            auto result = data::load_static_data("data");
 
-                    data::validate_static_data(
-                        result
-                    );
+            data::validate_static_data(result);
 
-                    return result;
-                }
-            );
+            return result;
+        });
 
-        std::cout
-            << "  Buildings: "
-            << static_data.buildings.size()
-            << '\n'
-            << "  Rooms: "
-            << static_data.rooms.size()
-            << "\n\n";
+        std::cout << "  Buildings: " << static_data.buildings.size() << '\n'
+                  << "  Rooms: " << static_data.rooms.size() << "\n\n";
 
         http::Client http_client;
 
-        publish::Client publish_client{
-            http_client
-        };
+        publish::Client publish_client{http_client};
 
-        const auto view_options =
-            timed_step(
-                "Fetching Publish view options",
-                [&] {
-                    return publish_client
-                        .get_view_options();
+        const auto view_options = timed_step("Fetching Publish view options",
+                                             [&] { return publish_client.get_view_options(); });
+
+        const auto location_ids = timed_step("Collecting Publish room IDs", [&] {
+            std::vector<std::string> result;
+
+            result.reserve(static_data.rooms.size());
+
+            for (const auto& room : static_data.rooms) {
+                if (!room.publish_id.has_value()) {
+                    continue;
                 }
-            );
 
-        const auto location_ids =
-            timed_step(
-                "Collecting Publish room IDs",
-                [&] {
-                    std::vector<std::string>
-                        result;
+                result.push_back(*room.publish_id);
+            }
 
-                    result.reserve(
-                        static_data.rooms.size()
-                    );
+            return result;
+        });
 
-                    for (
-                        const auto& room :
-                        static_data.rooms
-                    ) {
-                        if (
-                            !room.publish_id
-                                .has_value()
-                        ) {
-                            continue;
-                        }
+        std::cout << "  Rooms with Publish IDs: " << location_ids.size() << "\n\n";
 
-                        result.push_back(
-                            *room.publish_id
-                        );
-                    }
+        const auto events = timed_step("Fetching Publish events", [&] {
+            return publish_client.get_events(location_ids, view_options, year);
+        });
 
-                    return result;
-                }
-            );
+        const auto raw_event_count = count_event_rows(events);
 
-        std::cout
-            << "  Rooms with Publish IDs: "
-            << location_ids.size()
-            << "\n\n";
+        std::cout << "  Returned room categories: " << events.category_events.size() << '\n'
+                  << "  Raw room-event rows: " << raw_event_count << "\n\n";
 
-        const auto events =
-            timed_step(
-                "Fetching Publish events",
-                [&] {
-                    return publish_client
-                        .get_events(
-                            location_ids,
-                            view_options,
-                            year
-                        );
-                }
-            );
+        const auto image_count = timed_step("Extracting Publish room images", [&] {
+            return rooms::apply_publish_image_urls(static_data.rooms, events);
+        });
 
-        const auto raw_event_count =
-            count_event_rows(
-                events
-            );
+        std::cout << "  Rooms with image URLs: " << image_count << "\n\n";
 
-        std::cout
-            << "  Returned room categories: "
-            << events.category_events.size()
-            << '\n'
-            << "  Raw room-event rows: "
-            << raw_event_count
-            << "\n\n";
+        auto bookings = timed_step("Transforming Publish events into bookings", [&] {
+            return bookings::transform_publish_events(events, static_data.rooms);
+        });
 
-        const auto image_count =
-            timed_step(
-                "Extracting Publish room images",
-                [&] {
-                    return rooms::
-                        apply_publish_image_urls(
-                            static_data.rooms,
-                            events
-                        );
-                }
-            );
-
-        std::cout
-            << "  Rooms with image URLs: "
-            << image_count
-            << "\n\n";
-
-        auto bookings =
-            timed_step(
-                "Transforming Publish events into bookings",
-                [&] {
-                    return bookings::
-                        transform_publish_events(
-                            events,
-                            static_data.rooms
-                        );
-                }
-            );
-
-        if (
-            bookings.size()
-            != raw_event_count
-        ) {
-            throw std::runtime_error{
-                "Booking transformation changed "
-                "the number of event rows"
-            };
+        if (bookings.size() != raw_event_count) {
+            throw std::runtime_error{"Booking transformation changed "
+                                     "the number of event rows"};
         }
 
-        const auto removed_count =
-            timed_step(
-                "Filtering non-occupancy bookings",
-                [&] {
-                    return bookings::
-                        filter_bookings_for_occupancy(
-                            bookings
-                        );
-                }
-            );
+        const auto removed_count = timed_step("Filtering non-occupancy bookings", [&] {
+            return bookings::filter_bookings_for_occupancy(bookings);
+        });
 
-        std::cout
-            << "  Removed: "
-            << removed_count
-            << '\n'
-            << "  Remaining bookings: "
-            << bookings.size()
-            << "\n\n";
+        std::cout << "  Removed: " << removed_count << '\n'
+                  << "  Remaining bookings: " << bookings.size() << "\n\n";
 
-        auto building_payload =
-            timed_step(
-                "Serializing buildings",
-                [&] {
-                    return database::
-                        serialize_buildings(
-                            static_data.buildings,
-                            static_data.rooms
-                        );
-                }
-            );
+        auto building_payload = timed_step("Serializing buildings", [&] {
+            return database::serialize_buildings(static_data.buildings, static_data.rooms);
+        });
 
-        auto room_payload =
-            timed_step(
-                "Serializing rooms",
-                [&] {
-                    return database::
-                        serialize_rooms(
-                            static_data.rooms
-                        );
-                }
-            );
+        auto room_payload = timed_step(
+            "Serializing rooms", [&] { return database::serialize_rooms(static_data.rooms); });
 
-        auto booking_payload =
-            timed_step(
-                "Serializing bookings",
-                [&] {
-                    return bookings::
-                        serialize_bookings(
-                            bookings
-                        );
-                }
-            );
+        auto booking_payload = timed_step("Serializing bookings",
+                                          [&] { return bookings::serialize_bookings(bookings); });
 
-        auto module_payload =
-            timed_step(
-                "Serializing booking modules",
-                [&] {
-                    return bookings::
-                        serialize_booking_modules(
-                            bookings
-                        );
-                }
-            );
+        auto module_payload = timed_step("Serializing booking modules", [&] {
+            return bookings::serialize_booking_modules(bookings);
+        });
 
-        const auto building_count =
-            building_payload.size();
+        const auto building_count = building_payload.size();
 
-        const auto room_count =
-            room_payload.size();
+        const auto room_count = room_payload.size();
 
-        const auto booking_count =
-            booking_payload.size();
+        const auto booking_count = booking_payload.size();
 
-        const auto module_count =
-            module_payload.size();
+        const auto module_count = module_payload.size();
 
-        auto batch_request =
-            timed_step(
-                "Building Hasuragres transaction",
-                [&] {
-                    return database::
-                        build_batch_request(
-                            std::move(
-                                building_payload
-                            ),
-                            std::move(
-                                room_payload
-                            ),
-                            std::move(
-                                booking_payload
-                            ),
-                            std::move(
-                                module_payload
-                            ),
-                            year
-                        );
-                }
-            );
+        auto batch_request = timed_step("Building Hasuragres transaction", [&] {
+            return database::build_batch_request(std::move(building_payload),
+                                                 std::move(room_payload),
+                                                 std::move(booking_payload),
+                                                 std::move(module_payload),
+                                                 year);
+        });
 
-        if (
-            !batch_request.is_array()
-            || batch_request.size() != 4
-        ) {
-            throw std::runtime_error{
-                "Database transaction must "
-                "contain four table inserts"
-            };
+        if (!batch_request.is_array() || batch_request.size() != 4) {
+            throw std::runtime_error{"Database transaction must "
+                                     "contain four table inserts"};
         }
 
-        std::cout
-            << "Database payload:\n"
-            << "  Buildings: "
-            << building_count
-            << '\n'
-            << "  Rooms: "
-            << room_count
-            << '\n'
-            << "  Bookings: "
-            << booking_count
-            << '\n'
-            << "  BookingModules: "
-            << module_count
-            << "\n\n";
+        std::cout << "Database payload:\n"
+                  << "  Buildings: " << building_count << '\n'
+                  << "  Rooms: " << room_count << '\n'
+                  << "  Bookings: " << booking_count << '\n'
+                  << "  BookingModules: " << module_count << "\n\n";
 
-        database::Client database_client{
-            http_client,
-            database_config
-        };
+        database::Client database_client{http_client, database_config};
 
-        const auto insert_result =
-            timed_step(
-                "Uploading database transaction",
-                [&] {
-                    return database_client
-                        .batch_insert(
-                            batch_request
-                        );
-                }
-            );
+        const auto insert_result = timed_step("Uploading database transaction", [&] {
+            return database_client.batch_insert(batch_request);
+        });
 
         const auto request_mebibytes =
-            static_cast<double>(
-                insert_result.request_bytes
-            )
-            / 1024.0
-            / 1024.0;
+            static_cast<double>(insert_result.request_bytes) / 1024.0 / 1024.0;
 
-        std::cout
-            << "Database insert complete:\n"
-            << "  HTTP status: "
-            << insert_result.status_code
-            << '\n'
-            << "  Request size: "
-            << request_mebibytes
-            << " MiB\n";
+        std::cout << "Database insert complete:\n"
+                  << "  HTTP status: " << insert_result.status_code << '\n'
+                  << "  Request size: " << request_mebibytes << " MiB\n";
 
-        if (
-            !insert_result
-                .response_body
-                .empty()
-        ) {
-            std::cout
-                << "  Response: "
-                << insert_result.response_body
-                << '\n';
+        if (!insert_result.response_body.empty()) {
+            std::cout << "  Response: " << insert_result.response_body << '\n';
         }
 
-        std::cout
-            << "\nScrape completed successfully in ";
+        std::cout << "\nScrape completed successfully in ";
 
-        print_elapsed(
-            std::cout,
-            elapsed_seconds(
-                total_start
-            )
-        );
+        print_elapsed(std::cout, elapsed_seconds(total_start));
 
-        std::cout
-            << '\n';
-    }
-    catch (
-        const std::exception& error
-    ) {
-        std::cerr
-            << "\nScrape failed after ";
+        std::cout << '\n';
+    } catch (const std::exception& error) {
+        std::cerr << "\nScrape failed after ";
 
-        print_elapsed(
-            std::cerr,
-            elapsed_seconds(
-                total_start
-            )
-        );
+        print_elapsed(std::cerr, elapsed_seconds(total_start));
 
-        std::cerr
-            << "\nError: "
-            << error.what()
-            << '\n';
+        std::cerr << "\nError: " << error.what() << '\n';
 
         return 1;
     }

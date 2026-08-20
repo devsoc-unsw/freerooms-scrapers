@@ -62,11 +62,9 @@ struct Booking {
     std::vector<Module> modules;
 
     // Preserve the original API values even after parsing modules.
-    std::optional<std::string>
-        module_name_raw;
+    std::optional<std::string> module_name_raw;
 
-    std::optional<std::string>
-        module_description_raw;
+    std::optional<std::string> module_description_raw;
 
     // How many people they planned for
     std::optional<int> planned_size;
@@ -82,4 +80,4 @@ struct Booking {
     bool is_deleted = false;
 };
 
-}
+} // namespace model

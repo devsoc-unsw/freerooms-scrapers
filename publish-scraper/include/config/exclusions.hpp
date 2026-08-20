@@ -15,8 +15,6 @@ struct Exclusions {
     std::unordered_set<std::string> schools;
 };
 
-Exclusions load_exclusions(
-    const std::filesystem::path& path
-);
+Exclusions load_exclusions(const std::filesystem::path& path);
 
-}
+} // namespace config

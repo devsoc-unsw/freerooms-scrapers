@@ -13,10 +13,7 @@ enum class ExclusionReason {
     VirtualLocation,
 };
 
-std::optional<ExclusionReason>
-get_publish_location_exclusion(
-    const std::string& room_id,
-    const config::Exclusions& exclusions
-);
+std::optional<ExclusionReason> get_publish_location_exclusion(const std::string& room_id,
+                                                              const config::Exclusions& exclusions);
 
-}
+} // namespace rooms

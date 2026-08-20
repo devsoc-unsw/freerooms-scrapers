@@ -23,19 +23,14 @@ struct InsertResult {
 Config load_config_from_environment();
 
 class Client {
-public:
-    Client(
-        http::Client& http_client,
-        Config config
-    );
+  public:
+    Client(http::Client& http_client, Config config);
 
-    InsertResult batch_insert(
-        const nlohmann::json& request
-    );
+    InsertResult batch_insert(const nlohmann::json& request);
 
-private:
+  private:
     http::Client& http_client_;
     Config config_;
 };
 
-}
+} // namespace database

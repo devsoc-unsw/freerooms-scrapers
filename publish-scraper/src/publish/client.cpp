@@ -4,224 +4,123 @@
 #include "publish/json.hpp"
 #include "publish/request.hpp"
 
+#include <algorithm>
 #include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
-#include <algorithm>
 
 namespace publish {
 
-Client::Client(
-    http::Client& http_client
-)
-    : http_client_{http_client} {
-}
+Client::Client(http::Client& http_client) : http_client_{http_client} {}
 
 ViewOptionsResponse Client::get_view_options() {
     const auto url =
-        std::string{config::base_url}
-        + "/ViewOptions/"
-        + std::string{config::institution_id};
+        std::string{config::base_url} + "/ViewOptions/" + std::string{config::institution_id};
 
-    const auto response =
-        http_client_.get(url);
+    const auto response = http_client_.get(url);
 
-    if (
-        response.status_code < 200
-        || response.status_code >= 300
-    ) {
-        throw std::runtime_error{
-            "Publish ViewOptions request returned HTTP "
-            + std::to_string(response.status_code)
-        };
+    if (response.status_code < 200 || response.status_code >= 300) {
+        throw std::runtime_error{"Publish ViewOptions request returned HTTP " +
+                                 std::to_string(response.status_code)};
     }
 
     return parse_view_options(response.body);
 }
 
-CategoriesResponse Client::get_location_page(
-    const int page_number
-) {
+CategoriesResponse Client::get_location_page(const int page_number) {
     if (page_number < 1) {
-        throw std::invalid_argument{
-            "Publish page number must be at least 1"
-        };
+        throw std::invalid_argument{"Publish page number must be at least 1"};
     }
 
-    const auto url =
-        std::string{config::base_url}
-        + "/CategoryTypes/"
-        + std::string{
-            config::location_category_type_id
-        }
-        + "/Categories/FilterWithCache/"
-        + std::string{config::institution_id}
-        + "?pageNumber="
-        + std::to_string(page_number);
+    const auto url = std::string{config::base_url} + "/CategoryTypes/" +
+                     std::string{config::location_category_type_id} +
+                     "/Categories/FilterWithCache/" + std::string{config::institution_id} +
+                     "?pageNumber=" + std::to_string(page_number);
 
-    const auto response =
-        http_client_.post(url);
+    const auto response = http_client_.post(url);
 
-    if (
-        response.status_code < 200
-        || response.status_code >= 300
-    ) {
-        throw std::runtime_error{
-            "Publish location request returned HTTP "
-            + std::to_string(response.status_code)
-        };
+    if (response.status_code < 200 || response.status_code >= 300) {
+        throw std::runtime_error{"Publish location request returned HTTP " +
+                                 std::to_string(response.status_code)};
     }
 
     return parse_categories(response.body);
 }
 
 std::vector<Category> Client::get_locations() {
-    auto first_page =
-        get_location_page(1);
+    auto first_page = get_location_page(1);
 
     std::vector<Category> locations;
 
-    locations.reserve(
-        first_page.results.size()
-        * static_cast<std::size_t>(
-            first_page.total_pages
-        )
-    );
+    locations.reserve(first_page.results.size() * static_cast<std::size_t>(first_page.total_pages));
 
     for (auto& location : first_page.results) {
-        locations.push_back(
-            std::move(location)
-        );
+        locations.push_back(std::move(location));
     }
 
-    for (
-        int page = 2;
-        page <= first_page.total_pages;
-        ++page
-    ) {
-        auto response =
-            get_location_page(page);
+    for (int page = 2; page <= first_page.total_pages; ++page) {
+        auto response = get_location_page(page);
 
         for (auto& location : response.results) {
-            locations.push_back(
-                std::move(location)
-            );
+            locations.push_back(std::move(location));
         }
     }
 
     return locations;
 }
 
-EventsResponse Client::get_events_batch(
-    const std::vector<std::string>& location_ids,
-    const ViewOptionsResponse& view_options,
-    const int year
-) {
-    const auto request =
-        build_events_request(
-            view_options,
-            location_ids,
-            year
-        );
+EventsResponse Client::get_events_batch(const std::vector<std::string>& location_ids,
+                                        const ViewOptionsResponse& view_options,
+                                        const int year) {
+    const auto request = build_events_request(view_options, location_ids, year);
 
-    const auto body =
-        serialize_events_request(
-            request
-        );
+    const auto body = serialize_events_request(request);
 
-    const auto url =
-        std::string{config::base_url}
-        + "/CategoryTypes/Categories/"
-          "Events/Filter/"
-        + std::string{
-            config::institution_id
-        };
+    const auto url = std::string{config::base_url} +
+                     "/CategoryTypes/Categories/"
+                     "Events/Filter/" +
+                     std::string{config::institution_id};
 
-    const auto response =
-        http_client_.post_json(
-            url,
-            body
-        );
+    const auto response = http_client_.post_json(url, body);
 
-    if (
-        response.status_code < 200
-        || response.status_code >= 300
-    ) {
-        throw std::runtime_error{
-            "Publish events request returned HTTP "
-            + std::to_string(
-                response.status_code
-            )
-        };
+    if (response.status_code < 200 || response.status_code >= 300) {
+        throw std::runtime_error{"Publish events request returned HTTP " +
+                                 std::to_string(response.status_code)};
     }
 
-    return parse_events(
-        response.body
-    );
+    return parse_events(response.body);
 }
 
-EventsResponse Client::get_events(
-    const std::vector<std::string>& location_ids,
-    const ViewOptionsResponse& view_options,
-    const int year
-) {
+EventsResponse Client::get_events(const std::vector<std::string>& location_ids,
+                                  const ViewOptionsResponse& view_options,
+                                  const int year) {
     if (location_ids.empty()) {
-        throw std::invalid_argument{
-            "At least one Publish location is required"
-        };
+        throw std::invalid_argument{"At least one Publish location is required"};
     }
 
     EventsResponse combined_response;
 
-    for (
-        std::size_t start = 0;
-        start < location_ids.size();
-        start += config::category_selection_limit
-    ) {
-        const auto end =
-            std::min(
-                start
-                    + config::category_selection_limit,
-                location_ids.size()
-            );
+    for (std::size_t start = 0; start < location_ids.size();
+         start += config::category_selection_limit) {
+        const auto end = std::min(start + config::category_selection_limit, location_ids.size());
 
         std::vector<std::string> batch;
 
-        batch.reserve(
-            end - start
-        );
+        batch.reserve(end - start);
 
-        for (
-            std::size_t index = start;
-            index < end;
-            ++index
-        ) {
-            batch.push_back(
-                location_ids[index]
-            );
+        for (std::size_t index = start; index < end; ++index) {
+            batch.push_back(location_ids[index]);
         }
 
-        auto response =
-            get_events_batch(
-                batch,
-                view_options,
-                year
-            );
+        auto response = get_events_batch(batch, view_options, year);
 
-        for (
-            auto& category :
-            response.category_events
-        ) {
-            combined_response
-                .category_events
-                .push_back(
-                    std::move(category)
-                );
+        for (auto& category : response.category_events) {
+            combined_response.category_events.push_back(std::move(category));
         }
     }
 
     return combined_response;
 }
 
-}
+} // namespace publish

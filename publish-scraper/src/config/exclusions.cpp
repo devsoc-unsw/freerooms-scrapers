@@ -11,33 +11,21 @@ namespace {
 
 using json = nlohmann::json;
 
-std::unordered_set<std::string> load_string_set(
-    const json& root,
-    const std::string& key
-) {
-    const auto values =
-        root.at(key).get<std::vector<std::string>>();
+std::unordered_set<std::string> load_string_set(const json& root, const std::string& key) {
+    const auto values = root.at(key).get<std::vector<std::string>>();
 
-    return {
-        values.begin(),
-        values.end()
-    };
+    return {values.begin(), values.end()};
 }
 
-}
+} // namespace
 
 namespace config {
 
-Exclusions load_exclusions(
-    const std::filesystem::path& path
-) {
+Exclusions load_exclusions(const std::filesystem::path& path) {
     std::ifstream input{path};
 
     if (!input.is_open()) {
-        throw std::runtime_error{
-            "Could not open exclusions file: "
-            + path.string()
-        };
+        throw std::runtime_error{"Could not open exclusions file: " + path.string()};
     }
 
     try {
@@ -45,43 +33,19 @@ Exclusions load_exclusions(
         input >> root;
 
         return Exclusions{
-            .building_ids =
-                load_string_set(
-                    root,
-                    "buildingIds"
-                ),
+            .building_ids = load_string_set(root, "buildingIds"),
 
-            .room_ids =
-                load_string_set(
-                    root,
-                    "roomIds"
-                ),
+            .room_ids = load_string_set(root, "roomIds"),
 
-            .virtual_location_ids =
-                load_string_set(
-                    root,
-                    "virtualLocationIds"
-                ),
+            .virtual_location_ids = load_string_set(root, "virtualLocationIds"),
 
-            .usages =
-                load_string_set(
-                    root,
-                    "usages"
-                ),
+            .usages = load_string_set(root, "usages"),
 
-            .schools =
-                load_string_set(
-                    root,
-                    "schools"
-                ),
+            .schools = load_string_set(root, "schools"),
         };
-    }
-    catch (const json::exception& error) {
-        throw std::runtime_error{
-            "Invalid exclusions config: "
-            + std::string{error.what()}
-        };
+    } catch (const json::exception& error) {
+        throw std::runtime_error{"Invalid exclusions config: " + std::string{error.what()}};
     }
 }
 
-}
+} // namespace config

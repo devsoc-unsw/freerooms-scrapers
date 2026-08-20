@@ -8,10 +8,7 @@
 
 namespace bookings {
 
-std::vector<model::Booking>
-transform_publish_events(
-    const publish::EventsResponse& events,
-    const std::vector<model::Room>& rooms
-);
+std::vector<model::Booking> transform_publish_events(const publish::EventsResponse& events,
+                                                     const std::vector<model::Room>& rooms);
 
 }

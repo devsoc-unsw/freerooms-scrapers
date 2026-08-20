@@ -8,9 +8,7 @@
 
 namespace rooms {
 
-std::size_t apply_publish_image_urls(
-    std::vector<model::Room>& rooms,
-    const publish::EventsResponse& events
-);
+std::size_t apply_publish_image_urls(std::vector<model::Room>& rooms,
+                                     const publish::EventsResponse& events);
 
 }

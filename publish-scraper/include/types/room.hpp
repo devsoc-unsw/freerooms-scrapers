@@ -56,4 +56,4 @@ struct Room {
     std::optional<std::string> mazemap_poi;
 };
 
-}
+} // namespace model

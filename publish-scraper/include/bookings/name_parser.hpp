@@ -25,8 +25,6 @@ struct ParsedBookingName {
     NamePattern pattern;
 };
 
-ParsedBookingName parse_booking_name(
-    std::string_view raw_name
-);
+ParsedBookingName parse_booking_name(std::string_view raw_name);
 
-}
+} // namespace bookings

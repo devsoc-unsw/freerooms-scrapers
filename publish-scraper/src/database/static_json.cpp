@@ -6,195 +6,132 @@
 
 namespace {
 
-nlohmann::json floor_value(
-    const std::optional<model::FloorType>& floor
-) {
+nlohmann::json floor_value(const std::optional<model::FloorType>& floor) {
     if (!floor.has_value()) {
         return nullptr;
     }
 
     switch (*floor) {
-        case model::FloorType::Flat:
-            return "Flat";
+    case model::FloorType::Flat:
+        return "Flat";
 
-        case model::FloorType::Tiered:
-            return "Tiered";
+    case model::FloorType::Tiered:
+        return "Tiered";
 
-        case model::FloorType::Other:
-            return "Other";
+    case model::FloorType::Other:
+        return "Other";
     }
 
-    throw std::runtime_error{
-        "Unknown floor type"
-    };
+    throw std::runtime_error{"Unknown floor type"};
 }
 
-nlohmann::json seating_value(
-    const std::optional<model::SeatingType>& seating
-) {
+nlohmann::json seating_value(const std::optional<model::SeatingType>& seating) {
     if (!seating.has_value()) {
         return nullptr;
     }
 
     switch (*seating) {
-        case model::SeatingType::Movable:
-            return "Movable";
+    case model::SeatingType::Movable:
+        return "Movable";
 
-        case model::SeatingType::Fixed:
-            return "Fixed";
+    case model::SeatingType::Fixed:
+        return "Fixed";
     }
 
-    throw std::runtime_error{
-        "Unknown seating type"
-    };
+    throw std::runtime_error{"Unknown seating type"};
 }
 
-}
+} // namespace
 
 namespace database {
 
-nlohmann::json serialize_buildings(
-    const std::vector<model::Building>& buildings,
-    const std::vector<model::Room>& rooms
-) {
-    std::unordered_set<std::string>
-        used_building_ids;
+nlohmann::json serialize_buildings(const std::vector<model::Building>& buildings,
+                                   const std::vector<model::Room>& rooms) {
+    std::unordered_set<std::string> used_building_ids;
 
     for (const auto& room : rooms) {
-        used_building_ids.insert(
-            room.building_id
-        );
+        used_building_ids.insert(room.building_id);
     }
 
-    auto result =
-        nlohmann::json::array();
+    auto result = nlohmann::json::array();
 
     for (const auto& building : buildings) {
-        if (
-            !used_building_ids.contains(
-                building.id
-            )
-        ) {
+        if (!used_building_ids.contains(building.id)) {
             continue;
         }
 
-        auto row =
-            nlohmann::json::object();
+        auto row = nlohmann::json::object();
 
-        row["id"] =
-            building.id;
+        row["id"] = building.id;
 
-        row["name"] =
-            building.name;
+        row["name"] = building.name;
 
-        row["lat"] =
-            building.latitude;
+        row["lat"] = building.latitude;
 
-        row["long"] =
-            building.longitude;
+        row["long"] = building.longitude;
 
-        row["aliases"] =
-            building.aliases;
+        row["aliases"] = building.aliases;
 
-        result.push_back(
-            std::move(row)
-        );
+        result.push_back(std::move(row));
     }
 
     return result;
 }
 
-nlohmann::json serialize_rooms(
-    const std::vector<model::Room>& rooms
-) {
-    auto result =
-        nlohmann::json::array();
+nlohmann::json serialize_rooms(const std::vector<model::Room>& rooms) {
+    auto result = nlohmann::json::array();
 
-    auto& array =
-        result.get_ref<
-            nlohmann::json::array_t&
-        >();
+    auto& array = result.get_ref<nlohmann::json::array_t&>();
 
-    array.reserve(
-        rooms.size()
-    );
+    array.reserve(rooms.size());
 
     for (const auto& room : rooms) {
-        auto row =
-            nlohmann::json::object();
+        auto row = nlohmann::json::object();
 
-        row["abbr"] =
-            room.abbreviation;
+        row["abbr"] = room.abbreviation;
 
-        row["name"] =
-            room.name;
+        row["name"] = room.name;
 
-        row["id"] =
-            room.id;
+        row["id"] = room.id;
 
-        row["usage"] =
-            room.usage;
+        row["usage"] = room.usage;
 
-        row["capacity"] =
-            room.capacity;
+        row["capacity"] = room.capacity;
 
-        row["school"] =
-            room.school;
+        row["school"] = room.school;
 
-        row["buildingId"] =
-            room.building_id;
+        row["buildingId"] = room.building_id;
 
-        row["floor"] =
-            floor_value(
-                room.facilities.floor
-            );
+        row["floor"] = floor_value(room.facilities.floor);
 
-        row["seating"] =
-            seating_value(
-                room.facilities.seating
-            );
+        row["seating"] = seating_value(room.facilities.seating);
 
-        row["microphone"] =
-            room.facilities.microphone;
+        row["microphone"] = room.facilities.microphone;
 
-        row["accessibility"] =
-            room.facilities.accessibility;
+        row["accessibility"] = room.facilities.accessibility;
 
-        row["audiovisual"] =
-            room.facilities.audiovisual;
+        row["audiovisual"] = room.facilities.audiovisual;
 
-        row["infotechnology"] =
-            room.facilities
-                .information_technology;
+        row["infotechnology"] = room.facilities.information_technology;
 
-        row["writingMedia"] =
-            room.facilities
-                .writing_media;
+        row["writingMedia"] = room.facilities.writing_media;
 
-        row["service"] =
-            room.facilities.services;
+        row["service"] = room.facilities.services;
 
-        row["lat"] =
-            room.latitude;
+        row["lat"] = room.latitude;
 
-        row["long"] =
-            room.longitude;
+        row["long"] = room.longitude;
 
         if (room.image_url.has_value()) {
-            row["imageUrl"] =
-                *room.image_url;
-        }
-        else {
-            row["imageUrl"] =
-                nullptr;
+            row["imageUrl"] = *room.image_url;
+        } else {
+            row["imageUrl"] = nullptr;
         }
 
-        result.push_back(
-            std::move(row)
-        );
+        result.push_back(std::move(row));
     }
 
     return result;
 }
 
-}
+} // namespace database

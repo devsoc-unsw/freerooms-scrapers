@@ -126,4 +126,4 @@ struct EventsRequest {
     std::vector<std::string> personal_identities;
 };
 
-}
+} // namespace publish
