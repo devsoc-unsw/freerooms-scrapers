@@ -133,7 +133,7 @@ jobs:
           platforms: linux/amd64
           file: publish-scraper.dockerfile
           tags: |
-            ghcr.io/devsoc-unsw/publish-scraper:${{ github.sha }}
-            ghcr.io/devsoc-unsw/publish-scraper:latest
+            ghcr.io/devsoc-unsw/freerooms-publish-scraper:${{ github.sha }}
+            ghcr.io/devsoc-unsw/freerooms-publish-scraper:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
