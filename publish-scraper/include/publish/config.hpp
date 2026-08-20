@@ -14,5 +14,6 @@ inline constexpr std::string_view location_category_type_id =
     "1e042cb1-547d-41d4-ae93-a1f2c3d34538";
 
 inline constexpr std::size_t category_selection_limit = 20;
+inline constexpr std::size_t event_request_concurrency = 4;
 
 } // namespace publish::config

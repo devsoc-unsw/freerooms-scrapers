@@ -157,7 +157,11 @@ publish::Event parse_event(const json& value) {
     event.week_labels = parse_optional_string(value, "WeekLabels");
 
     if (value.contains("ExtraProperties") && !value.at("ExtraProperties").is_null()) {
-        for (const auto& property : value.at("ExtraProperties")) {
+        const auto& extra_properties = value.at("ExtraProperties");
+
+        event.extra_properties.reserve(extra_properties.size());
+
+        for (const auto& property : extra_properties) {
             event.extra_properties.push_back(parse_extra_property(property));
         }
     }
@@ -174,7 +178,11 @@ publish::CategoryEvents parse_category_events(const json& value) {
         .results = {},
     };
 
-    for (const auto& event : value.at("Results")) {
+    const auto& events = value.at("Results");
+
+    result.results.reserve(events.size());
+
+    for (const auto& event : events) {
         result.results.push_back(parse_event(event));
     }
 
@@ -190,6 +198,11 @@ ViewOptionsResponse parse_view_options(const std::string& body) {
         const auto root = json::parse(body);
 
         ViewOptionsResponse result;
+
+        result.time_periods.reserve(root.at("TimePeriods").size());
+        result.date_periods.reserve(root.at("DatePeriods").size());
+        result.weeks.reserve(root.at("Weeks").size());
+        result.days.reserve(root.at("Days").size());
 
         for (const auto& value : root.at("TimePeriods")) {
             result.time_periods.push_back(parse_time_period(value));
@@ -221,6 +234,8 @@ CategoriesResponse parse_categories(const std::string& body) {
         CategoriesResponse result;
 
         result.total_pages = root.at("TotalPages").get<int>();
+
+        result.results.reserve(root.at("Results").size());
 
         for (const auto& value : root.at("Results")) {
             result.results.push_back(parse_category(value));
@@ -284,6 +299,8 @@ EventsResponse parse_events(const std::string& body) {
         const auto root = json::parse(body);
 
         EventsResponse response;
+
+        response.category_events.reserve(root.at("CategoryEvents").size());
 
         for (const auto& category : root.at("CategoryEvents")) {
             response.category_events.push_back(parse_category_events(category));

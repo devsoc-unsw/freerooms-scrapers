@@ -11,15 +11,36 @@
 
 namespace {
 
-std::optional<std::string> find_extra_property(const publish::Event& event,
-                                               const std::string& name) {
+struct EventExtraProperties {
+    std::optional<std::string> planned_size;
+    std::optional<std::string> week_pattern;
+    std::optional<std::string> module_name;
+    std::optional<std::string> module_description;
+};
+
+EventExtraProperties extract_extra_properties(const publish::Event& event) {
+    EventExtraProperties result;
+
     for (const auto& property : event.extra_properties) {
-        if (property.name == name) {
-            return property.value;
+        if (property.name == "Activity.PlannedSize" && !result.planned_size.has_value()) {
+            result.planned_size = property.value;
+        } else if (property.name == "Activity.TeachingWeekPattern_PatternAsArray" &&
+                   !result.week_pattern.has_value()) {
+            result.week_pattern = property.value;
+        } else if (property.name == "Module Name" && !result.module_name.has_value()) {
+            result.module_name = property.value;
+        } else if (property.name == "Module Description" &&
+                   !result.module_description.has_value()) {
+            result.module_description = property.value;
+        }
+
+        if (result.planned_size.has_value() && result.week_pattern.has_value() &&
+            result.module_name.has_value() && result.module_description.has_value()) {
+            break;
         }
     }
 
-    return std::nullopt;
+    return result;
 }
 
 std::optional<int> parse_optional_int(const std::optional<std::string>& value) {
@@ -49,6 +70,7 @@ namespace bookings {
 std::vector<model::Booking> transform_publish_events(const publish::EventsResponse& events,
                                                      const std::vector<model::Room>& rooms) {
     std::unordered_map<std::string, std::string> room_ids_by_publish_id;
+    room_ids_by_publish_id.reserve(rooms.size());
 
     for (const auto& room : rooms) {
         if (!room.publish_id.has_value()) {
@@ -80,17 +102,12 @@ std::vector<model::Booking> transform_publish_events(const publish::EventsRespon
         }
 
         for (const auto& event : category.results) {
-            const auto planned_size =
-                parse_optional_int(find_extra_property(event, "Activity.PlannedSize"));
+            const auto properties = extract_extra_properties(event);
 
-            const auto week_pattern =
-                find_extra_property(event, "Activity.TeachingWeekPattern_PatternAsArray");
+            const auto planned_size = parse_optional_int(properties.planned_size);
 
-            const auto module_name_raw = find_extra_property(event, "Module Name");
-
-            const auto module_description_raw = find_extra_property(event, "Module Description");
-
-            const auto modules = parse_modules(module_name_raw, module_description_raw);
+            const auto modules =
+                parse_modules(properties.module_name, properties.module_description);
 
             const auto parsed_name = parse_booking_name(event.name);
 
@@ -117,15 +134,15 @@ std::vector<model::Booking> transform_publish_events(const publish::EventsRespon
 
                 .modules = modules,
 
-                .module_name_raw = module_name_raw,
+                .module_name_raw = properties.module_name,
 
-                .module_description_raw = module_description_raw,
+                .module_description_raw = properties.module_description,
 
                 .planned_size = planned_size,
 
                 .week_labels = event.week_labels,
 
-                .week_pattern = week_pattern,
+                .week_pattern = properties.week_pattern,
 
                 .source = event.source,
 

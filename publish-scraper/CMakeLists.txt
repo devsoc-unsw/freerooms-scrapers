@@ -25,6 +25,11 @@ find_package(
     REQUIRED
 )
 
+find_package(
+    Threads
+    REQUIRED
+)
+
 if(NOT nlohmann_json_FOUND)
     FetchContent_Declare(
         nlohmann_json
@@ -75,6 +80,7 @@ target_link_libraries(
     scraper_core
     PRIVATE
         CURL::libcurl
+        Threads::Threads
     PUBLIC
         nlohmann_json::nlohmann_json
 )
