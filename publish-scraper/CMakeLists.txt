@@ -168,6 +168,7 @@ if(BUILD_TESTING)
         tests/unit/static_json.test.cpp
         tests/unit/bookings.test.cpp
         tests/unit/database_request.test.cpp
+        tests/unit/publish_retry.test.cpp
     )
 
     target_link_libraries(

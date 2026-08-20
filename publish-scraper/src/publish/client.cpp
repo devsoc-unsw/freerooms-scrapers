@@ -3,10 +3,10 @@
 #include "publish/config.hpp"
 #include "publish/json.hpp"
 #include "publish/request.hpp"
+#include "publish/retry.hpp"
 
 #include <algorithm>
 #include <atomic>
-#include <chrono>
 #include <exception>
 #include <mutex>
 #include <stdexcept>
@@ -17,32 +17,22 @@
 
 namespace {
 
-constexpr int max_publish_attempts = 3;
-constexpr auto initial_retry_delay = std::chrono::milliseconds{500};
-
-bool is_retryable_status(const long status_code) {
-    return status_code == 429 || status_code == 500 || status_code == 502 || status_code == 503 ||
-           status_code == 504;
-}
-
 template <typename Request> http::Response perform_publish_request(Request&& request) {
-    auto retry_delay = initial_retry_delay;
-
-    for (int attempt = 1; attempt <= max_publish_attempts; ++attempt) {
+    for (int attempt = 1; attempt <= publish::retry::max_attempts; ++attempt) {
         try {
             auto response = request();
 
-            if (!is_retryable_status(response.status_code) || attempt == max_publish_attempts) {
+            if (!publish::retry::is_retryable_status(response.status_code) ||
+                attempt == publish::retry::max_attempts) {
                 return response;
             }
         } catch (const std::runtime_error&) {
-            if (attempt == max_publish_attempts) {
+            if (attempt == publish::retry::max_attempts) {
                 throw;
             }
         }
 
-        std::this_thread::sleep_for(retry_delay);
-        retry_delay *= 2;
+        std::this_thread::sleep_for(publish::retry::backoff_delay(attempt));
     }
 
     throw std::runtime_error{"Publish request retry loop ended unexpectedly"};
