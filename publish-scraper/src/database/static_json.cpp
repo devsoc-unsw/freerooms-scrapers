@@ -180,6 +180,15 @@ nlohmann::json serialize_rooms(
         row["long"] =
             room.longitude;
 
+        if (room.image_url.has_value()) {
+            row["imageUrl"] =
+                *room.image_url;
+        }
+        else {
+            row["imageUrl"] =
+                nullptr;
+        }
+
         result.push_back(
             std::move(row)
         );

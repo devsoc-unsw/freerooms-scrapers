@@ -146,7 +146,8 @@ nlohmann::json build_rooms_request(
             "writingMedia",
             "service",
             "lat",
-            "long"
+            "long",
+            "imageUrl"
         });
 
     metadata["sql_up"] =
@@ -157,6 +158,11 @@ nlohmann::json build_rooms_request(
     metadata["sql_down"] =
         read_file(
             "sql/rooms/down.sql"
+        );
+
+    metadata["sql_before"] =
+        read_file(
+            "sql/rooms/before.sql"
         );
 
     metadata["write_mode"] =

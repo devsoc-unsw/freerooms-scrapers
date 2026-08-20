@@ -7,63 +7,229 @@
 #include "database/static_json.hpp"
 #include "http/client.hpp"
 #include "publish/client.hpp"
+#include "rooms/image_url.hpp"
 
+#include <charconv>
+#include <chrono>
+#include <cstdlib>
 #include <exception>
+#include <iomanip>
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
 namespace {
 
-bool is_local_hasuragres(
-    const std::string& base_url
+using Clock =
+    std::chrono::steady_clock;
+
+double elapsed_seconds(
+    const Clock::time_point start
 ) {
-    return (
-        base_url
-        == "http://localhost:8000"
-    )
-    || (
-        base_url
-        == "http://127.0.0.1:8000"
-    );
+    return std::chrono::duration<double>(
+        Clock::now() - start
+    ).count();
+}
+
+void print_elapsed(
+    const double seconds
+) {
+    std::cout
+        << std::fixed
+        << std::setprecision(2)
+        << seconds
+        << "s";
+}
+
+template <typename Function>
+auto timed_step(
+    const std::string_view name,
+    Function&& function
+) {
+    std::cout
+        << name
+        << "...\n";
+
+    const auto start =
+        Clock::now();
+
+    try {
+        if constexpr (
+            std::is_void_v<
+                std::invoke_result_t<Function>
+            >
+        ) {
+            std::forward<Function>(
+                function
+            )();
+
+            std::cout
+                << "  Completed in ";
+
+            print_elapsed(
+                elapsed_seconds(start)
+            );
+
+            std::cout
+                << "\n\n";
+        }
+        else {
+            auto result =
+                std::forward<Function>(
+                    function
+                )();
+
+            std::cout
+                << "  Completed in ";
+
+            print_elapsed(
+                elapsed_seconds(start)
+            );
+
+            std::cout
+                << "\n\n";
+
+            return result;
+        }
+    }
+    catch (...) {
+        std::cerr
+            << "  Failed after ";
+
+        print_elapsed(
+            elapsed_seconds(start)
+        );
+
+        std::cerr
+            << '\n';
+
+        throw;
+    }
+}
+
+int load_year() {
+    const auto* value =
+        std::getenv("YEAR");
+
+    if (
+        value == nullptr
+        || *value == '\0'
+    ) {
+        throw std::runtime_error{
+            "Missing required environment variable: YEAR"
+        };
+    }
+
+    const std::string year_string{
+        value
+    };
+
+    int year = 0;
+
+    const auto result =
+        std::from_chars(
+            year_string.data(),
+            year_string.data()
+                + year_string.size(),
+            year
+        );
+
+    if (
+        result.ec != std::errc{}
+        || result.ptr
+            != year_string.data()
+                + year_string.size()
+        || year < 2000
+        || year > 2100
+    ) {
+        throw std::runtime_error{
+            "Invalid YEAR value: "
+            + year_string
+        };
+    }
+
+    return year;
+}
+
+std::size_t count_event_rows(
+    const publish::EventsResponse& events
+) {
+    std::size_t count = 0;
+
+    for (
+        const auto& category :
+        events.category_events
+    ) {
+        count +=
+            category.results.size();
+    }
+
+    return count;
 }
 
 }
 
 int main() {
-    try {
-        constexpr int year = 2026;
+    const auto total_start =
+        Clock::now();
 
-        const auto static_data =
-            data::load_static_data(
-                "data"
+    try {
+        std::cout
+            << "Publish Scraper\n\n";
+
+        const auto year =
+            timed_step(
+                "Loading scrape configuration",
+                [] {
+                    return load_year();
+                }
             );
 
-        data::validate_static_data(
-            static_data
-        );
+        const auto database_config =
+            timed_step(
+                "Loading database configuration",
+                [] {
+                    return database::
+                        load_config_from_environment();
+                }
+            );
 
         std::cout
-            << "Static data loaded successfully.\n"
-            << "Buildings: "
-            << static_data.buildings.size()
+            << "Scrape year: "
+            << year
             << '\n'
-            << "Rooms: "
-            << static_data.rooms.size()
+            << "Database target: "
+            << database_config.base_url
             << "\n\n";
 
-        auto building_payload =
-            database::serialize_buildings(
-                static_data.buildings,
-                static_data.rooms
+        auto static_data =
+            timed_step(
+                "Loading and validating static room data",
+                [] {
+                    auto result =
+                        data::load_static_data(
+                            "data"
+                        );
+
+                    data::validate_static_data(
+                        result
+                    );
+
+                    return result;
+                }
             );
 
-        auto room_payload =
-            database::serialize_rooms(
-                static_data.rooms
-            );
+        std::cout
+            << "  Buildings: "
+            << static_data.buildings.size()
+            << '\n'
+            << "  Rooms: "
+            << static_data.rooms.size()
+            << "\n\n";
 
         http::Client http_client;
 
@@ -72,56 +238,108 @@ int main() {
         };
 
         const auto view_options =
-            publish_client.get_view_options();
-
-        std::vector<std::string>
-            location_ids;
-
-        for (
-            const auto& room :
-            static_data.rooms
-        ) {
-            if (!room.publish_id.has_value()) {
-                continue;
-            }
-
-            location_ids.push_back(
-                *room.publish_id
+            timed_step(
+                "Fetching Publish view options",
+                [&] {
+                    return publish_client
+                        .get_view_options();
+                }
             );
-        }
+
+        const auto location_ids =
+            timed_step(
+                "Collecting Publish room IDs",
+                [&] {
+                    std::vector<std::string>
+                        result;
+
+                    result.reserve(
+                        static_data.rooms.size()
+                    );
+
+                    for (
+                        const auto& room :
+                        static_data.rooms
+                    ) {
+                        if (
+                            !room.publish_id
+                                .has_value()
+                        ) {
+                            continue;
+                        }
+
+                        result.push_back(
+                            *room.publish_id
+                        );
+                    }
+
+                    return result;
+                }
+            );
 
         std::cout
-            << "Publish API connection successful.\n"
-            << "Rooms with Publish IDs: "
+            << "  Rooms with Publish IDs: "
             << location_ids.size()
-            << '\n';
+            << "\n\n";
 
         const auto events =
-            publish_client.get_events(
-                location_ids,
-                view_options,
-                year
+            timed_step(
+                "Fetching Publish events",
+                [&] {
+                    return publish_client
+                        .get_events(
+                            location_ids,
+                            view_options,
+                            year
+                        );
+                }
             );
 
-        std::size_t raw_event_rows = 0;
+        const auto raw_event_count =
+            count_event_rows(
+                events
+            );
 
-        for (
-            const auto& category :
-            events.category_events
-        ) {
-            raw_event_rows +=
-                category.results.size();
-        }
+        std::cout
+            << "  Returned room categories: "
+            << events.category_events.size()
+            << '\n'
+            << "  Raw room-event rows: "
+            << raw_event_count
+            << "\n\n";
+
+        const auto image_count =
+            timed_step(
+                "Extracting Publish room images",
+                [&] {
+                    return rooms::
+                        apply_publish_image_urls(
+                            static_data.rooms,
+                            events
+                        );
+                }
+            );
+
+        std::cout
+            << "  Rooms with image URLs: "
+            << image_count
+            << "\n\n";
 
         auto bookings =
-            bookings::transform_publish_events(
-                events,
-                static_data.rooms
+            timed_step(
+                "Transforming Publish events into bookings",
+                [&] {
+                    return bookings::
+                        transform_publish_events(
+                            events,
+                            static_data.rooms
+                        );
+                }
             );
 
         if (
             bookings.size()
-            != raw_event_rows
+            != raw_event_count
         ) {
             throw std::runtime_error{
                 "Booking transformation changed "
@@ -129,31 +347,68 @@ int main() {
             };
         }
 
-        const auto removed =
-            bookings::filter_bookings_for_occupancy(
-                bookings
+        const auto removed_count =
+            timed_step(
+                "Filtering non-occupancy bookings",
+                [&] {
+                    return bookings::
+                        filter_bookings_for_occupancy(
+                            bookings
+                        );
+                }
             );
 
         std::cout
-            << "\nBooking pipeline complete.\n"
-            << "  Raw events: "
-            << raw_event_rows
-            << '\n'
             << "  Removed: "
-            << removed
+            << removed_count
             << '\n'
-            << "  Final bookings: "
+            << "  Remaining bookings: "
             << bookings.size()
-            << '\n';
+            << "\n\n";
+
+        auto building_payload =
+            timed_step(
+                "Serializing buildings",
+                [&] {
+                    return database::
+                        serialize_buildings(
+                            static_data.buildings,
+                            static_data.rooms
+                        );
+                }
+            );
+
+        auto room_payload =
+            timed_step(
+                "Serializing rooms",
+                [&] {
+                    return database::
+                        serialize_rooms(
+                            static_data.rooms
+                        );
+                }
+            );
 
         auto booking_payload =
-            bookings::serialize_bookings(
-                bookings
+            timed_step(
+                "Serializing bookings",
+                [&] {
+                    return bookings::
+                        serialize_bookings(
+                            bookings
+                        );
+                }
             );
 
         auto module_payload =
-            bookings::serialize_booking_modules(
-                bookings
+            timed_step(
+                "Serializing booking modules",
+                [&] {
+                    return bookings::
+                        serialize_booking_modules(
+                            bookings
+                        );
+                }
             );
 
         const auto building_count =
@@ -169,20 +424,26 @@ int main() {
             module_payload.size();
 
         auto batch_request =
-            database::build_batch_request(
-                std::move(
-                    building_payload
-                ),
-                std::move(
-                    room_payload
-                ),
-                std::move(
-                    booking_payload
-                ),
-                std::move(
-                    module_payload
-                ),
-                year
+            timed_step(
+                "Building Hasuragres transaction",
+                [&] {
+                    return database::
+                        build_batch_request(
+                            std::move(
+                                building_payload
+                            ),
+                            std::move(
+                                room_payload
+                            ),
+                            std::move(
+                                booking_payload
+                            ),
+                            std::move(
+                                module_payload
+                            ),
+                            year
+                        );
+                }
             );
 
         if (
@@ -190,13 +451,13 @@ int main() {
             || batch_request.size() != 4
         ) {
             throw std::runtime_error{
-                "Batch request must contain "
-                "four table inserts"
+                "Database transaction must "
+                "contain four table inserts"
             };
         }
 
         std::cout
-            << "\nPrepared local database transaction:\n"
+            << "Database payload:\n"
             << "  Buildings: "
             << building_count
             << '\n'
@@ -208,39 +469,22 @@ int main() {
             << '\n'
             << "  BookingModules: "
             << module_count
-            << '\n';
-
-        const auto database_config =
-            database::load_config_from_environment();
-
-        std::cout
-            << "\nHasuragres target:\n"
-            << "  "
-            << database_config.base_url
-            << '\n';
-
-        if (
-            !is_local_hasuragres(
-                database_config.base_url
-            )
-        ) {
-            throw std::runtime_error{
-                "Stage 7C local test refuses "
-                "to write to non-local Hasuragres"
-            };
-        }
+            << "\n\n";
 
         database::Client database_client{
             http_client,
             database_config
         };
 
-        std::cout
-            << "\nSending local /batch_insert...\n";
-
         const auto insert_result =
-            database_client.batch_insert(
-                batch_request
+            timed_step(
+                "Uploading database transaction",
+                [&] {
+                    return database_client
+                        .batch_insert(
+                            batch_request
+                        );
+                }
             );
 
         const auto request_mebibytes =
@@ -251,25 +495,51 @@ int main() {
             / 1024.0;
 
         std::cout
-            << "\nLocal Hasuragres insert successful.\n"
+            << "Database insert complete:\n"
             << "  HTTP status: "
             << insert_result.status_code
             << '\n'
             << "  Request size: "
             << request_mebibytes
-            << " MiB\n"
-            << "  Response: "
-            << insert_result.response_body
-            << '\n';
+            << " MiB\n";
+
+        if (
+            !insert_result
+                .response_body
+                .empty()
+        ) {
+            std::cout
+                << "  Response: "
+                << insert_result.response_body
+                << '\n';
+        }
 
         std::cout
-            << "\nStage 7C2 database write successful.\n";
+            << "\nScrape completed successfully in ";
+
+        print_elapsed(
+            elapsed_seconds(
+                total_start
+            )
+        );
+
+        std::cout
+            << '\n';
     }
     catch (
         const std::exception& error
     ) {
         std::cerr
-            << "Error: "
+            << "\nScrape failed after ";
+
+        print_elapsed(
+            elapsed_seconds(
+                total_start
+            )
+        );
+
+        std::cerr
+            << "\nError: "
             << error.what()
             << '\n';
 
