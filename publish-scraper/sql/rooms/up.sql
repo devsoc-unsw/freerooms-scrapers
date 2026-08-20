@@ -30,6 +30,7 @@ CREATE TABLE Rooms (
 
     "lat"                DOUBLE PRECISION NOT NULL,
     "long"               DOUBLE PRECISION NOT NULL,
+    "imageUrl"           TEXT,
 
     FOREIGN KEY ("buildingId")
         REFERENCES Buildings("id")

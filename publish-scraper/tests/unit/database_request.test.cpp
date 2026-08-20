@@ -53,7 +53,7 @@ TEST_CASE(
 }
 
 TEST_CASE(
-    "rooms request contains image URL migration"
+    "rooms request contains image URL schema"
 ) {
     const auto result =
         database::build_batch_request(
@@ -80,26 +80,19 @@ TEST_CASE(
         != columns.end()
     );
 
-    REQUIRE(
+    CHECK_FALSE(
         metadata.contains(
             "sql_before"
         )
     );
 
-    const auto sql_before =
-        metadata.at("sql_before")
+    const auto sql_up =
+        metadata.at("sql_up")
             .get<std::string>();
 
     CHECK(
-        sql_before.find(
-            "imageUrl"
-        )
-        != std::string::npos
-    );
-
-    CHECK(
-        sql_before.find(
-            "ADD COLUMN IF NOT EXISTS"
+        sql_up.find(
+            "\"imageUrl\""
         )
         != std::string::npos
     );

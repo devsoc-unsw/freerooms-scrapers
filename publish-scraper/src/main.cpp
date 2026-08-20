@@ -12,6 +12,7 @@
 #include <charconv>
 #include <chrono>
 #include <cstdlib>
+#include <ctime>
 #include <exception>
 #include <iomanip>
 #include <iostream>
@@ -27,6 +28,11 @@ namespace {
 using Clock =
     std::chrono::steady_clock;
 
+struct YearConfig {
+    int value = 0;
+    bool overridden = false;
+};
+
 double elapsed_seconds(
     const Clock::time_point start
 ) {
@@ -36,9 +42,10 @@ double elapsed_seconds(
 }
 
 void print_elapsed(
+    std::ostream& output,
     const double seconds
 ) {
-    std::cout
+    output
         << std::fixed
         << std::setprecision(2)
         << seconds
@@ -71,6 +78,7 @@ auto timed_step(
                 << "  Completed in ";
 
             print_elapsed(
+                std::cout,
                 elapsed_seconds(start)
             );
 
@@ -87,6 +95,7 @@ auto timed_step(
                 << "  Completed in ";
 
             print_elapsed(
+                std::cout,
                 elapsed_seconds(start)
             );
 
@@ -101,6 +110,7 @@ auto timed_step(
             << "  Failed after ";
 
         print_elapsed(
+            std::cerr,
             elapsed_seconds(start)
         );
 
@@ -111,16 +121,50 @@ auto timed_step(
     }
 }
 
-int load_year() {
+int current_sydney_year() {
+    using namespace std::chrono;
+
+    const auto sydney_time =
+        system_clock::now()
+        + hours{11};
+
+    const auto time =
+        system_clock::to_time_t(
+            sydney_time
+        );
+
+    const auto* calendar_time =
+        std::gmtime(
+            &time
+        );
+
+    if (calendar_time == nullptr) {
+        throw std::runtime_error{
+            "Could not determine current year"
+        };
+    }
+
+    return
+        calendar_time->tm_year
+        + 1900;
+}
+
+YearConfig load_year() {
     const auto* value =
-        std::getenv("YEAR");
+        std::getenv(
+            "YEAR"
+        );
 
     if (
         value == nullptr
         || *value == '\0'
     ) {
-        throw std::runtime_error{
-            "Missing required environment variable: YEAR"
+        return YearConfig{
+            .value =
+                current_sydney_year(),
+
+            .overridden =
+                false,
         };
     }
 
@@ -152,7 +196,13 @@ int load_year() {
         };
     }
 
-    return year;
+    return YearConfig{
+        .value =
+            year,
+
+        .overridden =
+            true,
+    };
 }
 
 std::size_t count_event_rows(
@@ -181,13 +231,16 @@ int main() {
         std::cout
             << "Publish Scraper\n\n";
 
-        const auto year =
+        const auto year_config =
             timed_step(
                 "Loading scrape configuration",
                 [] {
                     return load_year();
                 }
             );
+
+        const auto year =
+            year_config.value;
 
         const auto database_config =
             timed_step(
@@ -200,7 +253,18 @@ int main() {
 
         std::cout
             << "Scrape year: "
-            << year
+            << year;
+
+        if (year_config.overridden) {
+            std::cout
+                << " (YEAR override)";
+        }
+        else {
+            std::cout
+                << " (automatic Sydney year)";
+        }
+
+        std::cout
             << '\n'
             << "Database target: "
             << database_config.base_url
@@ -518,6 +582,7 @@ int main() {
             << "\nScrape completed successfully in ";
 
         print_elapsed(
+            std::cout,
             elapsed_seconds(
                 total_start
             )
@@ -533,6 +598,7 @@ int main() {
             << "\nScrape failed after ";
 
         print_elapsed(
+            std::cerr,
             elapsed_seconds(
                 total_start
             )

@@ -160,11 +160,6 @@ nlohmann::json build_rooms_request(
             "sql/rooms/down.sql"
         );
 
-    metadata["sql_before"] =
-        read_file(
-            "sql/rooms/before.sql"
-        );
-
     metadata["write_mode"] =
         "overwrite";
 
