@@ -2,7 +2,7 @@
 
 This repository contains the scrapers for the underlying buildings, rooms and bookings data used by Freerooms.
 
-For documentation on the internals of each scraper, please see the READMEs in the respective directories for each scraper.
+For documentation on the internals of each scraper, please see the READMEs in the respective directories for each scraper. The current scraper is the C++ [`publish-scraper`](./publish-scraper/README.md); the `nss` scraper is legacy.
 
 For instructions on how you can access this data, see the [DevSoc GraphQL API](https://github.com/devsoc-unsw/graphql-api).
 
@@ -24,64 +24,85 @@ For instructions on how you can access this data, see the [DevSoc GraphQL API](h
 | ---------------- | ------------------------------------------------- | -------------------- |
 | `id`             | Room ID in the format `CAMPUS-GRID_REF-ROOM_NUM`. | "K-J17-305"          |
 | `name`           | Name of the room.                                 | "Brass Lab J17 305"  |
-| `abbr`           | Shortened name, as seen on timetable.             | "BrassME305"         |
-| `usage`          | Room type - see below for list.                   | "CMLB"               |
+| `abbr`           | Shortened room name.                              | "BrassME305"         |
+| `usage`          | Room type.                                        | "CMLB"               |
 | `capacity`       | Number of people the room is suitable for.        | 36                   |
-| `school`         | School that manages the room - `" "` if none.     | "CSE"                |
-| `buildingId`     | ID of building that room is in.                   | "K-J17"              |
-| `floor`          | Floor type - see below for list.                  | "Tiered"             |
-| `seating`        | Seating type - see below for list.                | "Movable"            |
-| `microphone`     | List of microphone facilities of the room.        | "Lectern (fixed)"    |
-| `accessibility`  | List of accessibility facilities of the room.     | "Hearing loop"       |
-| `audiovisual`    | List of audiovisual facilities of the room.       | "Television monitor" |
-| `infotechnology` | List of intotechnology facilities of the room.    | "IT Lectern"         |
-| `writingMedia`   | List of writingMedia facilities of the room.      | "Blackboard"         |
-| `service`        | List of service facilities of the room.           | "Break out rooms"    |
+| `school`         | School that manages the room.                     | "CSE"                |
+| `buildingId`     | ID of the building that contains the room.        | "K-J17"              |
+| `floor`          | Floor type.                                       | "Tiered"             |
+| `seating`        | Seating type.                                     | "Movable"            |
+| `microphone`     | Microphone facilities.                            | ["Lectern (fixed)"]  |
+| `accessibility`  | Accessibility facilities.                         | ["Hearing loop"]     |
+| `audiovisual`    | Audiovisual facilities.                           | ["Television monitor"] |
+| `infotechnology` | Information technology facilities.                | ["IT Lectern"]       |
+| `writingMedia`   | Writing facilities.                               | ["Blackboard"]       |
+| `service`        | Other room services.                              | ["Break out rooms"]  |
+| `lat`            | Latitude of the room.                             | -33.91700            |
+| `long`           | Longitude of the room.                            | 151.227791           |
+| `imageUrl`       | Room image URL, if available.                     | "https://..."         |
 
-Floor type can be 'Flat', 'Tiered', 'Other' or null.
-Seating type can be 'Movable', 'Fixed' or null.
+Floor type can be `Flat`, `Tiered`, `Other` or null. Seating type can be `Movable`, `Fixed` or null.
 
 Mapping of room usages can be found [here](https://github.com/devsoc-unsw/freerooms/blob/dev/common/roomUsages.ts).
 Mapping of school codes can be found [here](https://github.com/devsoc-unsw/freerooms/blob/dev/common/schools.ts).
 
 ### Bookings
 
-| **Field**     | **Description**                                      | **Example**                 |
-| ------------- | ---------------------------------------------------- | --------------------------- |
-| `bookingType` | Type of booking - see below.                         | "SOCIETY"                   |
-| `name`        | Name of the booking (usually related to the booker). | "SOFTWAREDEV"               |
-| `roomId`      | ID of the room the booking is for.                   | "K-E19-G05"                 |
-| `start`       | Start time of the booking.                           | "2024-01-27T04:00:00+00:00" |
-| `end`         | End time of the booking.                             | "2024-01-27T08:00:00+00:00" |
+| **Field**       | **Description**                                      | **Example**                 |
+| --------------- | ---------------------------------------------------- | --------------------------- |
+| `roomId`        | ID of the room the booking is for.                   | "K-E19-G05"                 |
+| `occurrenceId`  | ID of this exact booking occurrence.                 | "..."                       |
+| `eventId`       | ID of the parent Publish event.                      | "..."                       |
+| `bookingType`   | Normalised booking type.                             | "LECTURE"                   |
+| `name`          | Display name for the booking.                        | "COMP1511"                  |
+| `rawName`       | Original booking name from Publish.                  | "COMP1511..."               |
+| `eventType`     | Original Publish event type.                         | "..."                       |
+| `start`         | Start time of the booking.                           | "2026-01-27T04:00:00+00:00" |
+| `end`           | End time of the booking.                             | "2026-01-27T08:00:00+00:00" |
+| `plannedSize`   | Planned attendance, if provided.                     | 120                         |
+| `source`        | Publish source value, if provided.                   | "..."                       |
+| `lastModified`  | Last modified time from Publish, if provided.        | "2026-01-20T00:00:00+00:00" |
 
-Full list of current booking types is: "CLASS", "SOCIETY", "INTERNAL", "LIB", "BLOCK", "MISC", "EXAM".
+Booking types are: `LECTURE`, `TUTORIAL`, `LABORATORY`, `TUTORIAL_LABORATORY`, `WORKSHOP`, `SEMINAR`, `STUDIO`, `CLASS`, `EXAMS`, `SOCIETY`, `INTERNAL`, `BLOCK`, `MISC` and `OTHER`.
+
+### BookingModules
+
+| **Field**      | **Description**                                | **Example** |
+| -------------- | ---------------------------------------------- | ----------- |
+| `roomId`       | Room for the booking occurrence.               | "K-E19-G05" |
+| `occurrenceId` | Booking occurrence the module belongs to.      | "..."       |
+| `moduleIndex`  | Position of the module on the booking.          | 0           |
+| `code`         | Module/course code.                            | "COMP1511"  |
+| `name`         | Module/course name.                            | "Programming Fundamentals" |
+| `term`         | Term, if provided.                             | "T1"        |
+| `career`       | Career, if provided.                           | "UGRD"      |
 
 ### Relationships
 
-The following relationships exist between tables. These relationships are tracked by Hasura and can be followed in GraphQL queries.
+The following relationships exist between tables and are tracked by Hasura:
 
-- Every **building** contains 1 or more **rooms**
-- Every **room** belongs to a **building**
-- Every **room** has 0 or more **bookings**
-- Every **booking** is for a specific **room**
+- Every **building** contains 0 or more **rooms**
+- Every **room** belongs to a **building** and has 0 or more **bookings**
+- Every **booking** belongs to a **room** and has 0 or more **booking modules**
 
 ## Making Changes
 
 ### Schema updates
 
-To update the schema, you will need to:
+To update the active schema:
 
-- Update the relevant `up.sql` and `down.sql` files in the root `sql/` directory
-- Update the scrapers to produce this data
+- Update the relevant `up.sql` and `down.sql` files in `publish-scraper/sql/`
+- Update the scraper to produce the matching data
+- Update this README if the exposed schema changes
 
 ### Adding additional scrapers
 
-To add additional scrapers, you will need to:
+To add an additional scraper:
 
 - Create a new subdirectory with the scraper inside it
-- Ensure that if you are using the shared schema SQL files, you reference them using symlinks so all scrapers are updated
-- Add to the GitHub workflow so that it also tests/builds/deploys the new scraper
+- Add its tests/build to the GitHub workflow
+- Document it in its own README
 
 ### Testing
 
-See the [DevSoc GraphQL API docs](https://github.com/devsoc-unsw/graphql-api/blob/master/scrapers.md) on how to test scrapers.
+See [`publish-scraper/README.md`](./publish-scraper/README.md) for build, lint and test commands.
