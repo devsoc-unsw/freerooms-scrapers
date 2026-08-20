@@ -29,18 +29,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             build-essential \
+            clang-format \
+            clang-tidy \
             cmake \
             libcurl4-openssl-dev \
             ninja-build
 
-      - name: Configure C++ scraper
+      - name: Lint C++ code
         working-directory: publish-scraper
-        run: |
-          cmake \
-            -S . \
-            -B build \
-            -G Ninja \
-            -DCMAKE_BUILD_TYPE=Release
+        run: ./scripts/lint.sh
 
       - name: Build C++ scraper
         working-directory: publish-scraper
