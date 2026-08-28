@@ -1,16 +1,20 @@
 #pragma once
 
 #include "http/client.hpp"
+#include "publish/settings.hpp"
 #include "types/publish.hpp"
 
+#include <memory>
 #include <string>
 #include <vector>
 
 namespace publish {
 
+class RequestThrottle;
+
 class Client {
   public:
-    explicit Client(http::Client& http_client);
+    explicit Client(http::Client& http_client, RequestSettings settings = {});
 
     ViewOptionsResponse get_view_options();
 
@@ -23,11 +27,17 @@ class Client {
                               int year);
 
   private:
+    Client(http::Client& http_client,
+           RequestSettings settings,
+           std::shared_ptr<RequestThrottle> throttle);
+
     EventsResponse get_events_batch(const std::vector<std::string>& location_ids,
                                     const ViewOptionsResponse& view_options,
                                     int year);
 
     http::Client& http_client_;
+    RequestSettings settings_;
+    std::shared_ptr<RequestThrottle> throttle_;
 };
 
 } // namespace publish

@@ -7,7 +7,9 @@
 
 #include <algorithm>
 #include <atomic>
+#include <chrono>
 #include <exception>
+#include <memory>
 #include <mutex>
 #include <stdexcept>
 #include <string>
@@ -15,24 +17,56 @@
 #include <utility>
 #include <vector>
 
+namespace publish {
+
+class RequestThrottle {
+  public:
+    explicit RequestThrottle(const std::chrono::milliseconds minimum_interval)
+        : minimum_interval_{minimum_interval} {}
+
+    void wait_for_slot() {
+        if (minimum_interval_.count() == 0) {
+            return;
+        }
+
+        const std::unique_lock lock{mutex_};
+
+        const auto now = std::chrono::steady_clock::now();
+
+        if (next_request_time_ > now) {
+            std::this_thread::sleep_until(next_request_time_);
+        }
+
+        next_request_time_ = std::chrono::steady_clock::now() + minimum_interval_;
+    }
+
+  private:
+    std::chrono::milliseconds minimum_interval_;
+    std::mutex mutex_;
+    std::chrono::steady_clock::time_point next_request_time_{};
+};
+
 namespace {
 
-template <typename Request> http::Response perform_publish_request(Request&& request) {
-    for (int attempt = 1; attempt <= publish::retry::max_attempts; ++attempt) {
+template <typename Request>
+http::Response perform_publish_request(Request&& request, RequestThrottle& throttle) {
+    for (int attempt = 1; attempt <= retry::max_attempts; ++attempt) {
+        throttle.wait_for_slot();
+
         try {
             auto response = request();
 
-            if (!publish::retry::is_retryable_status(response.status_code) ||
-                attempt == publish::retry::max_attempts) {
+            if (!retry::is_retryable_status(response.status_code) ||
+                attempt == retry::max_attempts) {
                 return response;
             }
         } catch (const std::runtime_error&) {
-            if (attempt == publish::retry::max_attempts) {
+            if (attempt == retry::max_attempts) {
                 throw;
             }
         }
 
-        std::this_thread::sleep_for(publish::retry::backoff_delay(attempt));
+        std::this_thread::sleep_for(retry::backoff_delay(attempt));
     }
 
     throw std::runtime_error{"Publish request retry loop ended unexpectedly"};
@@ -40,15 +74,26 @@ template <typename Request> http::Response perform_publish_request(Request&& req
 
 } // namespace
 
-namespace publish {
+Client::Client(http::Client& http_client, RequestSettings settings)
+    : Client{http_client,
+             settings,
+             std::make_shared<RequestThrottle>(settings.min_time_between_requests)} {}
 
-Client::Client(http::Client& http_client) : http_client_{http_client} {}
+Client::Client(http::Client& http_client,
+               RequestSettings settings,
+               std::shared_ptr<RequestThrottle> throttle)
+    : http_client_{http_client}, settings_{settings}, throttle_{std::move(throttle)} {
+    if (settings_.max_concurrent_requests == 0) {
+        throw std::invalid_argument{"Publish request concurrency must be at least 1"};
+    }
+}
 
 ViewOptionsResponse Client::get_view_options() {
     const auto url =
         std::string{config::base_url} + "/ViewOptions/" + std::string{config::institution_id};
 
-    const auto response = perform_publish_request([&] { return http_client_.get(url); });
+    const auto response =
+        perform_publish_request([&] { return http_client_.get(url); }, *throttle_);
 
     if (response.status_code < 200 || response.status_code >= 300) {
         throw std::runtime_error{"Publish ViewOptions request returned HTTP " +
@@ -68,7 +113,8 @@ CategoriesResponse Client::get_location_page(const int page_number) {
                      "/Categories/FilterWithCache/" + std::string{config::institution_id} +
                      "?pageNumber=" + std::to_string(page_number);
 
-    const auto response = perform_publish_request([&] { return http_client_.post(url); });
+    const auto response =
+        perform_publish_request([&] { return http_client_.post(url); }, *throttle_);
 
     if (response.status_code < 200 || response.status_code >= 300) {
         throw std::runtime_error{"Publish location request returned HTTP " +
@@ -113,7 +159,7 @@ EventsResponse Client::get_events_batch(const std::vector<std::string>& location
                      std::string{config::institution_id};
 
     const auto response =
-        perform_publish_request([&] { return http_client_.post_json(url, body); });
+        perform_publish_request([&] { return http_client_.post_json(url, body); }, *throttle_);
 
     if (response.status_code < 200 || response.status_code >= 300) {
         throw std::runtime_error{"Publish events request returned HTTP " +
@@ -144,7 +190,7 @@ EventsResponse Client::get_events(const std::vector<std::string>& location_ids,
     const auto worker = [&] {
         try {
             http::Client worker_http_client;
-            Client worker_client{worker_http_client};
+            Client worker_client{worker_http_client, settings_, throttle_};
 
             while (!stop.load(std::memory_order_relaxed)) {
                 const auto batch_index = next_batch.fetch_add(1, std::memory_order_relaxed);
@@ -178,7 +224,7 @@ EventsResponse Client::get_events(const std::vector<std::string>& location_ids,
         }
     };
 
-    const auto worker_count = std::min(config::event_request_concurrency, batch_count);
+    const auto worker_count = std::min(settings_.max_concurrent_requests, batch_count);
 
     std::vector<std::jthread> workers;
     workers.reserve(worker_count);

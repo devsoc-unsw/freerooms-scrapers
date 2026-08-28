@@ -42,6 +42,7 @@ TEST_CASE("Publish retry attempts remain bounded") {
     CHECK(publish::retry::max_attempts == 3);
 }
 
-TEST_CASE("Publish event fetching uses four workers") {
-    CHECK(publish::config::event_request_concurrency == 4);
+TEST_CASE("Publish request defaults preserve the current request behaviour") {
+    CHECK(publish::config::default_event_request_concurrency == 4);
+    CHECK(publish::config::default_min_time_between_requests_ms == 0);
 }

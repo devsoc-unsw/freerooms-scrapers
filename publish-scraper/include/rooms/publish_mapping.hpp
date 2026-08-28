@@ -21,6 +21,8 @@ struct PublishMappingReport {
 
     std::vector<publish::Category> missing_from_static;
 
+    std::vector<publish::Category> unrecognised_publish_locations;
+
     std::vector<std::string> duplicate_publish_room_ids;
 };
 

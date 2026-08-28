@@ -53,6 +53,7 @@ add_library(
     src/publish/client.cpp
     src/publish/json.cpp
     src/publish/request.cpp
+    src/publish/settings.cpp
     src/rooms/publish_mapping.cpp
     src/rooms/image_url.cpp
     src/data/room_metadata.cpp
@@ -64,6 +65,7 @@ add_library(
     src/bookings/modules.cpp
     src/bookings/name_parser.cpp
     src/bookings/filter.cpp
+    src/bookings/sort.cpp
     src/bookings/json.cpp
     src/database/request.cpp
     src/database/static_json.cpp
@@ -169,6 +171,10 @@ if(BUILD_TESTING)
         tests/unit/bookings.test.cpp
         tests/unit/database_request.test.cpp
         tests/unit/publish_retry.test.cpp
+        tests/unit/exclusions.test.cpp
+        tests/unit/room_metadata.test.cpp
+        tests/unit/publish_settings.test.cpp
+        tests/unit/publish_mapping.test.cpp
     )
 
     target_link_libraries(

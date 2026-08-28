@@ -26,6 +26,7 @@ PublishMappingReport match_publish_locations(const std::vector<model::Room>& sta
         const auto room_id = extract_room_id(location.name);
 
         if (!room_id.has_value()) {
+            report.unrecognised_publish_locations.push_back(location);
             continue;
         }
 

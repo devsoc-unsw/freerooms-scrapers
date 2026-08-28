@@ -213,10 +213,15 @@ void validate_static_data(const StaticData& static_data) {
     }
 
     std::unordered_set<std::string> room_ids;
+    std::unordered_set<std::string> publish_ids;
 
     for (const auto& room : static_data.rooms) {
         if (!room_ids.insert(room.id).second) {
             throw std::runtime_error{"Duplicate room ID: " + room.id};
+        }
+
+        if (room.publish_id.has_value() && !publish_ids.insert(*room.publish_id).second) {
+            throw std::runtime_error{"Duplicate Publish ID: " + *room.publish_id};
         }
 
         if (!building_ids.contains(room.building_id)) {
