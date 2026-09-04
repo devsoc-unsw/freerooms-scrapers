@@ -1,4 +1,5 @@
 name: Docker
+
 on:
   push:
     branches:
@@ -11,66 +12,116 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v7
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
       - name: Checkout GraphQL API
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: devsoc-unsw/graphql-api
           path: graphql-api
           persist-credentials: false
+
+      - name: Install C++ dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            clang-format \
+            clang-tidy \
+            cmake \
+            libcurl4-openssl-dev \
+            ninja-build
+
+      - name: Lint C++ code
+        working-directory: publish-scraper
+        run: ./scripts/lint.sh
+
+      - name: Build C++ scraper
+        working-directory: publish-scraper
+        run: cmake --build build
+
+      - name: Run unit tests
+        working-directory: publish-scraper
+        run: |
+          ctest \
+            --test-dir build \
+            -L unit \
+            --output-on-failure
+
       - name: Start local GraphQL API
         working-directory: graphql-api
         env:
           API_KEYS: ci_key
-        run: docker compose up --build --detach --wait --wait-timeout 120
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "22"
-      - name: Install dependencies
-        run: npm install
-        working-directory: nss
-      - name: Run scraper
-        run: npm run scrape
-        working-directory: nss
+        run: |
+          docker compose up \
+            --build \
+            --detach \
+            --wait \
+            --wait-timeout 120
+
+      - name: Set test year
+        run: echo "YEAR=$(TZ=Australia/Sydney date +%Y)" >> "$GITHUB_ENV"
+
+      - name: Run Publish scraper
+        working-directory: publish-scraper
         env:
           HASURAGRES_URL: http://localhost:8000
           HASURAGRES_API_KEY: ci_key
-      - name: Run Freerooms query tests
-        run: npm run test
-        working-directory: nss
+        run: ./build/publish-scraper
+
+      - name: Run Publish scraper integration tests
+        working-directory: publish-scraper
         env:
           GRAPHQL_URL: http://localhost:8080/v1/graphql
+        run: |
+          ctest \
+            --test-dir build \
+            -L integration \
+            --output-on-failure
+
       - name: Show local GraphQL API logs
         if: ${{ failure() }}
         working-directory: graphql-api
         run: docker compose logs
+
       - name: Stop local GraphQL API
         if: ${{ always() }}
         working-directory: graphql-api
         run: docker compose down --volumes
+
   build:
-    name: Build image
-    needs: [ test ]
+    name: Build images
+    needs:
+      - test
+
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Log into registry ${{ env.REGISTRY }}
+
+      - name: Log into GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ github.token }}
-      - name: Build and push Docker image
+
+      - name: Build and push NSS scraper image
         uses: docker/build-push-action@v5
         with:
           push: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
@@ -79,14 +130,28 @@ jobs:
           tags: |
             ghcr.io/devsoc-unsw/freerooms-nss-scraper:${{ github.sha }}
             ghcr.io/devsoc-unsw/freerooms-nss-scraper:latest
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=nss-scraper
+          cache-to: type=gha,mode=max,scope=nss-scraper
+
+      - name: Build and push Publish scraper image
+        uses: docker/build-push-action@v5
+        with:
+          push: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+          platforms: linux/amd64
+          file: publish-scraper.dockerfile
+          tags: |
+            ghcr.io/devsoc-unsw/freerooms-publish-scraper:${{ github.sha }}
+            ghcr.io/devsoc-unsw/freerooms-publish-scraper:latest
+          cache-from: type=gha,scope=publish-scraper
+          cache-to: type=gha,mode=max,scope=publish-scraper
+
   deploy:
-    name: Deploy (CD)
+    name: Deploy
     runs-on: ubuntu-latest
-    needs: [ build ]
+    needs:
+      - build
     if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+
     steps:
       - name: Dispatch deployment
         uses: devsoc-unsw/deployment-dispatch-action@main
@@ -95,3 +160,4 @@ jobs:
           deployment-dispatcher-app-private-key: ${{ secrets.DEPLOYMENT_DISPATCHER_APP_PRIVATE_KEY }}
           updates: |
             ghcr.io/devsoc-unsw/freerooms-nss-scraper=${{ github.sha }}
+            ghcr.io/devsoc-unsw/freerooms-publish-scraper=${{ github.sha }}

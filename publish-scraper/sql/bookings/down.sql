@@ -1,0 +1,2 @@
+DROP TABLE Bookings CASCADE;
+DROP TYPE BookingTypeEnum CASCADE;

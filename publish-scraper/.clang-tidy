@@ -1,0 +1,17 @@
+Checks: >
+  -*,
+  clang-analyzer-*,
+  bugprone-*,
+  performance-*,
+  portability-*,
+  -bugprone-easily-swappable-parameters,
+  -performance-enum-size,
+  -portability-avoid-pragma-once
+
+WarningsAsErrors: '*'
+
+HeaderFilterRegex: '.*/publish-scraper/(src|include|tests)/.*'
+
+SystemHeaders: false
+
+FormatStyle: file
