@@ -175,6 +175,7 @@ if(BUILD_TESTING)
         tests/unit/room_metadata.test.cpp
         tests/unit/publish_settings.test.cpp
         tests/unit/publish_mapping.test.cpp
+        tests/unit/publish_request.test.cpp
     )
 
     target_link_libraries(

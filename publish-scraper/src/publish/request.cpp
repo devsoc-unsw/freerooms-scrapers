@@ -7,6 +7,25 @@
 
 namespace publish {
 
+namespace {
+
+bool week_overlaps_year(const Week& week, const int year) {
+    if (week.first_day_in_week.size() < 10) {
+        return false;
+    }
+
+    const auto first_day = week.first_day_in_week.substr(0, 10);
+    const auto year_string = std::to_string(year);
+
+    // A week can begin up to six days before January 1 and still overlap
+    const auto earliest_start = std::to_string(year - 1) + "-12-26";
+    const auto latest_start = year_string + "-12-31";
+
+    return first_day >= earliest_start && first_day <= latest_start;
+}
+
+} // namespace
+
 EventsRequest build_events_request(const ViewOptionsResponse& view_options,
                                    const std::vector<std::string>& location_ids,
                                    const int year) {
@@ -53,10 +72,8 @@ EventsRequest build_events_request(const ViewOptionsResponse& view_options,
         throw std::runtime_error{"Publish does not contain the All Day time period"};
     }
 
-    const auto year_prefix = year_string + "-";
-
     for (const auto& week : view_options.weeks) {
-        if (week.first_day_in_week.starts_with(year_prefix)) {
+        if (week_overlaps_year(week, year)) {
             request.view_options.weeks.push_back(week);
         }
     }
