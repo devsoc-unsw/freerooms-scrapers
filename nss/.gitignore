@@ -124,3 +124,8 @@ database.json
 
 # artifacts
 bookings.json
+
+# environment variables
+.env
+
+.DS_Store
