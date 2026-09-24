@@ -1,4 +1,5 @@
 #include "bookings/classification.hpp"
+#include "bookings/deduplicate.hpp"
 #include "bookings/filter.hpp"
 #include "bookings/sort.hpp"
 #include "types/booking.hpp"
@@ -114,4 +115,71 @@ TEST_CASE("bookings are sorted by start then room then occurrence") {
     CHECK(values.at(1).occurrence_id == "1");
     CHECK(values.at(2).occurrence_id == "3");
     CHECK(values.at(3).start == "2026-01-02T10:00:00Z");
+}
+
+TEST_CASE("occupancy deduplication removes bookings with the same room time and name") {
+    auto first = make_booking("K-B-1", "occurrence-1", "2026-01-01T09:00:00Z");
+    first.end = "2026-01-01T10:00:00Z";
+    first.name = "MATH1251 TUT";
+    first.event_id = "event-1";
+    first.raw_name = "MATH1251 Tutorial Group A";
+
+    auto duplicate = make_booking("K-B-1", "occurrence-2", "2026-01-01T09:00:00Z");
+    duplicate.end = "2026-01-01T10:00:00Z";
+    duplicate.name = "MATH1251 TUT";
+    duplicate.event_id = "event-2";
+    duplicate.raw_name = "MATH1251 Tutorial Group B";
+
+    std::vector<model::Booking> values{first, duplicate};
+
+    const auto removed = bookings::deduplicate_bookings_for_occupancy(values);
+
+    REQUIRE(removed == 1);
+    REQUIRE(values.size() == 1);
+    CHECK(values.front().occurrence_id == "occurrence-1");
+}
+
+TEST_CASE("occupancy deduplication keeps different names at the same room and time") {
+    auto first = make_booking("K-B-1", "occurrence-1", "2026-01-01T09:00:00Z");
+    first.end = "2026-01-01T10:00:00Z";
+    first.name = "MATH1251 TUT";
+
+    auto second = make_booking("K-B-1", "occurrence-2", "2026-01-01T09:00:00Z");
+    second.end = "2026-01-01T10:00:00Z";
+    second.name = "PHYS1121 LAB";
+
+    std::vector<model::Booking> values{first, second};
+
+    CHECK(bookings::deduplicate_bookings_for_occupancy(values) == 0);
+    CHECK(values.size() == 2);
+}
+
+TEST_CASE("occupancy deduplication keeps the same name and time in different rooms") {
+    auto first = make_booking("K-B-1", "occurrence-1", "2026-01-01T09:00:00Z");
+    first.end = "2026-01-01T10:00:00Z";
+    first.name = "MATH1251 TUT";
+
+    auto second = make_booking("K-B-2", "occurrence-2", "2026-01-01T09:00:00Z");
+    second.end = "2026-01-01T10:00:00Z";
+    second.name = "MATH1251 TUT";
+
+    std::vector<model::Booking> values{first, second};
+
+    CHECK(bookings::deduplicate_bookings_for_occupancy(values) == 0);
+    CHECK(values.size() == 2);
+}
+
+TEST_CASE("occupancy deduplication keeps the same room and name at different times") {
+    auto first = make_booking("K-B-1", "occurrence-1", "2026-01-01T09:00:00Z");
+    first.end = "2026-01-01T10:00:00Z";
+    first.name = "MATH1251 TUT";
+
+    auto second = make_booking("K-B-1", "occurrence-2", "2026-01-01T10:00:00Z");
+    second.end = "2026-01-01T11:00:00Z";
+    second.name = "MATH1251 TUT";
+
+    std::vector<model::Booking> values{first, second};
+
+    CHECK(bookings::deduplicate_bookings_for_occupancy(values) == 0);
+    CHECK(values.size() == 2);
 }
