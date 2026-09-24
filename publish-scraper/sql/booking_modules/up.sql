@@ -14,15 +14,16 @@ CREATE TABLE BookingModules (
         "moduleIndex"
     ),
 
-    FOREIGN KEY (
-        "roomId",
-        "occurrenceId"
-    )
-    REFERENCES Bookings(
-        "roomId",
-        "occurrenceId"
-    )
-    ON DELETE CASCADE
+    CONSTRAINT booking_modules_booking_fk
+        FOREIGN KEY (
+            "roomId",
+            "occurrenceId"
+        )
+        REFERENCES Bookings(
+            "roomId",
+            "occurrenceId"
+        )
+        ON DELETE CASCADE
 );
 
 CREATE INDEX booking_modules_code

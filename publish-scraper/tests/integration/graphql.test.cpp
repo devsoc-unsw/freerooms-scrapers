@@ -16,6 +16,7 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <tuple>
 #include <vector>
 
 namespace {
@@ -285,6 +286,7 @@ TEST_CASE("GraphQL booking range queries return overlapping bookings sorted by s
         {{"start", start}, {"end", end}});
 
     std::size_t booking_count = 0;
+    std::set<std::tuple<std::string, std::string, std::string, std::string>> occupancy_keys;
 
     for (const auto& room : data.at("rooms")) {
         const auto& bookings = room.at("bookings");
@@ -304,6 +306,13 @@ TEST_CASE("GraphQL booking range queries return overlapping bookings sorted by s
             CHECK(booking.at("bookingType").is_string());
             CHECK(booking.at("start").is_string());
             CHECK(booking.at("end").is_string());
+
+            const auto key = std::make_tuple(room.at("id").get<std::string>(),
+                                             booking.at("start").get<std::string>(),
+                                             booking.at("end").get<std::string>(),
+                                             booking.at("name").get<std::string>());
+
+            CHECK(occupancy_keys.insert(key).second);
         }
     }
 

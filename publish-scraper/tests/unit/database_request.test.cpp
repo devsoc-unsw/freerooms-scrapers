@@ -63,6 +63,50 @@ TEST_CASE("booking year cleanup is correctly expanded") {
     CHECK(sql_before.find("{0}") == std::string::npos);
 
     CHECK(sql_before.find("{1}") == std::string::npos);
+
+    CHECK(sql_before.find("CREATE INDEX") == std::string::npos);
+
+    CHECK(sql_before.find("ADD CONSTRAINT") == std::string::npos);
+}
+
+TEST_CASE("booking schema contains occupancy uniqueness and lookup indexes") {
+    const auto result = database::build_batch_request(nlohmann::json::array(),
+                                                      nlohmann::json::array(),
+                                                      nlohmann::json::array(),
+                                                      nlohmann::json::array(),
+                                                      2026);
+
+    const auto sql_up = result.at(2).at("metadata").at("sql_up").get<std::string>();
+
+    CHECK(sql_up.find("bookings_room_start_end_name_unique") != std::string::npos);
+
+    CHECK(sql_up.find("UNIQUE (\"roomId\", \"start\", \"end\", \"name\")") != std::string::npos);
+
+    CHECK(sql_up.find("bookings_start_end") != std::string::npos);
+
+    CHECK(sql_up.find("bookings_room_start_end") != std::string::npos);
+
+    CHECK(sql_up.find("bookings_occurrence_id") != std::string::npos);
+
+    CHECK(sql_up.find("bookings_event_id") != std::string::npos);
+
+    CHECK(sql_up.find("bookings_name") != std::string::npos);
+
+    CHECK(sql_up.find("bookings_type_name") != std::string::npos);
+}
+
+TEST_CASE("booking modules schema recreates its booking foreign key") {
+    const auto result = database::build_batch_request(nlohmann::json::array(),
+                                                      nlohmann::json::array(),
+                                                      nlohmann::json::array(),
+                                                      nlohmann::json::array(),
+                                                      2026);
+
+    const auto sql_up = result.at(3).at("metadata").at("sql_up").get<std::string>();
+
+    CHECK(sql_up.find("booking_modules_booking_fk") != std::string::npos);
+
+    CHECK(sql_up.find("REFERENCES Bookings") != std::string::npos);
 }
 
 TEST_CASE("database write modes remain correct") {

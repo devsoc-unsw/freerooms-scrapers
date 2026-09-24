@@ -1,3 +1,4 @@
+#include "bookings/deduplicate.hpp"
 #include "bookings/filter.hpp"
 #include "bookings/json.hpp"
 #include "bookings/sort.hpp"
@@ -369,6 +370,13 @@ int run_scrape_command(const publish::RequestSettings& request_settings) {
               << "  Remaining bookings: " << bookings.size() << "\n\n";
 
     timed_step("Sorting bookings", [&] { bookings::sort_bookings(bookings); });
+
+    const auto duplicate_count = timed_step("Deduplicating occupancy bookings", [&] {
+        return bookings::deduplicate_bookings_for_occupancy(bookings);
+    });
+
+    std::cout << "  Removed duplicates: " << duplicate_count << '\n'
+              << "  Remaining bookings: " << bookings.size() << "\n\n";
 
     auto building_payload = timed_step("Serializing buildings", [&] {
         return database::serialize_buildings(static_data.buildings, static_data.rooms);

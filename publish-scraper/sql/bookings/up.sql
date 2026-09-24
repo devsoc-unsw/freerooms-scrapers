@@ -34,6 +34,9 @@ CREATE TABLE Bookings (
 
     PRIMARY KEY ("roomId", "occurrenceId"),
 
+    CONSTRAINT bookings_room_start_end_name_unique
+        UNIQUE ("roomId", "start", "end", "name"),
+
     FOREIGN KEY ("roomId")
         REFERENCES Rooms("id")
         ON DELETE CASCADE,
@@ -52,6 +55,9 @@ CREATE INDEX bookings_occurrence_id
 
 CREATE INDEX bookings_event_id
     ON Bookings ("eventId");
+
+CREATE INDEX bookings_name
+    ON Bookings ("name");
 
 CREATE INDEX bookings_type_name
     ON Bookings ("bookingType", "name");
