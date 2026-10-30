@@ -61,3 +61,6 @@ CREATE INDEX bookings_name
 
 CREATE INDEX bookings_type_name
     ON Bookings ("bookingType", "name");
+
+CREATE INDEX bookings_keyset_pagination
+    ON Bookings ("start", "bookingType", "roomId", "occurrenceId")
